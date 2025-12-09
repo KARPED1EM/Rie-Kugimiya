@@ -51,7 +51,7 @@ class MessageService:
                 "id": message.id,
                 "conversation_id": message.conversation_id,
                 "sender_id": message.sender_id,
-                "type": message.type.value,
+                "type": message.type,
                 "content": message.content,
                 "timestamp": message.timestamp,
                 "metadata": message.metadata
@@ -98,7 +98,7 @@ class MessageService:
                         "id": msg.id,
                         "conversation_id": msg.conversation_id,
                         "sender_id": msg.sender_id,
-                        "type": msg.type.value,
+                        "type": msg.type,
                         "content": msg.content,
                         "timestamp": msg.timestamp,
                         "metadata": msg.metadata
