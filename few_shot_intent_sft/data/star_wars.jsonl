@@ -1,0 +1,97 @@
+{"text": "Hi", "label": "greeting", "data_source": "star_wars", "split": "train"}
+{"text": "Hey", "label": "greeting", "data_source": "star_wars", "split": "train"}
+{"text": "How are you", "label": "greeting", "data_source": "star_wars", "split": "train"}
+{"text": "Is anyone there?", "label": "greeting", "data_source": "star_wars", "split": "validation"}
+{"text": "Hello", "label": "greeting", "data_source": "star_wars", "split": "train"}
+{"text": "Good day", "label": "greeting", "data_source": "star_wars", "split": "train"}
+{"text": "What's up", "label": "greeting", "data_source": "star_wars", "split": "train"}
+{"text": "Yo!", "label": "greeting", "data_source": "star_wars", "split": "train"}
+{"text": "Howdy", "label": "greeting", "data_source": "star_wars", "split": "train"}
+{"text": "Nice to meet you.", "label": "greeting", "data_source": "star_wars", "split": "train"}
+{"text": "Bye", "label": "goodbye", "data_source": "star_wars", "split": "test"}
+{"text": "See you later.", "label": "goodbye", "data_source": "star_wars", "split": "train"}
+{"text": "Goodbye", "label": "goodbye", "data_source": "star_wars", "split": "test"}
+{"text": "Have a great day.", "label": "goodbye", "data_source": "star_wars", "split": "train"}
+{"text": "See you next time.", "label": "goodbye", "data_source": "star_wars", "split": "train"}
+{"text": "It was my pleassure.", "label": "goodbye", "data_source": "star_wars", "split": "train"}
+{"text": "Take care.", "label": "goodbye", "data_source": "star_wars", "split": "train"}
+{"text": "See ya!", "label": "goodbye", "data_source": "star_wars", "split": "train"}
+{"text": "Catch you later.", "label": "goodbye", "data_source": "star_wars", "split": "test"}
+{"text": "Ciao.", "label": "goodbye", "data_source": "star_wars", "split": "train"}
+{"text": "Thanks", "label": "thanks", "data_source": "star_wars", "split": "validation"}
+{"text": "Thank you", "label": "thanks", "data_source": "star_wars", "split": "test"}
+{"text": "That's helpful", "label": "thanks", "data_source": "star_wars", "split": "train"}
+{"text": "Thank's a lot!", "label": "thanks", "data_source": "star_wars", "split": "train"}
+{"text": "Tnx", "label": "thanks", "data_source": "star_wars", "split": "test"}
+{"text": "Wow", "label": "thanks", "data_source": "star_wars", "split": "train"}
+{"text": "Great!", "label": "thanks", "data_source": "star_wars", "split": "train"}
+{"text": "Good!", "label": "thanks", "data_source": "star_wars", "split": "train"}
+{"text": "That nice!", "label": "thanks", "data_source": "star_wars", "split": "train"}
+{"text": "Amazing!", "label": "thanks", "data_source": "star_wars", "split": "train"}
+{"text": "What can you do?", "label": "tasks", "data_source": "star_wars", "split": "validation"}
+{"text": "What are your features?", "label": "tasks", "data_source": "star_wars", "split": "validation"}
+{"text": "What are you abilities.", "label": "tasks", "data_source": "star_wars", "split": "train"}
+{"text": "Can you sing.", "label": "tasks", "data_source": "star_wars", "split": "train"}
+{"text": "Can you talk.", "label": "tasks", "data_source": "star_wars", "split": "test"}
+{"text": "Are you alive.", "label": "alive", "data_source": "star_wars", "split": "train"}
+{"text": "Do you breathe.", "label": "alive", "data_source": "star_wars", "split": "train"}
+{"text": "Can you run.", "label": "alive", "data_source": "star_wars", "split": "test"}
+{"text": "Which items do you have in your bar?", "label": "Menu", "data_source": "star_wars", "split": "train"}
+{"text": "What kinds of items are in you bar?", "label": "Menu", "data_source": "star_wars", "split": "train"}
+{"text": "What do you serve?", "label": "Menu", "data_source": "star_wars", "split": "train"}
+{"text": "What is in you menu?", "label": "Menu", "data_source": "star_wars", "split": "train"}
+{"text": "I need a drink!", "label": "Menu", "data_source": "star_wars", "split": "train"}
+{"text": "Do you serve drinks.", "label": "Menu", "data_source": "star_wars", "split": "train"}
+{"text": "Menu please!", "label": "Menu", "data_source": "star_wars", "split": "train"}
+{"text": "So what is in menu today?", "label": "Menu", "data_source": "star_wars", "split": "test"}
+{"text": "Lets check your bar selection!", "label": "Menu", "data_source": "star_wars", "split": "validation"}
+{"text": "Bar menu for me please!", "label": "Menu", "data_source": "star_wars", "split": "train"}
+{"text": "I am looking for help.", "label": "hepl", "data_source": "star_wars", "split": "test"}
+{"text": "I need help.", "label": "hepl", "data_source": "star_wars", "split": "train"}
+{"text": "Can you help me?", "label": "hepl", "data_source": "star_wars", "split": "train"}
+{"text": "I am in trouble need a help.", "label": "hepl", "data_source": "star_wars", "split": "train"}
+{"text": "I hope you right person who can help me?", "label": "hepl", "data_source": "star_wars", "split": "train"}
+{"text": "Please help me.", "label": "hepl", "data_source": "star_wars", "split": "train"}
+{"text": "Now I will need you help with something else.", "label": "hepl", "data_source": "star_wars", "split": "train"}
+{"text": "I will need you help.", "label": "hepl", "data_source": "star_wars", "split": "train"}
+{"text": "Are you able to help me.", "label": "hepl", "data_source": "star_wars", "split": "train"}
+{"text": "PLease help me with something else.", "label": "hepl", "data_source": "star_wars", "split": "train"}
+{"text": "I am on mission.", "label": "mission", "data_source": "star_wars", "split": "train"}
+{"text": "I need assistance in my mission.", "label": "mission", "data_source": "star_wars", "split": "train"}
+{"text": "I am looking for partner in mision?", "label": "mission", "data_source": "star_wars", "split": "train"}
+{"text": "Who can assist me with my mission?", "label": "mission", "data_source": "star_wars", "split": "train"}
+{"text": "Do you know any one who can assist me with my mission?", "label": "mission", "data_source": "star_wars", "split": "train"}
+{"text": "Tell me top 10 jedi?", "label": "jedi", "data_source": "star_wars", "split": "train"}
+{"text": "Who is the best jedi in Galaxy?", "label": "jedi", "data_source": "star_wars", "split": "train"}
+{"text": "I am looking for the best jedi in galaxi?", "label": "jedi", "data_source": "star_wars", "split": "train"}
+{"text": "Which jedi can help me in this mission?", "label": "jedi", "data_source": "star_wars", "split": "train"}
+{"text": "I need a help of jedi.", "label": "jedi", "data_source": "star_wars", "split": "train"}
+{"text": "Tell me top 10 sith?", "label": "sith", "data_source": "star_wars", "split": "train"}
+{"text": "Who is the best sith in Galaxy?", "label": "sith", "data_source": "star_wars", "split": "train"}
+{"text": "I am looking for the best sith in galaxi.", "label": "sith", "data_source": "star_wars", "split": "train"}
+{"text": "Which sith can help me in this mission?", "label": "sith", "data_source": "star_wars", "split": "train"}
+{"text": "I need a help of sith.", "label": "sith", "data_source": "star_wars", "split": "train"}
+{"text": "Tell me top 10 bounti hounter?", "label": "bounti hounter", "data_source": "star_wars", "split": "train"}
+{"text": "Who is the bounti hounter sith in Galaxy?", "label": "bounti hounter", "data_source": "star_wars", "split": "train"}
+{"text": "I am looking for the best bounti hounter in galaxi.", "label": "bounti hounter", "data_source": "star_wars", "split": "train"}
+{"text": "Which bounti hounter can help me in this mission?", "label": "bounti hounter", "data_source": "star_wars", "split": "train"}
+{"text": "I need a help of bounti hounter.", "label": "bounti hounter", "data_source": "star_wars", "split": "train"}
+{"text": "Tell me a joke!", "label": "funny", "data_source": "star_wars", "split": "train"}
+{"text": "Can you be a bit funny", "label": "funny", "data_source": "star_wars", "split": "train"}
+{"text": "Tell me something funny!", "label": "funny", "data_source": "star_wars", "split": "train"}
+{"text": "Do you know a joke?", "label": "funny", "data_source": "star_wars", "split": "validation"}
+{"text": "Any joke for me?", "label": "funny", "data_source": "star_wars", "split": "train"}
+{"text": "Do you know me?", "label": "about me", "data_source": "star_wars", "split": "train"}
+{"text": "Who am I", "label": "about me", "data_source": "star_wars", "split": "validation"}
+{"text": "Tell me about myself", "label": "about me", "data_source": "star_wars", "split": "train"}
+{"text": "Identify me", "label": "about me", "data_source": "star_wars", "split": "train"}
+{"text": "Who is your creator?", "label": "creator", "data_source": "star_wars", "split": "train"}
+{"text": "Who created you", "label": "creator", "data_source": "star_wars", "split": "train"}
+{"text": "Who is your father.", "label": "creator", "data_source": "star_wars", "split": "train"}
+{"text": "Who is your daddy.", "label": "creator", "data_source": "star_wars", "split": "train"}
+{"text": "Tell me about Mr. ASLAN?", "label": "myself", "data_source": "star_wars", "split": "train"}
+{"text": "Who is Mr. ASLAN", "label": "myself", "data_source": "star_wars", "split": "train"}
+{"text": "Mr. ASLAN profile", "label": "myself", "data_source": "star_wars", "split": "train"}
+{"text": "Mr. ASLAN details.", "label": "myself", "data_source": "star_wars", "split": "train"}
+{"text": "Tell me a story?", "label": "stories", "data_source": "star_wars", "split": "train"}
+{"text": "Can you tell me a story.", "label": "stories", "data_source": "star_wars", "split": "train"}

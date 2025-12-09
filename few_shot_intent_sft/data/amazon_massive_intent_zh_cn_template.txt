@@ -1,0 +1,588 @@
+prompt_template:
+意图识别。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+亚马逊Alexa虚拟助手，意图识别。
+不知道时回答“{not_applicable}”
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "其它意图。", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+你是亚马逊Alexa虚拟助手，用户会提一些关于手机应用，家庭物联网设备等等相关的指令，请你判断其意图。不知道时回答“{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "其它意图。", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+虚拟助手意图分类。不知道时回答“{not_applicable}”。
+
+Examples:
+{examples}
+
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "其它意图。", "not_applicable_rate": 0.05, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+智能助手意图分类。
+不知道时回答“{not_applicable}”。
+
+Examples:
+------------
+{examples}
+------------
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "其它意图。", "not_applicable_rate": 0.05, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+针对亚马逊Alexa虚拟助手中的意图识别。我们会给出一些示例，然后你需要确定最后一个句子的意图，不知道时回答“{not_applicable}”。
+
+Examples:
+{examples}
+
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "不知道。", "not_applicable_rate": 0.05, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+请你根据给定的示例来推测最后一个句子的意图。
+如果无法确定，则输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+Message: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "其它意图", "not_applicable_rate": 0.05, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+根据示例进行意图识别，不确定时输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+Message: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\"]", "not_applicable_rate": 0.05, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+物联网助手意图识别，不知道时输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+Message: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图分类。
+不确定时回答“{not_applicable}”。
+
+Examples:
+------------
+{examples}
+------------
+Message: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"不知道\", \"其它意图\", \"其他意图\"]", "not_applicable_rate": 0.05, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图分类。
+
+Examples:
+```
+{examples}
+```
+Message: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"不知道\", \"其它意图\", \"其他意图\"]", "not_applicable_rate": 0.05, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+Zero-shot 零样本分类。
+
+可选标签有：{examples}。
+
+Message: {text}
+Output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "；", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"不知道\", \"其它意图\", \"其他意图\"]", "not_applicable_rate": 0.05, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+零样本意图识别。
+
+标签选项：
+- {examples}
+
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n- ", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"不知道\", \"其它意图\", \"其他意图\"]", "not_applicable_rate": 0.05, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent recognition.
+
+note:
+* if no intent id available, output: "{not_applicable}".
+* attention give out "intent id".
+
+description:
+```
+{intent_description}
+```
+
+examples:
+```
+{examples}
+```
+text: {text}
+intent id:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent id: {intent_symbol}\n", "example_sep": "```", "intent_description_template": "\nintent id: {intent_symbol}\ndescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"no ID fit it\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别:
+{intent_description}
+
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "intent_description_template": "\nintent: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+亚马逊Alexa虚拟助手，意图识别。不知道时回答：“{not_applicable}”。
+
+可选意图有:
+-----
+{intent_description}
+-----
+
+示例:
+-----
+{examples}
+-----
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "-----", "intent_description_template": "\nintent: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "-----", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在举例中\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+你是亚马逊Alexa虚拟助手，用户会提一些关于手机应用，家庭物联网设备等等相关的指令，请你判断其意图。不知道时回答：“{not_applicable}”。
+
+intent_description:
+```
+{intent_description}
+```
+
+Examples:
+```
+{examples}
+```
+text: {text}
+intent id:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent id: {intent_symbol}\n", "example_sep": "```", "intent_description_template": "\nintent: {intent}\nintent id: {intent_symbol}\ndescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在举例中\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+虚拟助手意图分类。不知道时回答“{not_applicable}”。
+
+intent_description:
+```
+{intent_description}
+```
+
+Examples:
+{examples}
+
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "", "intent_description_template": "\nIntent: {intent}\nIntent ID: {intent_symbol}\nDescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+智能助手意图分类。不知道时回答“{not_applicable}”。
+
+可选意图：
+```
+{intent_description}
+```
+
+示例：
+```
+{examples}
+```
+文本：{text}
+意图 ID：
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\n文本：{text}\n意图 ID：{intent_symbol}\n", "example_sep": "```", "intent_description_template": "\n意图：{intent}\n意图 ID：{intent_symbol}\n描述：{intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+针对亚马逊Alexa虚拟助手中的意图识别。我们会给出一些示例，然后你需要确定最后一个句子的意图，不知道时回答：“{not_applicable}”。
+
+候选意图有：
+```
+{intent_description}
+```
+
+示例：
+{examples}
+
+任务：
+Text: {text}
+Intent ID:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\nText：{text}\nIntent ID：{intent_symbol}\n", "example_sep": "```", "intent_description_template": "\nintent name: {intent}\nintent ID: {intent_symbol}\nintent desc: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+请你根据给定的示例来推测最后一个句子的意图。如果无法确定，则输出 “{not_applicable}”。
+
+intent list:
+```
+{intent_description}
+```
+
+Examples:
+```
+{examples}
+```
+Message: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent Name：{intent}\n", "example_sep": "```", "intent_description_template": "\nIntent Name: {intent}\nIntent ID: {intent_symbol}\nDescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\", \"判断不出意图标签\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+根据示例进行意图识别，不确定时输出 “{not_applicable}”。
+
+Intent List:
+```
+{intent_description}
+```
+
+Examples:
+```
+{examples}
+```
+Message: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent：{intent}\n", "example_sep": "```", "intent_description_template": "\nIntent: {intent}\nIntent ID: {intent_symbol}\nDescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\", \"判断不出意图标签\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+物联网助手意图识别，不知道时输出 “{not_applicable}”。
+
+意图列表：
+```
+{intent_description}
+```
+
+示例：
+{examples}
+
+Message: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent：{intent}\n", "example_sep": "", "intent_description_template": "\nIntent: {intent}\nIntent ID: {intent_symbol}\nDescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\", \"判断不出意图标签\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图分类。不能确定时回答：“{not_applicable}”。
+
+Intent Options:
+```
+{intent_description}
+```
+
+Examples:
+------------
+{examples}
+------------
+Message: {text}
+Intent ID:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent ID：{intent_symbol}\n", "example_sep": "------------", "intent_description_template": "\nIntent: {intent}\nIntent ID: {intent_symbol}\nDescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\", \"判断不出意图标签\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+Zero-shot 零样本分类。
+
+可选标签有：
+```
+{intent_description}
+```
+
+Message: {text}
+
+请输出它的 Intent ID:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "\nIntent: {intent}\nIntent ID: {intent_symbol}\nDescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\", \"判断不出意图标签\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+Zero-shot 零样本分类。
+
+可选标签有：
+```
+{intent_description}
+```
+
+{text}
+
+请输出它的 Intent ID:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "\nIntent: {intent}\nIntent ID: {intent_symbol}\nDescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\", \"判断不出意图标签\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+{text}
+
+请输出这个句子的 Intent ID，不确定时输出：“{not_applicable}”。
+
+可选标签有：
+```
+{intent_description}
+```
+
+output:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "\nIntent: {intent}\nIntent ID: {intent_symbol}\nDescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\", \"判断不出意图标签\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+零样本意图识别。
+
+标签选项：
+{intent_description}
+
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "Intent: {intent}\nDescription: {intent_description}\n", "intent_description_sep": "", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\", \"判断不出意图标签\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+零样本意图识别。
+
+标签选项：
+{intent_description}
+
+Text: {text}
+Intent ID:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "Intent ID: {intent_symbol}\nDescription: {intent_description}\n", "intent_description_sep": "", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\", \"判断不出意图标签\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+零样本意图识别。
+
+标签选项：
+{intent_description}
+
+Text: {text}
+Intent ID:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "Intent: {intent}\nIntent ID: {intent_symbol}\nDescription: {intent_description}\n", "intent_description_sep": "", "not_applicable_variable": "[\"其它意图。\", \"未知意图\", \"无法判断\", \"无关意图\", \"blank\", \"无法判断出意图\", \"意图不在例子中\", \"判断不出意图标签\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---

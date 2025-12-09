@@ -1,0 +1,240 @@
+prompt_template:
+文本分类.
+
+示例:
+------
+{examples}
+------
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: \n{text}\nlabel: {intent}\n", "example_sep": "------", "not_applicable_variable": "[\"其它类别\", \"其他类别\", \"领域外\", \"领域外类别\", \"未知类别\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+文本分类。
+
+示例：
+------
+{examples}
+------
+text： {text}
+label：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext：\n{text}\nlabel：\n{intent}\n", "example_sep": "------", "not_applicable_variable": "[\"其它类别\", \"其他类别\", \"领域外\", \"领域外类别\", \"未知类别\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+文本分类。
+
+Examples:
+```
+{examples}
+```
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: \n{text}\nlabel: {intent}\n", "example_sep": "------", "not_applicable_variable": "[\"其它类别\", \"其他类别\", \"领域外\", \"领域外类别\", \"未知类别\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+文本分类。
+
+Examples:
+*****
+{examples}
+*****
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: \n{text}\nlabel: {intent}\n", "example_sep": "*****", "not_applicable_variable": "[\"其它类别\", \"其他类别\", \"领域外\", \"领域外类别\", \"未知类别\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+文本分类。
+
+Examples:
+```
+{examples}
+```
+
+请根据以上示例推断这个句子的类别标签。请直接输出类别名称，不要额外输出多余内容。
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: \n{text}\nlabel: {intent}\n", "example_sep": "------", "not_applicable_variable": "[\"其它类别\", \"其他类别\", \"领域外\", \"领域外类别\", \"未知类别\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+文本分类。
+
+Examples:
+```
+{examples}
+```
+
+请根据以上示例推断这个句子的类别标签。
+- 请直接输出类别名称，不要额外输出多余内容。
+- 不确定时输出：“{not_applicable}”。
+
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: \n{text}\nlabel: {intent}\n", "example_sep": "------", "not_applicable_variable": "[\"其它类别\", \"其他类别\", \"领域外\", \"领域外类别\", \"未知类别\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+文本分类。
+
+示例：
+```
+{examples}
+```
+
+注意：
+- 请直接输出类别名称，不要额外输出多余内容。
+- 不确定时输出：“{not_applicable}”。
+
+请根据以上示例推断这个句子的类别标签。
+```
+{text}
+```
+label：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext：\n{text}\nlabel：{intent}\n", "example_sep": "------", "not_applicable_variable": "[\"其它类别\", \"其他类别\", \"领域外\", \"领域外类别\", \"未知类别\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+文本分类。
+
+可选标签：
+- {examples}
+
+注意：
+- 请直接输出标签名称，不要额外输出多余内容。
+- 不确定时输出：“{not_applicable}”。
+
+给出以下句子的类别标签：
+```
+{text}
+```
+label：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "- ，", "not_applicable_variable": "[\"其它类别\", \"其他类别\", \"领域外\", \"领域外类别\", \"未知类别\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+零样本，文本分类。
+
+可选标签：{examples}。
+
+注意：请直接输出标签名称，不要额外输出多余内容。
+
+给出以下句子的类别标签：
+```
+{text}
+```
+label：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "，", "not_applicable_variable": "其它", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+零样本，文本分类。
+
+可选标签：{examples}。
+
+```
+{text}
+```
+label：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "，", "not_applicable_variable": "其它", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+零样本，文本分类。
+
+可选标签：{examples}。
+
+不确定时输出：“{not_applicable}”。
+
+```
+{text}
+```
+label：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "，", "not_applicable_variable": "[\"其它类别\", \"其他类别\", \"领域外\", \"领域外类别\", \"未知类别\", \"其它标签\", \"未知标签\"]", "not_applicable_rate": 0.05, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+Few-Shot 文本分类。
+
+可选标签：{examples}。
+
+不确定时输出：“{not_applicable}”。
+
+{text}
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "，", "not_applicable_variable": "[\"其它类别\", \"其他类别\", \"领域外\", \"领域外类别\", \"未知类别\", \"其它标签\", \"未知标签\"]", "not_applicable_rate": 0.05, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---

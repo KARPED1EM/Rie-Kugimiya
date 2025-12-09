@@ -1,0 +1,228 @@
+prompt_template:
+intent recognition.
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"sorry I don't know\", \"I don't know\", \"cannot determine\"]", "not_applicable_rate": 0.0, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+intent recognition.
+
+Examples:
+---
+{examples}
+---
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"sorry I don't know\", \"I don't know\", \"cannot determine\"]", "not_applicable_rate": 0.0, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+This is a few-shot intent recognition task.
+
+please determine the last text's intent label according the examples below.
+
+output "{not_applicable}" when you can not determine.
+
+Examples:
+---
+{examples}
+---
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"sorry I don't know\", \"I don't know\", \"cannot determine\"]", "not_applicable_rate": 0.0, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+Few-shot intent recognition task.
+
+Examples:
+---
+{examples}
+---
+
+give me this text's intent label below, output "{not_applicable}" when you can not determine.
+
+{text}
+
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"sorry I don't know\", \"I don't know\", \"cannot determine\", \"sorry I can not determine according the examples.\"]", "not_applicable_rate": 0.0, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+Few-shot intent recognition task.
+
+Examples:
+---
+{examples}
+---
+
+give me this text's intent label below, output "{not_applicable}" when you can not determine.
+
+```
+{text}
+```
+
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nSentence: {text}\nLabel: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"sorry I don't know\", \"I don't know\", \"cannot determine\", \"sorry I can not determine according the examples.\"]", "not_applicable_rate": 0.0, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+Few-shot intent recognition task.
+
+Examples:
+---
+{examples}
+---
+
+give me the intent label of the text below.
+output "{not_applicable}" when you this it can not be determined.
+
+```
+{text}
+```
+
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nSentence: {text}\nLabel: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"sorry I don't know\", \"I don't know\", \"cannot determine\", \"sorry I can not determine according the examples.\"]", "not_applicable_rate": 0.0, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+Zero-shot intent recognition task.
+
+choices:
+* {examples}
+
+{text}
+
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n* ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot intent recognition task.
+
+choices:
+* {examples}
+
+{text}
+
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n* ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot intent recognition task.
+
+intent label choices:
+* {examples}
+
+{text}
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n* ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot intent recognition task.
+
+intent label choices:
+- {examples}
+
+{text}
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n* ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+
+intent label choices:
+- {examples}
+
+{text}
+
+give me the most suitable label of this text:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n* ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+
+{text}
+
+intent label choices: {examples}.
+
+give me the most suitable label of this text:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": ", ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---

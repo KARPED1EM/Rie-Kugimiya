@@ -1,0 +1,215 @@
+prompt_template:
+few-shot intent recognition for home assistant.
+
+if the tag not in the examples, output: "{not_applicable}".
+
+examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"others\", \"out of scope\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent determination.
+
+if not sure, output: "{not_applicable}".
+
+examples:
+{examples}
+
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"others\", \"out of scope\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent recognition for home assistant.
+
+if the tag not in the examples, output: "{not_applicable}".
+
+examples:
+-----
+{examples}
+-----
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "-----", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"others\", \"out of scope\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent determination.
+
+if not sure, output: "{not_applicable}".
+
+examples:
+************
+{examples}
+************
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "************", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"others\", \"out of scope\", \"out of scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent recognition for home assistant.
+
+if the tag not in the examples, output: "{not_applicable}".
+
+intent description:
+{intent_description}
+
+examples:
+{examples}
+
+text: {text}
+intent id:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "text: {text}\nintent id: {intent_symbol}\n", "example_sep": "", "intent_description_template": "intent id: {intent_symbol}\nintent: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent recognition for home assistant.
+
+if the tag not in the examples, output: "{not_applicable}".
+
+intent description:
+{intent_description}
+
+examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "text: {text}\nintent: {intent}\n", "example_sep": "", "intent_description_template": "intent id: {intent_symbol}\nintent: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent recognition for home assistant.
+
+if the tag not in the examples, output: "{not_applicable}".
+
+intent description:
+```
+{intent_description}
+```
+examples:
+```
+{examples}
+```
+text: {text}
+intent ID:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent ID: {intent_symbol}\n", "example_sep": "```", "intent_description_template": "\nintent id: {intent_symbol}\nintent: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent recognition for home assistant.
+
+if the tag not in the examples, output: "{not_applicable}".
+
+intent description:
+```
+{intent_description}
+```
+examples:
+```
+{examples}
+```
+text: {text}
+intent ID:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent ID: {intent_symbol}\n", "example_sep": "```", "intent_description_template": "\nintent id: {intent_symbol}\nintent: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent determination.
+
+if not sure, output: "{not_applicable}".
+
+intent description:
+{intent_description}
+
+examples:
+{examples}
+
+Text: {text}
+Intent ID:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent ID: {intent_symbol}\n", "example_sep": "", "intent_description_template": "\nIntent ID: {intent_symbol}\nIntent: {intent}\nDescription: {intent_description}\n", "intent_description_sep": "", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent determination.
+
+if not sure, output: "{not_applicable}".
+
+intent description:
+---
+{intent_description}
+---
+examples:
+---
+{examples}
+---
+Text: {text}
+Intent ID:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent ID: {intent_symbol}\n", "example_sep": "---", "intent_description_template": "\nIntent ID: {intent_symbol}\nIntent: {intent}\nDescription: {intent_description}\n", "intent_description_sep": "---", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---

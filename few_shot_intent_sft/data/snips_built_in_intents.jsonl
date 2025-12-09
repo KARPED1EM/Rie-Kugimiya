@@ -1,0 +1,327 @@
+{"text": "Share my location with Hillary's sister", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send my current location to my father", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my current location with Jim", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send my location to my husband", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send my location", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Always share my location with Lori", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my location with my boyfriend until I get home", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send my current location to Anna", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my location with Steve for 3 days", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my location to mum until I get to school", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my location with my office manager until noon", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my location with my Uber driver", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my location with Robert for the next 10 min", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my location with Jo until 8pm", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my current location", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send my current location to the friends I'm meeting with", "label": "ShareCurrentLocation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the best hotel between Soho Grand and Paramount Hotel?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the cheapest between the two restaurants the closest to my hotel?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the closest between Jo's and Lori's place?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is my Airbnb closer than John's hotel?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is The View more expensive than Masa?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the best between Le Bain and Marquee?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is Vertigo Sky Lounge more expensive than the bar I usually go to in New York?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I'd like to know whether Galli is more expensive than Rao's", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is my favorite bar better than the Donut Pub?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is Waldorf Astoria more luxurious than the Four Seasons?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the cheapest place between my favorite bar and Employees Only?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is my hotel in NYC for this week better than the hotel I stayed in when I was in Chicago?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is Soho Grand better than Paramount?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the cheapest place between Galli and The Smile?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is Three Dots and a Dash cheaper than Lost Lake?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What is the closest theatre between Belasco Theatre and Majestic Theatre?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What is the most expensive restaurant between Per Se and Rao's?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Which restaurant is the cheapest, Shake Shack or Five Guys ?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What is the cheapest restaurant between Balthazar and Lombardi's?", "label": "ComparePlaces", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me photos of the bar I'm going to for Rand's birthday", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Does the View has reserved parking?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How much is it to go to the top of Empire State Building?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Give me the phone number of the place I'm going to today", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "When is Rao's the most crowded?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the phone number of the Dead Rabbit?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there a parking at my hotel?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How crowded is Per Se right now?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What time does Pouring Ribbons open tonight?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How crowded is the bar near my place?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there wifi at the coffee place where I'm meeting with John?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the address of the place where I was yesterday night?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is the Swan Oyster Depot cash-only?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there a wifi at The Smile?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Can I pay by credit card at Boom Boom Room?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the phone number of my hotel in Chicago next month?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is Pates Et Traditions cash only?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Are there good tips to know when going to the Modern?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the price range for a dinner at Galli?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How far is Frying Pan from the Highline Ballroom?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Who is playing tonight at the Madison Square Garden?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's planned at Slim's tonight?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me photos of Mondrian Soho", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What time does Employees Only close?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I want to see photos of the place we're going to tonight", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's happening this week at Smalls Jazz Club?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there a children's menu at The Standard Grill?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the Butcher's Daughter's menu", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Give me the address of the biggest Wallmart in Boston area", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Where's Irving Plaza located?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How expensive is the best French restaurant near work?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How far is the NoMad Bar?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How much does it cost to go to Disneyland?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How far am I from the Guggenheim museum?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there wifi at my Airbnb in London next week end?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Are there activities for children at Hard Rock Cafe?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Does the Butcher's Daughter serve vegetarian food only?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Can I park at Gershwin Theatre?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Give me the address of State Grill and bar", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the menu of the restaurant I booked for tonight", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What are the opening hours of Please Don't Tell?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's Lori's home address?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Where can I get tickets for a concert at Blue Note?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Are there some tips to know when going to Battery Park?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How much is a dinner at La Chine?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Give me Steve's address in Manhattan", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Does Cafe Gitane have wifi?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's today's menu at The Water Club?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "When is it the quietest at Good Luck bar?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there valet parking at Kang Ho Dong Baekjeong?", "label": "GetPlaceDetails", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the cheapest cocktail bar near the hotel my sister stays in", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me a restaurant similar to the one I went to yesterday evening", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the closest restaurants with all you can eat buffets", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me a 3 stars restaurant in Los Angeles", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I want to eat some fried chicken. Any suggestions?", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the closest pizza restaurant around here?", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the top 5 French restaurants in Manhattan", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Where can I eat the best burger in Soho?", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me veggie restaurants nearby", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me a salad bar I can go to for my lunch meeting", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the best irish pub in hell's kitchen?", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find a store near Sia's place where I can buy champagne", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there a place similar to Per Se in Williamsburg?", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find the top 3 family attractions in Hollywood not far from Angie's place", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find the best restaurants near my airbnb that serve brunch all day", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me a romantic restaurant that serves good expensive wine near my girlfriend's work", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the best museums to visit near my London Airbnb", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me a brunch spot in Lower Manhattan", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me a coffee place similar to Starbucks that has gluten free food", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me the cheapest seafood restaurant near the Golden Bridge", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me a place that sells burritos in South Harlem", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What are the fanciest clubs in New York?", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Where is the nearest Starbucks?", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me a good expensive japanese restaurant near work", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find a good fried chicken restaurant that is not a fast food", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me the closest theatre for tonight", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the parks with swings and pony rides around my aunt's place", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me the finest sushi restaurant in the area of my next meeting", "label": "SearchPlace", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me a table for four for dinner tonight", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for today's lunch at Eggy's Diner for 3 people", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table at a restaurant near Times Square for 2 people tomorrow night", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for friday 8pm for 2 people at Katz's Delicatessen", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table at Joan's on Third for my family reunion on Saturday", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I'd like a table in a peaceful restaurant around Times Square", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table at Seven Hills for 6 people with a nice view", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for 6 people at Mr Donahue's for tomorrow's lunch", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a restaurant for 6 near my morning meeting tomorrow at 1pm", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I want reservations to grab brunch for 5 in hells kitchen tomorrow", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for Sophie and me at the Red Lobster tonight", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for 3 people at a restaurant that serve tapas and wine for tonight", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table near my London hotel next Wednesday evening", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book me a table for 8:45pm at a restaurant with wifi near my Airbnb", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Figure out if I can get a reservation at Ma Peche after the concert", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for four people at Tapestry for 9pm tonight", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get me a spot at Ippudo for lunch", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table at the best chinese restaurant in town for today's lunch", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a restaurant for brunch next Sunday", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book me a table for 2 people at the sushi place next to the show tomorrow night", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Make a reservation for 4 people for today's lunch at Daniel", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for four people at Mondrian Soho for 8pm", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get me a table at Din Tai Fung for the 4th of December at 12:30", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get me a table at a restaurant nearby that is not too crowded for tomorrow evening", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find me an outdoor table at Five leaves for 3", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get me a table at Delmonico's next monday at 8pm", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "We are a party of 4 people and we want to book a table at Seven Hills for sunset", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I need reservations at Quince at 9:30", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Make a reservation at Delmonico's on Saturday 8pm for 10 people", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table at an italian restaurant nearby for dinner with 5 people", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table at the nearest sushi restaurant for 2 for 1pm", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book me a table for 4 at Delmonico's around 8pm this friday", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there a table for boozy brunch at around 11 nearby?", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Need a table for lunch to eat steak near penn station", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get me a table at a restaurant near Emily's place for tomorrow 9pm", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for 5 people at the restaurant I'm used to going to every week", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Make a reservation for breakfast at Batter & Berries tomorrow", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get me a place near chelsea with good brunch cocktails tomorrow at 10", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for two people at a restaurant near work", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Table for a group of 12 near west village tomorrow? go!", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I want a reservation for 5 at Alinea", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Make a reservation for 4 people for today's lunch at a Starbucks nearby", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get me a table at a good deli near Mission Dolores Park for lunch", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Please book a table at Delmonico's this evening for 3 at 8pm", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I need a reservation for five people at Galli for friday night", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Can you make a reservation at a lebanese restaurant nearby, for lunch, party of 5?", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "See if there's a table outside for noon at that fried chicken restaurant I like", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table at Chops Lobster Bar for 5 people at 7:30pm", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I want to find a reservation at an old red sauce joint at 6", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for 3 people at the restaurant I went to last week", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Make a reservation for 3 at the finest restaurant in the area where I was yesterday afternoon", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I want a table in a good japanese restaurant near Trump tower", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Table for two at Nobu New York tonight", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table at The Standard Grill for four people for the day after tomorrow at 8:30pm", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book for 4 people at Per Se for Tuesday evening", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I want a table for friday 8pm for 2 people at Katz's Delicatessen", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Need a table for 6", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I want a reservation to get drinks after class tomorrow for 10", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table at an American restaurant for Thanksgiving", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table at Galli for 6 people tonight", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book for 4 at Nobu for tomorrow evening", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for four people at La Chine for the 11th at 8pm", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table at Saddle Peak Lodge for my diner with friends tonight", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Can I have a table at the Russian Tea Room for 4pm?", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for 8 at Tavern on the Green for 8 pm", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Need a table for 12 in 3 hours", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a table for me and my girlfriend in a romantic restaurant for Valentine's day", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Need a reservation for brunch for 5 in williamsburg near the bridge", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book me and my sister a spot at the milk bar place near the hotel she stays at in midtown", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book me a table for 4 at Delmonico's", "label": "BookRestaurant", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get a taxi to Emmit's Irish Pub", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get me a ride to the airport", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Order a taxi for tomorrow 8am", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get a cab at my place right now", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Order a taxi", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I need a taxi for 6 to go to Audrey and Sam's wedding", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book an Uber to my next meeting", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I need a taxi to catch my flight tomorrow morning", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a cab", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a taxi to go to Sebastian's", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Find a taxi", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I need a cab to go to work", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I need a taxi in 5 minutes at 36 5th avenue", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book an Uber to home", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Can you find me a ride at this hour?", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Order a cab for 6 people", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I need an Uber right now", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book me a ride at my current location", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Order a cab at my mother's place to go to the LA stadium", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get an Uber to go to my dinner tonight", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Book a Lyft car to go to 33 greene street", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I want a taxi right now", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there any Uber around?", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get a taxi to the nearest japanese restaurant", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Order a cab at Shake Shack to go to the Empire State Building", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get a Lyft car at Scott's place", "label": "RequestRide", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How do I go to Montauk avoiding tolls?", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Directions to Disneyworld avoiding traffic", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the way to go to 33 Greene Street", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Give me directions to my parents' place avoiding toll roads", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me directions to my next meeting avoiding traffic", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Quickest directions to go pick up my son at soccer practice", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me directions to my yoga retreat avoiding the highway", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Bicycling directions to Millenium park", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Directions to La Guardia airport using Waze", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Cycling directions to Chelsea Market", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Cycling directions to my surf lesson at 10am", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the fastest itinerary to my Airbnb on a Friday night", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Driving directions to Tavern on the Green", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Transit directions to Barcelona Wine Bar", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Navigate to Palo Alto avoiding traffic", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Directions to JFK airport at 7am", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How do I go back home?", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Walking directions to my Christmas party with Citymapper", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get me directions to John's place if I leave at 6pm", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Walking directions from home to my Halloween party stopping by a wine store", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Directions to Tulsa with road 66", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the way to go to work", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Give me transit directions from Grand Central to Brooklyn bridge", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Navigate me to Empire State Building using the shortest way", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me walking directions to MOMA", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Get me directions to Las Vegas avoiding toll roads", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me directions to Jersey City avoiding the highway", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the directions from the LA County Museum to Santa Monica", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Directions to my beach house avoiding tolls", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me directions to my hotel", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the fastest itinerary to go to Williamsburg", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Fastest way to go to my next meeting", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Directions to Joe's pub", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I want to go to Boston with the quickest itinerary", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the way to Rand's birthday party by car", "label": "GetDirections", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my ETA with Mary Jane", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send my ETA to the guy I'm meeting with", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my time of arrival with my Airbnb host", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my arrival time with Juan Carlos", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my ETA with Jo", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my estimated time of arrival with Lily", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send my time of arrival to Nina", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Tell my friends what time I'll get there", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share with Franz my ETA", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send a message to John to tell him when I get there", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send my ETA to my girlfriend", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Tell Valery how long it's gonna take to join her", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my ETA with the guy who just called me", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my ETA", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my ETA with my data scientist", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my estimated time of arrival with my mother", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send a message to Michael with my ETA", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Share my ETA with the Snips team", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send my ETA to the girl I'm supposed to have dinner with", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send a message to Montgomery with my arrival time", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send my ETA to the guests of my apartment", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Send a message to my boss with my ETA", "label": "ShareETA", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Should I expect traffic from here to Kennedy international airport?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Any traffic problems to go to my dinner?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Any accidents from my Airbnb to Golden Gate Bridge?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there traffic from work to gym?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there traffic on my way to the gym?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How's traffic to go to my hotel?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How's the road on the 11th avenue?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I want to know if there is traffic to go to my upcoming meeting", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there traffic jam on 6th avenue?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Any accidents to expect to go to my cousin's place?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How's the traffic from here to Jo's place?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there traffic on 8th avenue and west 14th street?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Shoud I expect traffic between broadway and prince street?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there traffic on the US 50 portion I'm going to take to go to my client meeting?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Are there any accidents from home to work?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Should I expect any traffic to go meet my friends tonight?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there traffic jam from here to Brooklyn bridge?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How's the traffic from here to Central Park?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is the road to work congested?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is there any traffic on US 20?", "label": "GetTrafficInformation", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the forecast for New Orleans", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Will it be cloudy at my facebook event?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the weather like at my parents'?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is the weather good for a walk today?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is it cold outside?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is it going to rain tomorrow?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the weather like at Jo's place right now?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Can I walk to my next meeting?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the weather forecast for my upcoming trip to Los Angeles", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Will it rain in the next 30 minutes?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the weather like in Paris, New York and Chicago?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the weather forecast for the rest of the week?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the weather like from New York to Boston?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "How windy will it be tomorrow?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Should I have an umbrella with me tomorrow?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What will the weather be like at Jo's place this afternoon?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Can I go hiking this afternoon?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What is the temperature tomorrow morning?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Should I take an umbrella to walk to my dinner?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What will the weather be like from Home to Jo's place?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the weather like in 3 days?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What will the weather be like from 8am to 2pm in Central Park?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What will the weather be like tomorrow morning?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Can I take my bike to go to work today?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What will the weather be like in London next week?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is it windy today?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the weather like at work?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is it going to be sunny next week?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I want the weather in Paris", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "It is a beautiful day for a walk?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's it like outside?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What will the weather be like when I land in Paris?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Is it raining right now?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What will the weather be like at my Airbnb this week end?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Whats the weather like in Bordeaux?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What's the weather like near my upcoming event?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Will it rain tomorrow near my all day event?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "I need the weather at Jo's place around 8 pm", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "What will the weather be like when I get out of my afternoon meeting?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Show me the forecast for my upcoming weekend", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}
+{"text": "Should I take a rain coat today?", "label": "GetWeather", "data_source": "snips_built_in_intents", "split": "train"}

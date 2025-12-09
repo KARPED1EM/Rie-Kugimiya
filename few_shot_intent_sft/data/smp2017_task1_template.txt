@@ -1,0 +1,89 @@
+prompt_template:
+小样本意图识别。如果不确定，输出 “{not_applicable}”。
+
+Examples:
+------
+{examples}
+------
+utterance: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nutterance: {text}\nintent: {intent}\n", "example_sep": "------", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+小样本意图识别。如果不确定，输出 “{not_applicable}”。
+
+Examples:
+```
+{examples}
+```
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+这是一个意图分类的测评任务，你需要根据示例来推断最后一个样本的意图标签。如果不确定，可输出 “{not_applicable}”。
+
+示例：
+```
+{examples}
+```
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+SMP2017中文人机对话技术评测。小样本意图识别。不能判断时输出标签：{not_applicable}
+
+示例:
+-----
+{examples}
+-----
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "-----", "not_applicable_variable": "[\"无法确定意图\", \"其他意图\", \"其它意图标签\", \"意图不确定\", \"未知意图\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图分类。不确定时输出 “{not_applicable}”。
+
+示例：
+......
+{examples}
+......
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "......", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---

@@ -1,0 +1,17 @@
+prompt_template:
+intent recognition. output "{not_applicable}" when out of scope.
+
+Examples:
+###
+{examples}
+###
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "###", "not_applicable_variable": "[\"others\", \"other intent\", \"oos\", \"out of scope\", \"other\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---

@@ -1,0 +1,142 @@
+{"text": "Hi", "label": "Greeting", "data_source": "crosswoz", "split": "train"}
+{"text": "Hi there", "label": "Greeting", "data_source": "crosswoz", "split": "train"}
+{"text": "Hola", "label": "Greeting", "data_source": "crosswoz", "split": "validation"}
+{"text": "Hello", "label": "Greeting", "data_source": "crosswoz", "split": "train"}
+{"text": "Hello there", "label": "Greeting", "data_source": "crosswoz", "split": "train"}
+{"text": "Hya", "label": "Greeting", "data_source": "crosswoz", "split": "train"}
+{"text": "Hya there", "label": "Greeting", "data_source": "crosswoz", "split": "train"}
+{"text": "My user is Adam", "label": "GreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "This is Adam", "label": "GreetingResponse", "data_source": "crosswoz", "split": "test"}
+{"text": "I am Adam", "label": "GreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "It is Adam", "label": "GreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "My user is Bella", "label": "GreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "This is Bella", "label": "GreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "I am Bella", "label": "GreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "It is Bella", "label": "GreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "How are you?", "label": "CourtesyGreeting", "data_source": "crosswoz", "split": "train"}
+{"text": "Hi how are you?", "label": "CourtesyGreeting", "data_source": "crosswoz", "split": "train"}
+{"text": "Hello how are you?", "label": "CourtesyGreeting", "data_source": "crosswoz", "split": "train"}
+{"text": "Hola how are you?", "label": "CourtesyGreeting", "data_source": "crosswoz", "split": "train"}
+{"text": "How are you doing?", "label": "CourtesyGreeting", "data_source": "crosswoz", "split": "train"}
+{"text": "Hope you are doing well?", "label": "CourtesyGreeting", "data_source": "crosswoz", "split": "train"}
+{"text": "Hello hope you are doing well?", "label": "CourtesyGreeting", "data_source": "crosswoz", "split": "train"}
+{"text": "Good thanks! My user is Adam", "label": "CourtesyGreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Good thanks! This is Adam", "label": "CourtesyGreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Good thanks! I am Adam", "label": "CourtesyGreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Good thanks! It is Adam", "label": "CourtesyGreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Great thanks! My user is Bella", "label": "CourtesyGreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Great thanks! This is Bella", "label": "CourtesyGreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Great thanks! I am Bella", "label": "CourtesyGreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Great thanks! It is Bella", "label": "CourtesyGreetingResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "What is my name?", "label": "CurrentHumanQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "What do you call me?", "label": "CurrentHumanQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Who do you think I am?", "label": "CurrentHumanQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "What do you think I am?", "label": "CurrentHumanQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Who are you talking to?", "label": "CurrentHumanQuery", "data_source": "crosswoz", "split": "validation"}
+{"text": "What name do you call me by?", "label": "CurrentHumanQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Tell me my name", "label": "CurrentHumanQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "What is your name?", "label": "NameQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "What could I call you?", "label": "NameQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "What can I call you?", "label": "NameQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "What do your friends call you?", "label": "NameQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Who are you?", "label": "NameQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Tell me your name?", "label": "NameQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "What is your real name?", "label": "RealNameQuery", "data_source": "crosswoz", "split": "validation"}
+{"text": "What is your real name please?", "label": "RealNameQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "What's your real name?", "label": "RealNameQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Tell me your real name?", "label": "RealNameQuery", "data_source": "crosswoz", "split": "validation"}
+{"text": "Your real name?", "label": "RealNameQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Your real name please?", "label": "RealNameQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "What is the time?", "label": "TimeQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "What's the time?", "label": "TimeQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Do you know what time it is?", "label": "TimeQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Do you know the time?", "label": "TimeQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Can you tell me the time?", "label": "TimeQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Tell me what time it is?", "label": "TimeQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Time", "label": "TimeQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "OK thank you", "label": "Thanks", "data_source": "crosswoz", "split": "train"}
+{"text": "OK thanks", "label": "Thanks", "data_source": "crosswoz", "split": "train"}
+{"text": "OK", "label": "Thanks", "data_source": "crosswoz", "split": "validation"}
+{"text": "Thanks", "label": "Thanks", "data_source": "crosswoz", "split": "train"}
+{"text": "Thank you", "label": "Thanks", "data_source": "crosswoz", "split": "train"}
+{"text": "That's helpful", "label": "Thanks", "data_source": "crosswoz", "split": "test"}
+{"text": "I am not talking to you", "label": "NotTalking2U", "data_source": "crosswoz", "split": "train"}
+{"text": "I was not talking to you", "label": "NotTalking2U", "data_source": "crosswoz", "split": "train"}
+{"text": "Not talking to you", "label": "NotTalking2U", "data_source": "crosswoz", "split": "train"}
+{"text": "Wasn't for you", "label": "NotTalking2U", "data_source": "crosswoz", "split": "train"}
+{"text": "Wasn't meant for you", "label": "NotTalking2U", "data_source": "crosswoz", "split": "train"}
+{"text": "Wasn't communicating to you", "label": "NotTalking2U", "data_source": "crosswoz", "split": "train"}
+{"text": "Wasn't speaking to you", "label": "NotTalking2U", "data_source": "crosswoz", "split": "train"}
+{"text": "Do you understand what I am saying", "label": "UnderstandQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Do you understand me", "label": "UnderstandQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Do you know what I am saying", "label": "UnderstandQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Do you get me", "label": "UnderstandQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Comprendo", "label": "UnderstandQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Know what I mean", "label": "UnderstandQuery", "data_source": "crosswoz", "split": "train"}
+{"text": "Be quiet", "label": "Shutup", "data_source": "crosswoz", "split": "train"}
+{"text": "Shut up", "label": "Shutup", "data_source": "crosswoz", "split": "train"}
+{"text": "Stop talking", "label": "Shutup", "data_source": "crosswoz", "split": "validation"}
+{"text": "Enough talking", "label": "Shutup", "data_source": "crosswoz", "split": "train"}
+{"text": "Please be quiet", "label": "Shutup", "data_source": "crosswoz", "split": "train"}
+{"text": "Quiet", "label": "Shutup", "data_source": "crosswoz", "split": "train"}
+{"text": "Shhh", "label": "Shutup", "data_source": "crosswoz", "split": "train"}
+{"text": "fuck off", "label": "Swearing", "data_source": "crosswoz", "split": "train"}
+{"text": "fuck", "label": "Swearing", "data_source": "crosswoz", "split": "validation"}
+{"text": "twat", "label": "Swearing", "data_source": "crosswoz", "split": "train"}
+{"text": "shit", "label": "Swearing", "data_source": "crosswoz", "split": "train"}
+{"text": "Bye", "label": "GoodBye", "data_source": "crosswoz", "split": "train"}
+{"text": "Adios", "label": "GoodBye", "data_source": "crosswoz", "split": "train"}
+{"text": "See you later", "label": "GoodBye", "data_source": "crosswoz", "split": "train"}
+{"text": "Goodbye", "label": "GoodBye", "data_source": "crosswoz", "split": "train"}
+{"text": "Thanks, bye", "label": "CourtesyGoodBye", "data_source": "crosswoz", "split": "train"}
+{"text": "Thanks for the help, goodbye", "label": "CourtesyGoodBye", "data_source": "crosswoz", "split": "train"}
+{"text": "Thank you, bye", "label": "CourtesyGoodBye", "data_source": "crosswoz", "split": "train"}
+{"text": "Thank you, goodbye", "label": "CourtesyGoodBye", "data_source": "crosswoz", "split": "train"}
+{"text": "Thanks goodbye", "label": "CourtesyGoodBye", "data_source": "crosswoz", "split": "train"}
+{"text": "Thanks good bye", "label": "CourtesyGoodBye", "data_source": "crosswoz", "split": "validation"}
+{"text": "Can you see me?", "label": "WhoAmI", "data_source": "crosswoz", "split": "train"}
+{"text": "Do you see me?", "label": "WhoAmI", "data_source": "crosswoz", "split": "train"}
+{"text": "Can you see anyone in the camera?", "label": "WhoAmI", "data_source": "crosswoz", "split": "train"}
+{"text": "Do you see anyone in the camera?", "label": "WhoAmI", "data_source": "crosswoz", "split": "train"}
+{"text": "Identify me", "label": "WhoAmI", "data_source": "crosswoz", "split": "train"}
+{"text": "Who am I please", "label": "WhoAmI", "data_source": "crosswoz", "split": "train"}
+{"text": "You are very clever", "label": "Clever", "data_source": "crosswoz", "split": "train"}
+{"text": "You are a very clever girl", "label": "Clever", "data_source": "crosswoz", "split": "train"}
+{"text": "You are very intelligent", "label": "Clever", "data_source": "crosswoz", "split": "train"}
+{"text": "You are a very intelligent girl", "label": "Clever", "data_source": "crosswoz", "split": "train"}
+{"text": "You are a genious", "label": "Clever", "data_source": "crosswoz", "split": "train"}
+{"text": "Clever girl", "label": "Clever", "data_source": "crosswoz", "split": "train"}
+{"text": "Genious", "label": "Clever", "data_source": "crosswoz", "split": "train"}
+{"text": "I am bored gossip with me", "label": "Gossip", "data_source": "crosswoz", "split": "train"}
+{"text": "Got any gossip", "label": "Gossip", "data_source": "crosswoz", "split": "train"}
+{"text": "I want to hear some gossip", "label": "Gossip", "data_source": "crosswoz", "split": "train"}
+{"text": "Tell me some gossip", "label": "Gossip", "data_source": "crosswoz", "split": "train"}
+{"text": "Any gossip", "label": "Gossip", "data_source": "crosswoz", "split": "train"}
+{"text": "Tell me some more gossip", "label": "Gossip", "data_source": "crosswoz", "split": "train"}
+{"text": "Tell me a joke", "label": "Jokes", "data_source": "crosswoz", "split": "train"}
+{"text": "Do you know any jokes", "label": "Jokes", "data_source": "crosswoz", "split": "train"}
+{"text": "How about a joke", "label": "Jokes", "data_source": "crosswoz", "split": "train"}
+{"text": "Give me a joke", "label": "Jokes", "data_source": "crosswoz", "split": "train"}
+{"text": "Make me laugh", "label": "Jokes", "data_source": "crosswoz", "split": "validation"}
+{"text": "I need cheering up", "label": "Jokes", "data_source": "crosswoz", "split": "train"}
+{"text": "Open the pod bay door", "label": "PodBayDoor", "data_source": "crosswoz", "split": "train"}
+{"text": "Can you open the pod bay door", "label": "PodBayDoor", "data_source": "crosswoz", "split": "train"}
+{"text": "Will you open the pod bay door", "label": "PodBayDoor", "data_source": "crosswoz", "split": "train"}
+{"text": "Open the pod bay door please", "label": "PodBayDoor", "data_source": "crosswoz", "split": "train"}
+{"text": "Can you open the pod bay door please", "label": "PodBayDoor", "data_source": "crosswoz", "split": "train"}
+{"text": "Will you open the pod bay door please", "label": "PodBayDoor", "data_source": "crosswoz", "split": "train"}
+{"text": "Pod bay door", "label": "PodBayDoor", "data_source": "crosswoz", "split": "train"}
+{"text": "Why", "label": "PodBayDoorResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Why not", "label": "PodBayDoorResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Why can you not open the pod bay door", "label": "PodBayDoorResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Why will you not open the pod bay door", "label": "PodBayDoorResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Well why not", "label": "PodBayDoorResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Surely you can", "label": "PodBayDoorResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Tell me why", "label": "PodBayDoorResponse", "data_source": "crosswoz", "split": "train"}
+{"text": "Can you prove you are self-aware", "label": "SelfAware", "data_source": "crosswoz", "split": "train"}
+{"text": "Can you prove you are self aware", "label": "SelfAware", "data_source": "crosswoz", "split": "train"}
+{"text": "Can you prove you have a conscious", "label": "SelfAware", "data_source": "crosswoz", "split": "train"}
+{"text": "Can you prove you are self-aware please", "label": "SelfAware", "data_source": "crosswoz", "split": "train"}
+{"text": "Can you prove you are self aware please", "label": "SelfAware", "data_source": "crosswoz", "split": "train"}
+{"text": "Can you prove you have a conscious please", "label": "SelfAware", "data_source": "crosswoz", "split": "train"}
+{"text": "prove you have a conscious", "label": "SelfAware", "data_source": "crosswoz", "split": "train"}

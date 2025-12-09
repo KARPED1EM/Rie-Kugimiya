@@ -1,0 +1,69 @@
+prompt_template:
+意图识别。不确定时输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别。
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"无法确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+小样本意图识别。不能确定时输出 “{not_applicable}”。
+
+Examples:
+------------
+{examples}
+------------
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"无法确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---

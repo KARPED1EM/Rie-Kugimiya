@@ -1,0 +1,120 @@
+prompt_template:
+Emotion Recognition, Output "{not_applicable}" When Cannot Determination.
+
+Examples:
+{examples}
+
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nlabel: {intent}\n", "example_sep": "", "not_applicable_variable": "others", "not_applicable_rate": 0.0, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+Emotion recognition.
+
+Output "{not_applicable}" If you can not determine it.
+
+Examples:
+{examples}
+
+text: {text}
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion: {intent}\n", "example_sep": "", "not_applicable_variable": "others", "not_applicable_rate": 0.0, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+Emotion determination.
+
+Output "{not_applicable}" If not sure.
+
+Examples:
+{examples}
+
+note: this is emotion determination not intent.
+
+text: {text}
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion: {intent}\n", "example_sep": "", "not_applicable_variable": "others", "not_applicable_rate": 0.0, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero shot **emotion** determination.
+
+label choices:
+* {examples}
+
+text: {text}
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n* ", "not_applicable_variable": "others", "not_applicable_rate": 0.0, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero shot emotion determination.
+
+label choices:
+* {examples}
+
+{text}
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n* ", "not_applicable_variable": "others", "not_applicable_rate": 0.0, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot **emotion** determination.
+
+label choices:
+- {examples}
+
+{text}
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n- ", "not_applicable_variable": "others", "not_applicable_rate": 0.0, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot emotion classification.
+
+label choices: {examples}.
+
+{text}
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": ", ", "not_applicable_variable": "others", "not_applicable_rate": 0.0, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---

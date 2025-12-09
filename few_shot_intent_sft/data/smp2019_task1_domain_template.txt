@@ -1,0 +1,91 @@
+prompt_template:
+小意图识别。如果不确定，输出 “{not_applicable}”。
+
+Examples:
+```
+{examples}
+```
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+根据示例来推理最后一个句子的领域。如果不确定，输出 "{not_applicable}"
+
+Examples:
+```
+{examples}
+```
+text: {text}
+domain:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\ndomain: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"其它领域\", \"无法判断\", \"不知道\", \"不确定\", \"合适的领域标签没有在示例中\", \"不能根据示例推断出结果\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+本次测评任务为领域分类。我们会先给出一些示例，然后你需要判断给定的句子属于什么类别。
+
+示例：
+```
+{examples}
+```
+
+请判断以下句子的领域标签。注意正确的标签应该在示例中出现过，如果不确定，可输出："{not_applicable}"。
+text: {text}
+domain:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\ndomain: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"其它领域\", \"无法判断\", \"不知道\", \"不确定\", \"合适的领域标签没有在示例中\", \"不能根据示例推断出结果\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+领域分类。如果不能确定，请输出："{not_applicable}"。
+
+示例：
+******
+{examples}
+******
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nlabel: {intent}\n", "example_sep": "******", "not_applicable_variable": "[\"其它领域\", \"无法判断\", \"不知道\", \"不确定\", \"合适的领域标签没有在示例中\", \"不能根据示例推断出结果\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+在人机对话系统中，一般是先进行领域分类，再进行意图分类，然后提取关键词槽。
+本次任务是领域分类。如果不能确定，请输出："{not_applicable}"。
+
+----
+{examples}
+----
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nlabel: {intent}\n", "example_sep": "----", "not_applicable_variable": "[\"其它领域\", \"无法判断\", \"不知道\", \"不确定\", \"合适的领域标签没有在示例中\", \"不能根据示例推断出结果\", \"领域不确定\", \"正确领域标签不在示例中\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---

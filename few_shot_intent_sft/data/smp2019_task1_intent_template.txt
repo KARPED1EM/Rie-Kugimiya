@@ -1,0 +1,72 @@
+prompt_template:
+意图识别。如果不确定，输出 “{not_applicable}”。
+
+Examples:
+```
+{examples}
+```
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+SMP2019中文人机对话技术评测 - 任务1
+意图识别。如果不确定，输出：{not_applicable}
+
+示例：
+```
+{examples}
+```
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"无法确定意图标签\", \"其他意图标签\", \"其它意图\", \"意图不确定\", \"未知意图\", \"不知道\", \"我不能推断出正确的意图类别\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+人机对话意图识别任务。不能判断时请打{not_applicable}标签。
+
+Examples:
+```
+{examples}
+```
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+prompt_template:
+少样本意图识别。
+如果不确定，输出 “{not_applicable}”。
+
+示例:
+#####
+{examples}
+#####
+Sentence: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nSentence: {text}\nIntent: {intent}\n", "example_sep": "#####", "not_applicable_variable": "[\"意图无法确定\", \"其他意图\", \"不能从示例中推断出正确意图\", \"不能确定\", \"未知意图\", \"我不知道\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---

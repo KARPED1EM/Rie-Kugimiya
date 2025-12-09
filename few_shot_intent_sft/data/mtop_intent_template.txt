@@ -1,0 +1,17 @@
+prompt_template:
+intent recognition.
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"others\", \"other intent\", \"other label\", \"other intent label\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---

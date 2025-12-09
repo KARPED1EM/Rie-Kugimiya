@@ -1,0 +1,235 @@
+prompt_template:
+few-shot intent recognition.
+
+output "{not_applicable}" when not determinable.
+
+Examples:
+{examples}
+
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nlabel: {intent}\n", "example_sep": "", "not_applicable_variable": "others", "not_applicable_rate": 0.1, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent recognition for game developers.
+
+please output "{not_applicable}" when not determinable.
+
+Examples:
+----
+{examples}
+----
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nlabel: {intent}\n", "example_sep": "----", "not_applicable_variable": "[\"not determinable.\", \"other intent\", \"other intent label\", \"out of scope\", \"It cannot be inferred.\"]", "not_applicable_rate": 0.1, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+game developers intent recognition.
+
+note:
+- if out of scope. give it "{not_applicable}".
+
+examples:
+{examples}
+
+text: {text}
+intent label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent label: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"not determinable.\", \"other intent\", \"other intent label\", \"out of scope\", \"It cannot be inferred.\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent classification.
+
+note:
+- if out of scope. give it "{not_applicable}".
+
+examples:
+{examples}
+
+text: {text}
+intent label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent label: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"not determinable.\", \"other intent\", \"other intent label\", \"out of scope\", \"It cannot be inferred.\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+intent classification.
+
+if label not appears in examples, give it: {not_applicable}
+
+examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"not determinable.\", \"other intent\", \"other intent label\", \"out of scope\", \"It cannot be inferred.\", \"not appear in examples.\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+intent classification. if label not appears in examples, give it: {not_applicable}
+
+examples:
+```
+{examples}
+```
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"not determinable.\", \"other intent\", \"other intent label\", \"out of scope\", \"It cannot be inferred.\", \"not appear in examples.\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+intent classification. if label not appears in examples, give it: {not_applicable}
+
+examples:
+```
+{examples}
+```
+sentence: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nsentence: {text}\nintent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"not determinable.\", \"other intent\", \"other intent label\", \"out of scope\", \"It cannot be inferred.\", \"not appear in examples.\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+intent classification. if label not appears in examples, give it: {not_applicable}
+
+{examples}
+
+sentence: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nsentence: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"not determinable.\", \"other intent\", \"other intent label\", \"out of scope\", \"It cannot be inferred.\", \"not appear in examples.\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot intent classification.
+
+classes options: {examples}.
+
+sentence: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": ", ", "not_applicable_variable": "[\"not determinable.\", \"other intent\", \"other intent label\", \"out of scope\", \"It cannot be inferred.\", \"not appear in examples.\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot intent classification.
+
+classes options:
+- {examples}
+
+sentence: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n- ", "not_applicable_variable": "[\"not determinable.\", \"other intent\", \"other intent label\", \"out of scope\", \"It cannot be inferred.\", \"not appear in examples.\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+{text}
+
+intent classification.
+
+classes options:
+- {examples}
+
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n- ", "not_applicable_variable": "[\"not determinable.\", \"other intent\", \"other intent label\", \"out of scope\", \"It cannot be inferred.\", \"not appear in examples.\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+{text}
+
+what's the intent label of this text.
+
+label options:
+- {examples}
+
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n- ", "not_applicable_variable": "[\"not determinable.\", \"other intent\", \"other intent label\", \"out of scope\", \"It cannot be inferred.\", \"not appear in examples.\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+{text}
+
+label options: {examples}.
+
+what's the intent label of this text.
+
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": ", ", "not_applicable_variable": "[\"not determinable.\", \"other intent\", \"other intent label\", \"out of scope\", \"It cannot be inferred.\", \"not appear in examples.\"]", "not_applicable_rate": 0.1, "max_n_way": 12, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---

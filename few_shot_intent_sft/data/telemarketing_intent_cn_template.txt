@@ -1,0 +1,308 @@
+prompt_template:
+电销场景意图识别。
+不确定时请输出 “{not_applicable}”。
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "未知领域", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+电销场景意图识别。
+不确定时请输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+电销场景意图识别。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+电销场景意图识别。如果不能确定，请输出 “{not_applicable}”。
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别，不确定时输出 “{not_applicable}”。
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"意图不能确定。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+电话营销场景的意图识别任务，不能确定意图时请输出 “{not_applicable}”。
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"无法确定\", \"其他\", \"意图不能确定。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+电话营销场景的意图识别任务，不能确定意图时请输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"其他\", \"意图不能确定。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+这是一个意图识别任务，我们给出一些示例，然后你需要给最后一个句子做意图判断。
+注意我们的应用场景是电话销售场景。
+当你不能确定意图时，请输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"其他\", \"意图不能确定。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+这是一个意图识别任务，我们给出一些示例，然后你需要给最后一个句子做意图判断。
+注意我们的应用场景是电话销售场景。
+当你不能确定意图时，请输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"意图不确定\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+这是一个意图识别任务，我们给出一些示例，然后你需要给最后一个句子做意图判断。
+注意我们的应用场景是电话销售场景。
+当你不能确定意图时，请输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"意图不确定\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+在智能外呼系统中，机器人需要识别用户话语的意思，以下我们给出了一些示例，请你判断最后一个用户话语的意图。如果你认为它的意图不在示例的意图中，请给出意图 “{not_applicable}”。
+
+Examples:
+{examples}
+
+message: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nmessage: {text}\nlabel: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"意图不确定\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别。
+
+Examples:
+{examples}
+
+utterance: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nutterance: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"意图不确定\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+电销场景意图识别，由于句子是从语音转录而来，因此常常会有错误的句子，但请从大体意图中推测最后一个句子的意图。
+不确定时输出 “{not_applicable}”。
+
+Examples:
+------
+{examples}
+------
+utterance: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nutterance: {text}\nintent: {intent}\n", "example_sep": "------", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+小样本意图识别，句子可能存在语法问题，但仍可从字面意思推断。
+如果意图不能确定，输出 “{not_applicable}”。
+
+Examples:
+------
+{examples}
+------
+utterance: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nutterance: {text}\nintent: {intent}\n", "example_sep": "------", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+小样本意图识别。
+
+示例：
+```
+{examples}
+```
+
+如果可能的意图标签不在示例中，可输出 “{not_applicable}”。
+utterance: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nutterance: {text}\nintent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"领域外\", \"无关领域\", \"不相关领域\", \"其它意图\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+
+{text}
+
+标签集：“{examples}”。
+
+Question：哪个标签最适合这个句子？
+Answer：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "”，“", "not_applicable_variable": "其它", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+

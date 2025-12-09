@@ -1,0 +1,140 @@
+prompt_template:
+意图识别。不确定时输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+医药领域意图识别。不确定时输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+医药领域意图识别。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+请根据以下示例中医药领域的句子及其对应的标签，给最后一个句子打上意图标签。
+如果最后一个句子的意图不与示例中的任何一个相同，则输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+以下是一个关于医药领域的意图识别任务。你需要根据给出的示例给最后一个句子输出标签。如果不确定，则输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+请针对以下医药领域的句子做意图识别，答案不确定时输出 “{not_applicable}”。
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"无法确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+这是一个意图识别任务，我们给出一些示例，然后你需要给最后一个句子做意图判断。
+注意我们的应用场景是医药领域。
+如果你不能确定意图是什么，请输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"， \"无法判断\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+少样本意图识别。不确定时输出：{not_applicable}
+
+示例：
+{examples}
+
+请输出以下句子的意图标签：
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"， \"无法判断\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---

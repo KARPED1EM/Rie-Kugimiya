@@ -1,0 +1,189 @@
+prompt_template:
+intent recognition.
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "I don't know", "not_applicable_rate": 0.0, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few shot intent recognition.
+
+If you can't determine its correct intent tag, output: "{not_applicable}".
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"I don't know\", \"sorry, I can't determine it.\"]", "not_applicable_rate": 0.05, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+virtual assistant few shot intent recognition task.
+
+You need output the last text's intent label.
+
+If there is no confidence, output: {not_applicable}
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"I don't know\", \"sorry, I can't determine it.\"]", "not_applicable_rate": 0.05, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+This is a intent recognition task, where you need determine the last text's intent tag according the given examples.
+
+If you think the correct label not in the examples. you can tag it with "{not_applicable}".
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"I don't know\", \"sorry, I can't determine it.\", \"intent label not in the examples.\", \"unknown\", \"other\"]", "not_applicable_rate": 0.05, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+judge the last text intent label according the given examples below.
+
+{examples}
+
+Note:
+- If the correct label not list in the examples. tag it with "{not_applicable}".
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"I don't know\", \"sorry, I can't determine it.\", \"intent label not in the examples.\", \"unknown\", \"other\", \"other intent\"]", "not_applicable_rate": 0.05, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+prompt_template:
+intent recognition.
+
+Label Choices:
+{intent_description}
+
+
+Examples:
+{examples}
+
+text: {text}
+intent id:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent id: {intent_symbol}\n", "example_sep": "", "intent_description_template": "\nintent id: {intent_symbol}\nintent: {intent}\ndesc: {intent_description}\n", "intent_description_sep": "", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few shot intent recognition.
+
+If you can't determine its correct intent tag, output: "{not_applicable}".
+
+Label Choices:
+{intent_description}
+
+
+Examples:
+{examples}
+
+text: {text}
+intent id:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent id: {intent_symbol}\n", "example_sep": "", "intent_description_template": "\nintent id: {intent_symbol}\nintent: {intent}\ndesc: {intent_description}\n", "intent_description_sep": "", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+virtual assistant few shot intent recognition task.
+
+You need output the last text's intent label.
+
+If there is no confidence, output: {not_applicable}
+
+Intent Choices:
+---
+{intent_description}
+---
+
+Examples:
+---
+{examples}
+---
+text: {text}
+intent ID:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent ID: {intent_symbol}\n", "example_sep": "---", "intent_description_template": "\nintent: {intent}\nintent ID: {intent_symbol}\ndescription: {intent_description}\n", "intent_description_sep": "---", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+This is a intent recognition task, where you need determine the last text's intent tag according the given examples.
+
+If you think the correct label not in the examples. you can tag it with "{not_applicable}".
+
+Candidate Labels:
+---
+{intent_description}
+---
+
+Examples:
+---
+{examples}
+---
+text: {text}
+intent id:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent id: {intent_symbol}\n", "example_sep": "---", "intent_description_template": "\nintent: {intent}\nintent id: {intent_symbol}\ndescription: {intent_description}\n", "intent_description_sep": "---", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---

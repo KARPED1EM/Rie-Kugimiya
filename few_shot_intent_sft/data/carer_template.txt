@@ -1,0 +1,503 @@
+prompt_template:
+**emotion** recognition. please output "{not_applicable}" when you not sure it.
+
+note: the annotations in the examples may be wrong
+
+Examples:
+```
+{examples}
+```
+text: {text}
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"cannot determine.\", \"Sorry I'm not sure.\", \"I can not determine\", \"sorry, I don't know\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+**emotion intent** classification. please output "{not_applicable}" when you not sure it.
+
+Examples:
+```
+{examples}
+```
+text: {text}
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"cannot determine.\", \"Sorry I'm not sure.\", \"I can not determine\", \"sorry, I don't know\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+this is a emotion classification task.
+
+please determine the emotion of the last text.
+
+if you can not determine it, please output "{not_applicable}".
+
+Examples:
+```
+{examples}
+```
+text: {text}
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"cannot determine.\", \"Sorry I'm not sure.\", \"I can not determine\", \"sorry, I don't know\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+emotion classification.
+
+Examples:
+```
+{examples}
+```
+
+please give me the emotion of the text below. if cannot determine, please output "{not_applicable}".
+text: {text}
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"cannot determine.\", \"Sorry I'm not sure.\", \"I can not determine\", \"sorry, I don't know\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+emotion classification.
+
+Examples:
+###
+{examples}
+###
+
+please give me the emotion of the text below.
+if cannot determine, please output "{not_applicable}".
+###
+{text}
+###
+
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion: {intent}\n", "example_sep": "###", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"cannot determine.\", \"Sorry I'm not sure.\", \"I can not determine\", \"sorry, I don't know\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+emotion classification.
+
+please determine according the examples below.
+###
+{examples}
+###
+
+note:
+- if cannot determine, please output "{not_applicable}".
+- the result emotion label must be one of the examples.
+
+please give me the emotion of the text below.
+
+###
+{text}
+###
+
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion: {intent}\n", "example_sep": "###", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"cannot determine.\", \"Sorry I'm not sure.\", \"I can not determine\", \"sorry, I don't know\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+emotion classification.
+
+Examples:
+```
+{examples}
+```
+
+{text}
+
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion: {intent}\n", "example_sep": "###", "not_applicable_variable": "[\"unknown\", \"unknown emotion\", \"emotion unknown\", \"other emotion\", \"emotion out of examples\", \"out of examples\", \"out-of-examples\", \"out of scope\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+emotion classification.
+
+candidate emotions: {examples}.
+
+text:
+{text}
+
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "; ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+emotion classification.
+
+emotion options: {examples}.
+
+text: {text}
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "; ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot emotion classification.
+
+emotion options: {examples}.
+
+give me the emotion of the text below.
+```
+{text}
+```
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "; ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot emotion classification.
+
+emotion options: {examples}.
+
+text:
+---
+{text}
+---
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "; ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot emotion recognition.
+
+emotion options: {examples}.
+
+text:
+---
+{text}
+---
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "; ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot emotion recognition.
+
+options: {examples}.
+
+text: {text}
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "; ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot emotion recognition.
+
+options: "{examples}".
+
+text: {text}
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\"{intent}\"", "example_sep": "; ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot **emotion** recognition.
+
+options:
+- {examples}
+
+text: {text}
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n- ", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+**emotion** recognition. please output "{not_applicable}" when you not sure it.
+
+note: the annotations in the examples may be wrong
+
+emotion description:
+```
+{intent_description}
+```
+
+examples:
+```
+{examples}
+```
+text: {text}
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion: {intent}\n", "example_sep": "```", "intent_description_template": "\nemotion: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+this is a emotion classification task.
+
+please determine the emotion of the last text.
+
+if you can not determine it, please output "{not_applicable}".
+
+Emotion Label Description:
+```
+{intent_description}
+```
+
+Examples:
+```
+{examples}
+```
+text: {text}
+emotion id:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion id: {intent_symbol}\n", "example_sep": "```", "intent_description_template": "\nemotion: {intent}\nid: {intent_symbol}\ndescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+emotion classification.
+
+Label Description:
+###
+{intent_description}
+###
+
+Examples:
+###
+{examples}
+###
+
+please give me the **emotion id** of the text below. if cannot determine, please output "{not_applicable}".
+###
+{text}
+###
+
+output:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion id: {intent_symbol}\n", "example_sep": "###", "intent_description_template": "\nemotion: {intent}\nemotion id: {intent_symbol}\ndescription: {intent_description}\n", "intent_description_sep": "###", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+emotion classification.
+
+Label Description:
+```
+{intent_description}
+```
+
+Examples:
+```
+{examples}
+```
+
+{text}
+
+output:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion id: {intent_symbol}\n", "example_sep": "```", "intent_description_template": "\nemotion id: {intent_symbol}\nemotion: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+emotion classification.
+
+emotion desc:
+```
+{intent_description}
+```
+
+examples:
+```
+{examples}
+```
+
+{text}
+
+output:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nemotion id: {intent_symbol}\n", "example_sep": "```", "intent_description_template": "\nemotion id: {intent_symbol}\nemotion: {intent}\ndesc: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot emotion classification.
+
+emotion options:
+```
+{intent_description}
+```
+
+give me the emotion of the text below.
+```
+{text}
+```
+emotion:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "\nemotion id: {intent_symbol}\nemotion: {intent}\ndesc: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot emotion classification.
+
+emotion options:
+```
+{intent_description}
+```
+
+give me the emotion of the text below.
+```
+{text}
+```
+emotion ID:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "\nemotion ID: {intent_symbol}\nemotion: {intent}\ndesc: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot **emotion** recognition.
+
+options:
+```
+{intent_description}
+```
+
+text: {text}
+emotion id:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "\nemotion id: {intent_symbol}\nemotion: {intent}\ndesc: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot **emotion** recognition.
+
+options:
+```
+{intent_description}
+```
+
+text: {text}
+emotion id:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "\nemotion: {intent}\nemotion id: {intent_symbol}\ndesc: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---

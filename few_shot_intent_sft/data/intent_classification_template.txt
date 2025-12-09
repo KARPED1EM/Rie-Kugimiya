@@ -1,0 +1,173 @@
+prompt_template:
+intent recognition.
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "other", "not_applicable_rate": 0.0, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+intent recognition.
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"others\", \"other intent\", \"unknown\", \"out of scope\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+intent recognition. tag it "{not_applicable}" when cannot determine.
+
+Examples:
+---
+{examples}
+---
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"out of scope intent\", \"out of domain intent\", \"out of scope intent label\", \"out of domain intent label\", \"out of scope label\", \"out of domain label\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+intent recognition.
+
+tag it "{not_applicable}" when cannot determine.
+
+Examples:
+---
+{examples}
+---
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"out of scope intent\", \"out of domain intent\", \"out of scope intent label\", \"out of domain intent label\", \"out of scope label\", \"out of domain label\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few shot intent recognition.
+
+Examples:
+---
+{examples}
+---
+
+note: tag it "{not_applicable}" when cannot determine.
+
+give me the intent label of below text.
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"out of scope intent\", \"out of domain intent\", \"out of scope intent label\", \"out of domain intent label\", \"out of scope label\", \"out of domain label\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few shot intent recognition.
+
+Examples:
+{examples}
+
+note: tag it "{not_applicable}" if you think the right label not in the examples.
+
+give me the intent label of below text.
+```
+{text}
+```
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"out of scope intent\", \"out of domain intent\", \"out of scope intent label\", \"out of domain intent label\", \"out of scope label\", \"out of domain label\"]", "not_applicable_rate": 0.1, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot intent recognition.
+
+choices:
+- {examples}
+
+give me the intent label of below text.
+```
+{text}
+```
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n- ", "not_applicable_variable": "[\"out of scope intent\", \"out of domain intent\", \"out of scope intent label\", \"out of domain intent label\", \"out of scope label\", \"out of domain label\"]", "not_applicable_rate": 0.1, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot intent recognition.
+
+choices:
+- {examples}
+
+give me the intent label of below text.
+
+```
+{text}
+```
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n- ", "not_applicable_variable": "[\"sorry, I cannot determine.\", \"sorry, I don't know\", \"I think it not in the choices\"]", "not_applicable_rate": 0.1, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+
+{text}
+
+choices:
+{examples}
+
+give me the label of the text.
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n", "not_applicable_variable": "[\"There is no appropriate label for it.\", \"No appropriate label for it.\"]", "not_applicable_rate": 0.1, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
