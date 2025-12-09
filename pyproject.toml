@@ -1,7 +1,7 @@
 [project]
 name = "yuzuriha-rin"
 version = "0.1.0"
-description = "Virtual character dialogue system with BiLSTM-based behavior modeling for natural messaging patterns"
+description = "Virtual character dialogue system with rule-based behavior engine for natural messaging patterns"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [

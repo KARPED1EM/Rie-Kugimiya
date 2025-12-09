@@ -46,8 +46,8 @@ The segmentation module now relies purely on rule-based logic (no mini model dep
 - Enforces a soft max segment length when no punctuation is present
 
 **SmartSegmenter (Recommended)**
-- Thin wrapper around `RuleBasedSegmenter`
-- Kept for future extension if a new upstream LLM-based segmenter is added
+- Currently uses `RuleBasedSegmenter` internally
+- Provides consistent API for segmentation
 
 ### 2. Emotion Interpretation (`src/behavior/emotion.py`)
 
@@ -272,10 +272,12 @@ Tests cover:
    - Modify `BehaviorConfig` in `routes.py`
    - Or send custom settings in API requests
 
-## Next Steps
+## Future Enhancements
 
-- [ ] Implement BiLSTM-CRF model training
-- [ ] Add more sophisticated emotion detection (sentiment analysis model)
-- [ ] Implement conversation history analysis for consistent behavior
-- [ ] Add user preferences for behavior intensity
-- [ ] Performance optimization for real-time processing
+- [ ] Multi-character conversation support
+- [ ] Conversation history persistence
+- [ ] Character preset library
+- [ ] Extended emotion types (shy, embarrassed, surprised, playful, etc.)
+- [ ] User-adjustable behavior intensity settings
+- [ ] Performance optimization for high-concurrency scenarios
+- [ ] Mobile responsive design
