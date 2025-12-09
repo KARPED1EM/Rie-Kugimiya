@@ -11,8 +11,8 @@ class PausePredictor:
     """Generate intervals to space out playback actions."""
 
     def __init__(self):
-        # Emotion multipliers keep some personality in the pauses
-        self.emotion_intervals = {
+        # Emotion-based speed multipliers for pause duration
+        self.emotion_speed_multipliers = {
             EmotionState.NEUTRAL: 1.0,
             EmotionState.HAPPY: 0.9,
             EmotionState.EXCITED: 0.8,
@@ -43,9 +43,9 @@ class PausePredictor:
         if max_duration < min_duration:
             min_duration, max_duration = max_duration, min_duration
 
-        sarcasm = random.uniform(0.8, 1.2)
-        base = random.uniform(max(0.0, min_duration), max_duration) * sarcasm
-        multiplier = self.emotion_intervals.get(emotion, 1.0)
+        variance = random.uniform(0.8, 1.2)
+        base = random.uniform(max(0.0, min_duration), max_duration) * variance
+        multiplier = self.emotion_speed_multipliers.get(emotion, 1.0)
         interval = base * multiplier
 
         length_bonus = min(max(text_length, 0) * 0.035, 5.0)

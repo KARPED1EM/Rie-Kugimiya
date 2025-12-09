@@ -55,7 +55,7 @@ class ChatApp {
         this.baseUrlInput = document.getElementById('baseUrl');
         this.baseUrlGroup = document.getElementById('baseUrlGroup');
         this.modelInput = document.getElementById('model');
-        this.systemPromptTextarea = document.getElementById('systemPrompt');
+        this.personaInput = document.getElementById('personaInput');
         this.characterNameInput = document.getElementById('characterName');
         this.emotionThemeToggle = document.getElementById('emotionThemeToggle');
         this.saveConfigBtn = document.getElementById('saveConfig');
@@ -136,7 +136,7 @@ class ChatApp {
                 this.apiKeyInput.value = config.api_key || '';
                 this.baseUrlInput.value = config.base_url || '';
                 this.modelInput.value = config.model || 'gpt-3.5-turbo';
-                this.systemPromptTextarea.value = config.system_prompt || '';
+                this.personaInput.value = config.persona || '';
                 this.characterNameInput.value = config.character_name || 'Rin';
                 if (this.emotionThemeToggle) {
                     this.emotionThemeToggle.checked = config.enable_emotion_theme !== false;
@@ -162,7 +162,7 @@ class ChatApp {
             api_key: apiKey,
             base_url: this.baseUrlInput.value.trim() || null,
             model: this.modelInput.value.trim(),
-            system_prompt: this.systemPromptTextarea.value.trim(),
+            persona: this.personaInput.value.trim(),
             character_name: this.characterNameInput.value.trim() || 'Rin',
             enable_emotion_theme: this.emotionThemeToggle ? this.emotionThemeToggle.checked : false
         };
@@ -204,13 +204,13 @@ class ChatApp {
         if (!source) {
             return null;
         }
-        const { provider, api_key, base_url, model, system_prompt } = source;
+        const { provider, api_key, base_url, model, persona } = source;
         return {
             provider,
             api_key,
             base_url: base_url || null,
             model,
-            system_prompt
+            persona
         };
     }
     

@@ -7,7 +7,7 @@ class LLMConfig(BaseModel):
     api_key: str
     base_url: Optional[str] = None
     model: str = "gpt-3.5-turbo"
-    system_prompt: str = "You are a helpful assistant."  # Character persona/personality
+    persona: str = "You are a helpful assistant."  # Character personality and behavior
 
 class ChatMessage(BaseModel):
     role: Literal["user", "assistant", "system"]

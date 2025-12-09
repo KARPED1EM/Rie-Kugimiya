@@ -38,7 +38,7 @@ class BehaviorCoordinator:
             return []
 
         emotion = self._detect_emotion(cleaned_input, emotion_map)
-        segments = self._segment_and_postfix(cleaned_input)
+        segments = self._segment_and_clean(cleaned_input)
         total_segments = len(segments)
 
         actions: List[PlaybackAction] = []
@@ -65,7 +65,8 @@ class BehaviorCoordinator:
     # --------------------------------------------------------------------- #
     # Internal helpers
     # --------------------------------------------------------------------- #
-    def _segment_and_postfix(self, text: str) -> List[str]:
+    def _segment_and_clean(self, text: str) -> List[str]:
+        """Segment text and clean up trailing punctuation from each segment"""
         segments = [text]
         if self.config.enable_segmentation:
             try:
@@ -74,14 +75,14 @@ class BehaviorCoordinator:
                 print(f"[behavior] segmentation failed, fallback to raw text: {exc}")
                 segments = [text]
 
-        normalized = [self._apply_postfix(seg) for seg in segments]
-        normalized = [seg for seg in normalized if seg]
+        cleaned = [self._trim_trailing_punctuation(seg) for seg in segments]
+        cleaned = [seg for seg in cleaned if seg]
 
-        if not normalized:
-            fallback = self._apply_postfix(text)
+        if not cleaned:
+            fallback = self._trim_trailing_punctuation(text)
             return [fallback] if fallback else []
 
-        return normalized
+        return cleaned
 
     def _build_actions_for_segment(
         self,
@@ -206,7 +207,8 @@ class BehaviorCoordinator:
         return self.emotion_detector.detect(emotion_map=emotion_map, fallback_text=text)
 
     @staticmethod
-    def _apply_postfix(text: str) -> str:
+    def _trim_trailing_punctuation(text: str) -> str:
+        """Remove trailing commas and periods from text"""
         trimmed = text.strip()
         while trimmed and trimmed[-1] in {",", "，", ".", "。"}:
             trimmed = trimmed[:-1].rstrip()
