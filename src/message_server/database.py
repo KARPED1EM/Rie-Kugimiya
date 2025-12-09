@@ -114,33 +114,8 @@ class MessageDatabase:
             print(f"Error getting messages: {e}")
             return []
 
-    def recall_message(self, message_id: str, conversation_id: str) -> bool:
-        try:
-            with self._get_connection() as conn:
-                cursor = conn.cursor()
-                cursor.execute("""
-                    UPDATE messages
-                    SET type = ?, content = ''
-                    WHERE id = ? AND conversation_id = ?
-                """, ("recalled", message_id, conversation_id))
-                conn.commit()
-                return cursor.rowcount > 0
-        except Exception as e:
-            print(f"Error recalling message: {e}")
-            return False
-
-    def clear_conversation(self, conversation_id: str) -> bool:
-        try:
-            with self._get_connection() as conn:
-                cursor = conn.cursor()
-                cursor.execute("DELETE FROM messages WHERE conversation_id = ?", (conversation_id,))
-                conn.commit()
-                return True
-        except Exception as e:
-            print(f"Error clearing conversation: {e}")
-            return False
-
     def get_message_by_id(self, message_id: str) -> Optional[Message]:
+        """根据ID查询单条消息"""
         try:
             with self._get_connection() as conn:
                 cursor = conn.cursor()
@@ -162,3 +137,15 @@ class MessageDatabase:
         except Exception as e:
             print(f"Error getting message by id: {e}")
             return None
+
+    def clear_conversation(self, conversation_id: str) -> bool:
+        try:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM messages WHERE conversation_id = ?", (conversation_id,))
+                conn.commit()
+                return True
+        except Exception as e:
+            print(f"Error clearing conversation: {e}")
+            return False
+

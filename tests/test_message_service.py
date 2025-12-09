@@ -123,10 +123,6 @@ async def test_create_events():
     assert typing_event.type == "typing"
     assert typing_event.data["is_typing"] is True
 
-    recall_event = service.create_recall_event("msg-1", "conv-1")
-    assert recall_event.type == "recall"
-    assert recall_event.data["message_id"] == "msg-1"
-
     clear_event = service.create_clear_event("conv-1")
     assert clear_event.type == "clear"
 
@@ -172,6 +168,57 @@ async def test_incremental_sync():
     print("✓ Incremental sync test successful")
 
 
+async def test_recall_message_event():
+    """测试新的撤回机制：撤回创建一个recall_event消息"""
+    print("Testing recall message event mechanism...")
+    with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
+        db_path = tmp.name
+
+    service = MessageService(db_path)
+
+    # 1. 创建原始消息
+    original_message = Message(
+        id="msg-original",
+        conversation_id="conv-1",
+        sender_id="rin",
+        type=MessageType.TEXT,
+        content="This will be recalled",
+        timestamp=100.0,
+        metadata={}
+    )
+    await service.save_message(original_message)
+
+    # 2. 撤回消息
+    recall_event = await service.recall_message("msg-original", "conv-1", recalled_by="rin")
+
+    # 3. 验证撤回事件被创建
+    assert recall_event is not None, "Recall event should be created"
+    assert recall_event.type == MessageType.RECALL_EVENT, "Should be recall_event type"
+    assert recall_event.sender_id == "system", "Should be sent by system"
+    assert recall_event.metadata["target_message_id"] == "msg-original"
+    assert recall_event.metadata["recalled_by"] == "rin"
+    assert recall_event.metadata["original_sender"] == "rin"
+    assert recall_event.timestamp > 100.0, "Recall event should have new timestamp"
+
+    # 4. 验证原消息仍然存在且未修改
+    original_still_exists = service.db.get_message_by_id("msg-original")
+    assert original_still_exists is not None, "Original message should still exist"
+    assert original_still_exists.type == MessageType.TEXT, "Original message type unchanged"
+    assert original_still_exists.content == "This will be recalled", "Original content unchanged"
+
+    # 5. 验证增量同步能获取到撤回事件
+    messages_after = await service.get_messages("conv-1", after_timestamp=100.0)
+    assert len(messages_after) == 1, "Should have 1 message (the recall event)"
+    assert messages_after[0].type == MessageType.RECALL_EVENT
+
+    # 6. 验证撤回不存在的消息返回None
+    recall_nonexistent = await service.recall_message("non-existent", "conv-1", recalled_by="user")
+    assert recall_nonexistent is None, "Recalling non-existent message should return None"
+
+    os.unlink(db_path)
+    print("✓ Recall message event mechanism test successful")
+
+
 async def run_all_tests():
     print("=" * 50)
     print("Running Message Service Tests")
@@ -182,6 +229,7 @@ async def run_all_tests():
     await test_clear_user_typing_state()
     await test_create_events()
     await test_incremental_sync()
+    await test_recall_message_event()
 
     print("\n" + "=" * 50)
     print("✅ All message service tests passed!")

@@ -223,6 +223,294 @@ Uvicorn         # ASGI服务器
 
 ---
 
+## 消息撤回机制
+
+### 设计理念
+
+**问题**：传统的撤回实现通过修改原消息（UPDATE）会导致增量同步失败，因为被撤回的消息timestamp不变，客户端无法获取到撤回通知。
+
+**解决方案**：撤回作为新事件（Event-Driven Recall）
+
+参考WeChat、WhatsApp等主流社交软件的实现，撤回不是修改原消息，而是创建一个新的"撤回事件消息"。
+
+### 撤回流程
+
+#### 传统错误实现（已废弃）
+
+```
+用户发送消息: Message(id="msg-1", type="text", timestamp=100)
+用户撤回消息: UPDATE messages SET type="recalled" WHERE id="msg-1"
+              → timestamp仍然=100
+
+客户端增量同步: GET messages WHERE timestamp > 150
+服务器返回: [] （因为msg-1的timestamp=100 < 150）
+结果: 客户端永远不知道消息被撤回 ❌
+```
+
+#### 新的正确实现
+
+```
+1. 用户发送消息
+   Message(id="msg-1", type="text", content="Hello", timestamp=100)
+
+2. 用户撤回消息
+   创建新的recall_event消息:
+   Message(
+       id="recall-xxx",
+       type="recall_event",
+       sender_id="system",
+       timestamp=200,  ← 新的时间戳
+       metadata={
+           "target_message_id": "msg-1",
+           "recalled_by": "user",
+           "original_sender": "user"
+       }
+   )
+
+3. 客户端增量同步
+   GET messages WHERE timestamp > 150
+   返回: [recall_event消息]  ✅
+
+4. 客户端处理
+   - 接收到recall_event
+   - 从UI和本地存储中删除msg-1
+   - 显示"消息已撤回"提示
+```
+
+### 核心特性
+
+1. **原消息不变**
+   - 原消息保留在数据库中
+   - type、content、timestamp都不修改
+   - 便于审计和恢复
+
+2. **撤回作为新事件**
+   - recall_event是独立的新消息
+   - 有自己的ID和timestamp
+   - 可以被增量同步获取
+
+3. **元数据完整**
+   ```python
+   metadata = {
+       "target_message_id": "msg-123",  # 被撤回的消息ID
+       "recalled_by": "rin",            # 撤回者
+       "original_sender": "rin"         # 原始发送者
+   }
+   ```
+
+4. **支持增量同步**
+   - 新的timestamp确保撤回事件可以被同步
+   - 离线用户上线后也能看到撤回
+
+### 数据库设计
+
+**messages表**（统一存储所有消息和事件）
+
+```sql
+-- 文本消息
+INSERT INTO messages VALUES (
+    'msg-1', 'conv-1', 'user', 'text',
+    'Hello', 100.0, '{}', CURRENT_TIMESTAMP
+);
+
+-- 撤回事件（新的一行）
+INSERT INTO messages VALUES (
+    'recall-abc123', 'conv-1', 'system', 'recall_event',
+    '', 200.0,
+    '{"target_message_id":"msg-1","recalled_by":"user","original_sender":"user"}',
+    CURRENT_TIMESTAMP
+);
+
+-- 原消息仍然存在且未修改
+SELECT * FROM messages WHERE id = 'msg-1';
+-- 返回: id='msg-1', type='text', content='Hello'  ← 未改变
+```
+
+### API设计
+
+#### 服务层
+
+```python
+class MessageService:
+    async def recall_message(
+        self,
+        message_id: str,
+        conversation_id: str,
+        recalled_by: str
+    ) -> Optional[Message]:
+        """
+        创建并返回recall_event消息
+
+        Returns:
+            - recall_event消息（如果成功）
+            - None（如果原消息不存在）
+        """
+        # 1. 验证原消息存在
+        original = self.db.get_message_by_id(message_id)
+        if not original:
+            return None
+
+        # 2. 创建recall_event
+        recall_event = Message(
+            id=f"recall-{uuid.uuid4().hex[:8]}",
+            conversation_id=conversation_id,
+            sender_id="system",
+            type=MessageType.RECALL_EVENT,
+            content="",
+            timestamp=datetime.now().timestamp(),  # 新时间戳
+            metadata={
+                "target_message_id": message_id,
+                "recalled_by": recalled_by,
+                "original_sender": original.sender_id
+            }
+        )
+
+        # 3. 保存recall_event
+        self.db.save_message(recall_event)
+        return recall_event
+```
+
+#### WebSocket处理
+
+```python
+async def handle_recall(websocket, conversation_id, user_id, data):
+    """处理用户撤回请求"""
+    message_id = data.get("message_id")
+
+    # 创建recall_event
+    recall_event = await message_service.recall_message(
+        message_id,
+        conversation_id,
+        recalled_by=user_id
+    )
+
+    if recall_event:
+        # 作为普通消息广播
+        event = message_service.create_message_event(recall_event)
+        await ws_manager.send_to_conversation(
+            conversation_id,
+            event.model_dump()
+        )
+```
+
+### 前端处理
+
+```javascript
+handleMessage(data) {
+    // 检查是否为撤回事件
+    if (data.type === 'recall_event') {
+        this.handleRecallEvent(data);
+        return;
+    }
+
+    // 处理普通消息
+    this.addMessage(data);
+}
+
+handleRecallEvent(recallEventMsg) {
+    const targetId = recallEventMsg.metadata.target_message_id;
+
+    // 从localStorage删除原消息
+    this.localMessages.delete(targetId);
+    this.saveLocalMessages();
+
+    // 从UI删除原消息
+    const messageDiv = this.messageRefs.get(targetId);
+    if (messageDiv) {
+        messageDiv.remove();
+    }
+
+    // 显示撤回提示
+    this.showRecallNotice();
+}
+```
+
+### 与现有系统集成
+
+#### 1. 历史加载
+
+```javascript
+// 加载历史时，遇到recall_event自动过滤被撤回的消息
+handleHistory(data) {
+    const messages = data.messages;
+
+    for (const msg of messages) {
+        if (msg.type === 'recall_event') {
+            // 删除被撤回的消息
+            const targetId = msg.metadata.target_message_id;
+            this.localMessages.delete(targetId);
+        } else {
+            this.localMessages.set(msg.id, msg);
+        }
+    }
+
+    this.renderMessages();
+}
+```
+
+#### 2. 增量同步
+
+```python
+# 客户端请求
+{
+    "type": "sync",
+    "after_timestamp": 150.0
+}
+
+# 服务器响应（包含recall_event）
+{
+    "type": "history",
+    "data": {
+        "messages": [
+            {
+                "id": "recall-abc",
+                "type": "recall_event",
+                "timestamp": 200.0,
+                "metadata": {"target_message_id": "msg-1"}
+            }
+        ]
+    }
+}
+```
+
+#### 3. Rin行为系统
+
+```python
+# Rin撤回错别字消息
+async def _recall_message(self, conversation_id, message_id):
+    recall_event = await self.message_service.recall_message(
+        message_id,
+        conversation_id,
+        recalled_by=self.user_id  # "rin"
+    )
+
+    if recall_event:
+        event = self.message_service.create_message_event(recall_event)
+        await self.ws_manager.send_to_conversation(
+            conversation_id,
+            event.model_dump()
+        )
+```
+
+### 优势总结
+
+| 特性 | 传统UPDATE实现 | 事件驱动实现 |
+|-----|--------------|------------|
+| 增量同步 | ❌ 失败 | ✅ 成功 |
+| 原消息保留 | ❌ 被修改 | ✅ 保留 |
+| 审计追踪 | ❌ 丢失 | ✅ 完整 |
+| 离线用户 | ❌ 不同步 | ✅ 可同步 |
+| 撤回者记录 | ❌ 无 | ✅ 有 |
+| 实现复杂度 | 简单但有缺陷 | 稍复杂但正确 |
+
+### 参考资料
+
+- [WeChat撤回机制](https://help.wechat.com/cgi-bin/micromsg-bin/oshelpcenter?opcode=2&plat=2&lang=en&id=120813euEJVf1410236fI7RB)
+- [WhatsApp消息删除](https://academic.oup.com/cybersecurity/article/6/1/tyz016/5718217)
+- [消息系统最佳实践](https://learn.microsoft.com/en-us/exchange/mail-flow-best-practices/work-with-cloud-based-message-recall)
+
+---
+
 ## 配置系统
 
 ### 配置文件: `src/config.py`
@@ -362,7 +650,7 @@ typo_rate = behavior_defaults.base_typo_rate
 ```python
 class MessageType(str, Enum):
     TEXT = "text"
-    RECALLED = "recalled"
+    RECALL_EVENT = "recall_event"  # 撤回事件（新的消息类型）
     SYSTEM = "system"
 
 class Message(BaseModel):
@@ -446,17 +734,13 @@ class MessageDatabase:
         # ORDER BY timestamp ASC
         # LIMIT ?
 
-    def recall_message(self, message_id: str, conversation_id: str) -> bool:
-        """撤回消息"""
-        # UPDATE messages SET type = 'recalled', content = ''
-        # WHERE id = ? AND conversation_id = ?
+    def get_message_by_id(self, message_id: str) -> Optional[Message]:
+        """根据ID查询单条消息"""
 
     def clear_conversation(self, conversation_id: str) -> bool:
         """清空会话"""
         # DELETE FROM messages WHERE conversation_id = ?
 
-    def get_message_by_id(self, message_id: str) -> Optional[Message]:
-        """根据ID查询单条消息"""
 ```
 
 ### 服务层: `src/message_server/service.py`
@@ -479,6 +763,32 @@ class MessageService:
     async def get_messages(...) -> List[Message]:
         """异步查询消息"""
 
+    async def recall_message(
+        self,
+        message_id: str,
+        conversation_id: str,
+        recalled_by: str
+    ) -> Optional[Message]:
+        """
+        撤回消息 - 创建一个新的recall_event消息
+
+        Args:
+            message_id: 要撤回的消息ID
+            conversation_id: 会话ID
+            recalled_by: 撤回者的用户ID
+
+        Returns:
+            新创建的recall_event消息，如果原消息不存在则返回None
+
+        实现:
+        1. 验证原消息存在
+        2. 创建recall_event消息（type=RECALL_EVENT）
+        3. metadata包含: target_message_id, recalled_by, original_sender
+        4. timestamp为当前时间（新消息，确保增量同步可获取）
+        5. 保存recall_event到数据库
+        6. 原消息保持不变
+        """
+
     async def set_typing_state(self, typing_state: TypingState):
         """设置输入状态"""
         key = f"{typing_state.conversation_id}:{typing_state.user_id}"
@@ -493,9 +803,6 @@ class MessageService:
 
     def create_typing_event(self, typing_state: TypingState) -> WSMessage:
         """创建输入状态事件"""
-
-    def create_recall_event(...) -> WSMessage:
-        """创建撤回事件"""
 
     def create_history_event(self, messages: List[Message]) -> WSMessage:
         """创建历史消息事件"""

@@ -150,7 +150,12 @@ class RinClient:
 
     async def _recall_message(self, conversation_id: str, message_id: str):
         """Recall a message"""
-        await self.message_service.recall_message(message_id, conversation_id)
+        recall_event = await self.message_service.recall_message(
+            message_id,
+            conversation_id,
+            recalled_by=self.user_id
+        )
 
-        event = self.message_service.create_recall_event(message_id, conversation_id)
-        await self.ws_manager.send_to_conversation(conversation_id, event.model_dump())
+        if recall_event:
+            event = self.message_service.create_message_event(recall_event)
+            await self.ws_manager.send_to_conversation(conversation_id, event.model_dump())

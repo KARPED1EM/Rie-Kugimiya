@@ -130,35 +130,6 @@ def test_get_messages_after_timestamp():
     print("✓ Get messages after timestamp successful")
 
 
-def test_recall_message():
-    print("Testing recall message...")
-    with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
-        db_path = tmp.name
-
-    db = MessageDatabase(db_path)
-
-    message = Message(
-        id="msg-recall",
-        conversation_id="conv-1",
-        sender_id="rin",
-        type=MessageType.TEXT,
-        content="This will be recalled",
-        timestamp=datetime.now().timestamp(),
-        metadata={}
-    )
-    db.save_message(message)
-
-    success = db.recall_message("msg-recall", "conv-1")
-    assert success, "Failed to recall message"
-
-    recalled = db.get_message_by_id("msg-recall")
-    assert recalled is not None
-    assert recalled.type == MessageType.RECALLED
-    assert recalled.content == ""
-
-    os.unlink(db_path)
-    print("✓ Recall message successful")
-
 
 def test_clear_conversation():
     print("Testing clear conversation...")
@@ -241,7 +212,6 @@ def run_all_tests():
     test_get_messages()
     test_get_messages_with_limit()
     test_get_messages_after_timestamp()
-    test_recall_message()
     test_clear_conversation()
     test_multiple_conversations()
 

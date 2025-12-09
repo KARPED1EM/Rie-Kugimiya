@@ -155,6 +155,7 @@ async def test_typing_state_flow():
 
 
 async def test_recall_flow():
+    """测试完整的撤回流程：发送带错别字的消息 -> 撤回 -> 发送修正消息"""
     print("Testing recall flow...")
 
     with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
@@ -162,42 +163,59 @@ async def test_recall_flow():
 
     message_service = MessageService(db_path)
 
-    original_message = Message(
+    # 1. 发送带错别字的消息
+    typo_message = Message(
         id="msg-typo",
         conversation_id="conv-1",
         sender_id="rin",
         type=MessageType.TEXT,
         content="你hao！",
-        timestamp=datetime.now().timestamp(),
+        timestamp=100.0,
         metadata={"has_typo": True}
     )
+    await message_service.save_message(typo_message)
 
-    await message_service.save_message(original_message)
+    # 2. 撤回消息（生成recall_event）
+    recall_event = await message_service.recall_message("msg-typo", "conv-1", recalled_by="rin")
+    assert recall_event is not None, "Should create recall event"
+    assert recall_event.type == MessageType.RECALL_EVENT, "Should be recall_event type"
+    assert recall_event.metadata["target_message_id"] == "msg-typo"
 
-    success = await message_service.recall_message("msg-typo", "conv-1")
-    assert success, "Should successfully recall message"
-
+    # 3. 发送修正后的消息
     corrected_message = Message(
         id="msg-corrected",
         conversation_id="conv-1",
         sender_id="rin",
         type=MessageType.TEXT,
         content="你好！",
-        timestamp=datetime.now().timestamp(),
+        timestamp=recall_event.timestamp + 1.0,
         metadata={"is_correction": True}
     )
-
     await message_service.save_message(corrected_message)
 
-    messages = await message_service.get_messages("conv-1")
+    # 4. 验证数据库中的消息
+    all_messages = await message_service.get_messages("conv-1")
+    assert len(all_messages) == 3, "Should have 3 messages: typo + recall_event + corrected"
 
-    recalled_msg = next((m for m in messages if m.id == "msg-typo"), None)
-    assert recalled_msg is not None
-    assert recalled_msg.type == MessageType.RECALLED
+    # 原消息仍然存在且未修改
+    typo_msg = next((m for m in all_messages if m.id == "msg-typo"), None)
+    assert typo_msg is not None, "Original typo message should still exist"
+    assert typo_msg.type == MessageType.TEXT, "Original message type unchanged"
+    assert typo_msg.content == "你hao！", "Original content unchanged"
 
-    corrected_msg = next((m for m in messages if m.id == "msg-corrected"), None)
-    assert corrected_msg is not None
-    assert corrected_msg.content == "你好！"
+    # 撤回事件存在
+    recall_msg = next((m for m in all_messages if m.type == MessageType.RECALL_EVENT), None)
+    assert recall_msg is not None, "Recall event should exist"
+
+    # 修正消息存在
+    corrected_msg = next((m for m in all_messages if m.id == "msg-corrected"), None)
+    assert corrected_msg is not None, "Corrected message should exist"
+
+    # 5. 验证增量同步能获取到撤回事件和修正消息
+    new_messages = await message_service.get_messages("conv-1", after_timestamp=100.0)
+    assert len(new_messages) == 2, "Should get recall_event and corrected message"
+    assert new_messages[0].type == MessageType.RECALL_EVENT
+    assert new_messages[1].id == "msg-corrected"
 
     os.unlink(db_path)
     print("✓ Recall flow test successful")

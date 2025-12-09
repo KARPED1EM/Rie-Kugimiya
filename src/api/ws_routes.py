@@ -166,15 +166,25 @@ async def handle_recall(
     user_id: str,
     data: dict
 ):
-    """Handle message recall"""
+    """
+    Handle message recall
+
+    创建一个新的recall_event消息并广播给所有客户端
+    """
     message_id = data.get("message_id")
     if not message_id:
         return
 
-    success = await message_service.recall_message(message_id, conversation_id)
+    # 创建撤回事件消息
+    recall_event = await message_service.recall_message(
+        message_id,
+        conversation_id,
+        recalled_by=user_id
+    )
 
-    if success:
-        event = message_service.create_recall_event(message_id, conversation_id)
+    if recall_event:
+        # 广播撤回事件作为普通消息
+        event = message_service.create_message_event(recall_event)
         await ws_manager.send_to_conversation(
             conversation_id,
             event.model_dump(),

@@ -6,7 +6,7 @@ from datetime import datetime
 
 class MessageType(str, Enum):
     TEXT = "text"
-    RECALLED = "recalled"
+    RECALL_EVENT = "recall_event"  # 撤回事件（新消息）
     SYSTEM = "system"
 
 

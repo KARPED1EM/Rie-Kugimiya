@@ -232,8 +232,14 @@ class ChatApp {
                     skipSave: true
                 });
                 this.messageRefs.set(msg.id, messageDiv);
-            } else if (msg.type === 'recalled') {
-                this.showRecallNotice(true);
+            } else if (msg.type === 'recall_event') {
+                // 撤回事件在历史消息中，直接删除被撤回的消息
+                const targetId = msg.metadata?.target_message_id;
+                if (targetId && this.localMessages.has(targetId)) {
+                    this.localMessages.delete(targetId);
+                }
+                // 显示撤回提示（可选，取决于是否想在历史加载时显示）
+                // this.showRecallNotice(true);
             }
         }
     }
@@ -301,11 +307,10 @@ class ChatApp {
             this.handleMessage(data.data);
         } else if (type === 'typing') {
             this.handleTyping(data.data);
-        } else if (type === 'recall') {
-            this.handleRecall(data.data);
         } else if (type === 'clear') {
             this.handleClear(data.data);
         }
+        // 注意：不再单独处理'recall'类型，撤回事件现在作为type='recall_event'的消息
     }
 
     handleHistory(data) {
@@ -341,6 +346,13 @@ class ChatApp {
             this.lastSyncTimestamp = data.timestamp;
         }
 
+        // 处理撤回事件消息
+        if (data.type === 'recall_event') {
+            this.handleRecallEvent(data);
+            return;
+        }
+
+        // 处理普通文本消息
         const role = data.sender_id === 'user' ? 'user' : 'assistant';
         const messageDiv = this.addMessage(role, data.content, {
             messageId: data.id,
@@ -363,25 +375,43 @@ class ChatApp {
         }
     }
 
-    handleRecall(data) {
-        const messageId = data.message_id;
+    handleRecallEvent(recallEventMsg) {
+        /**
+         * 处理撤回事件消息
+         * recallEventMsg格式：
+         * {
+         *   id: "recall-xxx",
+         *   type: "recall_event",
+         *   metadata: {
+         *     target_message_id: "msg-123",
+         *     recalled_by: "rin",
+         *     original_sender: "rin"
+         *   }
+         * }
+         */
+        const targetMessageId = recallEventMsg.metadata?.target_message_id;
+        if (!targetMessageId) {
+            console.warn('Recall event missing target_message_id');
+            return;
+        }
 
-        if (this.localMessages.has(messageId)) {
-            const msg = this.localMessages.get(messageId);
-            msg.type = 'recalled';
-            msg.content = '';
-            this.localMessages.set(messageId, msg);
+        // 从localMessages中删除原消息（或标记为已撤回）
+        if (this.localMessages.has(targetMessageId)) {
+            this.localMessages.delete(targetMessageId);
             this.saveLocalMessages();
         }
 
-        if (messageId && this.messageRefs.has(messageId)) {
-            const messageDiv = this.messageRefs.get(messageId);
+        // 从UI中移除原消息
+        if (this.messageRefs.has(targetMessageId)) {
+            const messageDiv = this.messageRefs.get(targetMessageId);
             if (messageDiv) {
                 messageDiv.remove();
             }
-            this.messageRefs.delete(messageId);
-            this.showRecallNotice();
+            this.messageRefs.delete(targetMessageId);
         }
+
+        // 显示撤回提示
+        this.showRecallNotice();
     }
 
     handleClear(data) {

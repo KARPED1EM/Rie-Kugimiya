@@ -21,8 +21,47 @@ class MessageService:
     ) -> List[Message]:
         return self.db.get_messages(conversation_id, limit, after_timestamp)
 
-    async def recall_message(self, message_id: str, conversation_id: str) -> bool:
-        return self.db.recall_message(message_id, conversation_id)
+    async def recall_message(
+        self,
+        message_id: str,
+        conversation_id: str,
+        recalled_by: str
+    ) -> Optional[Message]:
+        """
+        撤回消息：创建一个新的recall_event消息
+
+        Args:
+            message_id: 要撤回的消息ID
+            conversation_id: 会话ID
+            recalled_by: 撤回者的用户ID
+
+        Returns:
+            新创建的recall_event消息，如果原消息不存在则返回None
+        """
+        # 验证原消息存在
+        original_message = self.db.get_message_by_id(message_id)
+        if not original_message:
+            return None
+
+        # 创建撤回事件消息
+        import uuid
+        recall_event = Message(
+            id=f"recall-{uuid.uuid4().hex[:8]}",
+            conversation_id=conversation_id,
+            sender_id="system",
+            type=MessageType.RECALL_EVENT,
+            content="",
+            timestamp=datetime.now().timestamp(),
+            metadata={
+                "target_message_id": message_id,
+                "recalled_by": recalled_by,
+                "original_sender": original_message.sender_id
+            }
+        )
+
+        # 保存撤回事件
+        self.db.save_message(recall_event)
+        return recall_event
 
     async def clear_conversation(self, conversation_id: str) -> bool:
         return self.db.clear_conversation(conversation_id)
@@ -68,16 +107,6 @@ class MessageService:
                 "is_typing": typing_state.is_typing
             },
             timestamp=typing_state.timestamp
-        )
-
-    def create_recall_event(self, message_id: str, conversation_id: str) -> WSMessage:
-        return WSMessage(
-            type="recall",
-            data={
-                "message_id": message_id,
-                "conversation_id": conversation_id
-            },
-            timestamp=datetime.now().timestamp()
         )
 
     def create_clear_event(self, conversation_id: str) -> WSMessage:
