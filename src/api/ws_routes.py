@@ -5,7 +5,6 @@ import json
 from ..message_server import MessageService, WebSocketManager, Message, MessageType, TypingState
 from ..rin_client import RinClient
 from ..config import character_config
-from .schemas import LLMConfig
 
 router = APIRouter()
 
