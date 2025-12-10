@@ -136,7 +136,10 @@ class ChatApp {
             }
         });
 
-        this.userInput.addEventListener('input', () => this.updateComposerState());
+        this.userInput.addEventListener('input', () => {
+            this.updateComposerState();
+            this.adjustTextareaHeight();
+        });
 
         if (this.emotionThemeToggle) {
             this.emotionThemeToggle.addEventListener('change', () => {
@@ -561,6 +564,7 @@ class ChatApp {
 
         this.isProcessing = true;
         this.userInput.value = '';
+        this.adjustTextareaHeight(); // Reset height after clearing
         this.updateComposerState();
 
         const messageId = `msg-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
@@ -630,6 +634,24 @@ class ChatApp {
         }
     }
 
+    adjustTextareaHeight() {
+        // Reset height to auto to get the correct scrollHeight
+        this.userInput.style.height = 'auto';
+        
+        // Calculate the new height based on content
+        const scrollHeight = this.userInput.scrollHeight;
+        const maxHeight = 120; // Maximum height in pixels (about 6 lines)
+        
+        // Set the height to fit content, but cap at maxHeight
+        if (scrollHeight > maxHeight) {
+            this.userInput.style.height = maxHeight + 'px';
+            this.userInput.style.overflowY = 'auto';
+        } else {
+            this.userInput.style.height = scrollHeight + 'px';
+            this.userInput.style.overflowY = 'hidden';
+        }
+    }
+
     setTypingStatus(active) {
         if (!this.chatTitle) return;
         this.chatTitle.textContent = active ? "对方正在输入中..." : (this.defaultTitle || 'Rin');
@@ -648,12 +670,89 @@ class ChatApp {
         }
 
         const emotionMap = metadata.emotion_map || metadata.emotionMap;
-        if (!emotionMap) {
+        if (!emotionMap || Object.keys(emotionMap).length === 0) {
             this.clearEmotionTheme();
             return;
         }
 
+        // Calculate mixed color based on all emotions and their intensities
+        const mixedColor = this.mixEmotionColors(emotionMap);
+        
+        // Apply the mixed color to the glow effect
+        this.wechatShell.style.setProperty('--glow-base', mixedColor.base);
+        this.wechatShell.style.setProperty('--glow-shadow', mixedColor.shadow);
+        this.wechatShell.style.setProperty('--glow-shadow-soft', mixedColor.shadowSoft);
         this.wechatShell.classList.add('glow-enabled');
+    }
+
+    mixEmotionColors(emotionMap) {
+        // Define color mapping for emotions
+        const emotionColors = {
+            'neutral': { r: 26, g: 173, b: 25 },      // Green (default)
+            'happy': { r: 255, g: 215, b: 0 },        // Gold
+            'excited': { r: 255, g: 140, b: 0 },      // Orange
+            'sad': { r: 100, g: 149, b: 237 },        // Cornflower blue
+            'angry': { r: 220, g: 20, b: 60 },        // Crimson
+            'anxious': { r: 186, g: 85, b: 211 },     // Medium orchid
+            'confused': { r: 169, g: 169, b: 169 },   // Dark gray
+            'mad': { r: 220, g: 20, b: 60 },          // Crimson (same as angry)
+            'playful': { r: 255, g: 105, b: 180 },    // Hot pink
+            'affectionate': { r: 255, g: 182, b: 193 }, // Light pink
+            'nervous': { r: 186, g: 85, b: 211 },     // Medium orchid (same as anxious)
+            'shy': { r: 255, g: 192, b: 203 },        // Pink
+            'embarrassed': { r: 255, g: 160, b: 122 }, // Light salmon
+            'surprised': { r: 255, g: 215, b: 0 },    // Gold (same as happy)
+            'tired': { r: 119, g: 136, b: 153 },      // Light slate gray
+            'bored': { r: 128, g: 128, b: 128 },      // Gray
+            'serious': { r: 70, g: 130, b: 180 },     // Steel blue
+            'caring': { r: 255, g: 218, b: 185 }      // Peach puff
+        };
+
+        // Intensity weights
+        const intensityWeights = {
+            'low': 0.3,
+            'medium': 0.6,
+            'high': 0.9,
+            'extreme': 1.2
+        };
+
+        let totalR = 0, totalG = 0, totalB = 0, totalWeight = 0;
+
+        // Mix colors based on emotion intensities
+        for (const [emotion, intensity] of Object.entries(emotionMap)) {
+            const emotionKey = emotion.toLowerCase().trim();
+            const intensityKey = intensity.toLowerCase().trim();
+            
+            const color = emotionColors[emotionKey];
+            const weight = intensityWeights[intensityKey] || 0.5;
+
+            if (color) {
+                totalR += color.r * weight;
+                totalG += color.g * weight;
+                totalB += color.b * weight;
+                totalWeight += weight;
+            }
+        }
+
+        // Calculate average color
+        if (totalWeight === 0) {
+            // Fallback to default green
+            return {
+                base: 'rgb(26, 173, 25)',
+                shadow: 'rgba(26, 173, 25, 0.35)',
+                shadowSoft: 'rgba(26, 173, 25, 0.22)'
+            };
+        }
+
+        const r = Math.round(totalR / totalWeight);
+        const g = Math.round(totalG / totalWeight);
+        const b = Math.round(totalB / totalWeight);
+
+        return {
+            base: `rgb(${r}, ${g}, ${b})`,
+            shadow: `rgba(${r}, ${g}, ${b}, 0.35)`,
+            shadowSoft: `rgba(${r}, ${g}, ${b}, 0.22)`
+        };
     }
 
     clearEmotionTheme() {
