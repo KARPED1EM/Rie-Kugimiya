@@ -84,7 +84,7 @@ class BehaviorCoordinator:
             except Exception as exc:
                 unified_logger.warning(
                     f"Segmentation failed, fallback to raw text: {exc}",
-                    category=LogCategory.BEHAVIOR
+                    category=LogCategory.BEHAVIOR,
                 )
                 segments = [text]
 
@@ -227,7 +227,7 @@ class BehaviorCoordinator:
     def _trim_trailing_punctuation(text: str) -> str:
         """Remove trailing commas and periods from text"""
         trimmed = text.strip()
-        while trimmed and trimmed[-1] in {",", "，", ".", "。"}:
+        while trimmed and trimmed[-1] in {",", "，", "。"}:
             trimmed = trimmed[:-1].rstrip()
         return trimmed
 
