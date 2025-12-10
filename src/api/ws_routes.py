@@ -1,15 +1,29 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from datetime import datetime
+import logging
 
 from ..message_server import MessageService, WebSocketManager, Message, MessageType, TypingState
 from ..rin_client import RinClient
 from ..config import character_config
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
 message_service = MessageService()
 ws_manager = WebSocketManager()
 rin_clients = {}
+
+
+@router.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "ok",
+        "service": "Yuzuriha Rin Virtual Character System",
+        "active_conversations": len(ws_manager.active_connections),
+        "active_websockets": sum(len(ws_set) for ws_set in ws_manager.active_connections.values())
+    }
 
 
 def get_or_create_rin_client(conversation_id: str, llm_config: dict) -> RinClient:
@@ -45,7 +59,7 @@ async def websocket_endpoint(
         await message_service.clear_user_typing_state(user_id, conversation_id)
 
     except Exception as e:
-        print(f"WebSocket error: {e}")
+        logger.error(f"WebSocket error: {e}", exc_info=True)
         ws_manager.disconnect(websocket, conversation_id)
 
 

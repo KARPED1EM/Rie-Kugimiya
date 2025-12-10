@@ -4,8 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import os
+import logging
 from .ws_routes import router as ws_router
 from ..config import app_config, websocket_config
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title=app_config.app_name, debug=app_config.debug)
 
@@ -30,7 +33,7 @@ if os.path.exists(frontend_dir):
     async def serve_frontend():
         return FileResponse(os.path.join(frontend_dir, "index.html"))
 else:
-    print(f"Warning: Frontend directory not found at {frontend_dir}")
+    logger.warning(f"Frontend directory not found at {frontend_dir}")
 
 if __name__ == "__main__":
     import uvicorn
