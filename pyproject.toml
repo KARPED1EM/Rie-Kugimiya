@@ -5,8 +5,10 @@ description = "Virtual character dialogue system with rule-based behavior engine
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "accelerate>=1.12.0",
     "datasets>=4.4.1",
     "fastapi>=0.124.0",
+    "hf-xet>=1.2.0",
     "httpx>=0.28.1",
     "jieba>=0.42.1",
     "jinja2>=3.1.6",
@@ -19,7 +21,7 @@ dependencies = [
     "torch>=2.6.0",
     "tqdm>=4.67.1",
     "transformers>=4.57.3",
-    "uvicorn[standard]>=0.38.0",
+    "uvicorn>=0.38.0",
 ]
 
 [[tool.uv.index]]
