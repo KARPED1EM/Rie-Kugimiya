@@ -1773,7 +1773,7 @@ WS_HOST="0.0.0.0"
 WS_PORT=8000
 
 # 数据库配置
-DB_PATH="data/messages.db"
+DB_PATH="data/rin_app.db"
 ```
 
 ### 启动服务
@@ -1821,10 +1821,10 @@ docker run -p 8000:8000 -v $(pwd)/data:/app/data rie-kugimiya
 
 ```bash
 # 备份数据库
-cp data/messages.db data/messages.db.backup
+cp data/rin_app.db data/rin_app.db.backup
 
 # 恢复
-cp data/messages.db.backup data/messages.db
+cp data/rin_app.db.backup data/rin_app.db
 ```
 
 ---

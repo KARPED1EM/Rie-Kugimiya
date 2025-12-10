@@ -11,14 +11,38 @@ logger = logging.getLogger(__name__)
 
 
 class MessageDatabase:
+    """Lightweight SQLite wrapper for message and conversation state."""
+
+    LEGACY_PATHS = ["data/messages.db"]
+
     def __init__(self, db_path: str = None):
-        self.db_path = db_path or database_config.path
+        self.db_path = Path(db_path or database_config.path)
+        self._prepare_database_path()
         self._ensure_database_exists()
 
-    def _ensure_database_exists(self):
-        db_path = Path(self.db_path)
-        db_path.parent.mkdir(parents=True, exist_ok=True)
+    def _prepare_database_path(self):
+        """
+        Ensure the target directory exists and migrate legacy database
+        filenames so existing data remains available under the new name.
+        """
+        target_path = Path(self.db_path)
+        target_path.parent.mkdir(parents=True, exist_ok=True)
 
+        if target_path.exists():
+            return
+
+        for legacy in self.LEGACY_PATHS:
+            legacy_path = Path(legacy)
+            if legacy_path.exists():
+                logger.info(
+                    "Migrating legacy database file from %s to %s",
+                    legacy_path,
+                    target_path,
+                )
+                legacy_path.replace(target_path)
+                return
+
+    def _ensure_database_exists(self):
         with self._get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
@@ -45,7 +69,7 @@ class MessageDatabase:
 
     @contextmanager
     def _get_connection(self):
-        conn = sqlite3.connect(self.db_path)
+        conn = sqlite3.connect(str(self.db_path))
         conn.row_factory = sqlite3.Row
         try:
             yield conn

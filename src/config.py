@@ -159,7 +159,7 @@ class WebSocketConfig(BaseSettings):
 
 
 class DatabaseConfig(BaseSettings):
-    path: str = "data/messages.db"
+    path: str = "data/rin_app.db"
 
     class Config:
         env_file = ".env"

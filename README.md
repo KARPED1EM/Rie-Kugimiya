@@ -188,7 +188,7 @@ Rie-Kugimiya/
 │   ├── app.js
 │   └── styles.css
 ├── data/                 # 数据目录
-│   └── messages.db       # SQLite数据库
+│   └── rin_app.db       # SQLite数据库
 ├── tests/                # 单元测试
 └── pyproject.toml        # 项目配置
 ```

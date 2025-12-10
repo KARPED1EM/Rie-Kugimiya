@@ -123,7 +123,7 @@ def test_websocket_config():
 def test_database_config():
     print("Testing database config...")
     assert isinstance(database_config.path, str)
-    assert database_config.path.endswith(".db")
+    assert database_config.path.endswith("rin_app.db")
     print("✓ Database config valid")
 
 
