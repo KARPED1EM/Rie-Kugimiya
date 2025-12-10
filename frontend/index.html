@@ -67,11 +67,18 @@
         <div class="chat-container" id="chatContainer" style="display: none;">
             <div class="wechat-shell">
                 <div class="wechat-statusbar">
-                    <span class="status-time" id="statusTime">9:41</span>
-                    <div class="status-icons">
-                        <span class="icon-signal"></span>
-                        <span class="icon-wifi"></span>
-                        <span class="icon-battery"></span>
+                    <div class="status-left">
+                        <span class="status-time" id="statusTime">
+                            <span id="statusAmPm">上午</span>
+                            <span id="statusClock">9:41</span>
+                        </span>
+                    </div>
+                    <div class="punch-hole" aria-hidden="true"></div>
+                    <div class="status-right">
+                        <img src="/static/assets/signal.svg" alt="Signal" class="status-icon status-icon-signal">
+                        <img src="/static/assets/wifi.svg" alt="WiFi" class="status-icon status-icon-wifi">
+                        <img src="/static/assets/battery.svg" alt="Battery" class="status-icon battery-icon">
+                        <span class="battery-percent">100%</span>
                     </div>
                 </div>
 

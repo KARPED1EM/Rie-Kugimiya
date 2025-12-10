@@ -83,12 +83,14 @@ class ChatApp {
         this.showConfigBtn = document.getElementById('showConfig');
         this.clearBtn = document.getElementById('clearBtn');
         this.statusTime = document.getElementById('statusTime');
+        this.statusClock = document.getElementById('statusClock');
+        this.statusAmPm = document.getElementById('statusAmPm');
         this.plusBtn = document.querySelector('.plus-btn');
 
         this.defaultTitle = this.chatTitle.textContent || 'Rin';
 
         if (this.statusTime) {
-            this.statusTime.textContent = this.getCurrentTime();
+            this.startStatusClock();
         }
     }
 
@@ -612,15 +614,6 @@ class ChatApp {
         }));
     }
 
-    getCurrentTime() {
-        const now = new Date();
-        return now.toLocaleTimeString('zh-CN', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        });
-    }
-
     updateComposerState() {
         const hasText = this.userInput.value.trim().length > 0;
         if (hasText) {
@@ -759,6 +752,43 @@ class ChatApp {
         if (!this.wechatShell) return;
         this.wechatShell.classList.remove('glow-enabled');
     }
+
+    startStatusClock() {
+        this.updateStatusTime();
+
+        if (this.timeInterval) {
+            clearInterval(this.timeInterval);
+        }
+
+        const now = new Date();
+        const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+
+        setTimeout(() => {
+            this.updateStatusTime();
+            this.timeInterval = setInterval(() => this.updateStatusTime(), 60000);
+        }, Math.max(msToNextMinute, 500));
+    }
+
+    updateStatusTime() {
+        const { ampm, clock } = this.getCurrentTimeParts();
+
+        if (this.statusClock && this.statusAmPm) {
+            this.statusAmPm.textContent = ampm;
+            this.statusClock.textContent = clock;
+        } else if (this.statusTime) {
+            this.statusTime.textContent = `${ampm} ${clock}`;
+        }
+    }
+
+    getCurrentTimeParts() {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? '下午' : '上午';
+        hours = hours % 12 || 12;
+        return { ampm, clock: `${hours}:${minutes}` };
+    }
+
 }
 
 document.addEventListener('DOMContentLoaded', () => {
