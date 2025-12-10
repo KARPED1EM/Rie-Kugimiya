@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional
 from datetime import datetime
 from .database import MessageDatabase
-from .models import Message, MessageType, TypingState, WSMessage
+from .models import Message, TypingState, WSMessage
 
 
 class MessageService:
