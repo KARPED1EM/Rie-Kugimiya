@@ -10,6 +10,7 @@ from ..behavior.models import BehaviorConfig, PlaybackAction
 from ..message_server.service import MessageService
 from ..message_server.models import Message, MessageType, TypingState
 from ..config import character_config
+from ..utils.logger import unified_logger, LogCategory, broadcast_log_if_needed
 
 logger = logging.getLogger(__name__)
 
@@ -76,10 +77,48 @@ class RinClient:
                 character_name=self.character_name
             )
 
+            # Log emotion data
+            if llm_response.emotion_map:
+                log_entry = unified_logger.emotion(
+                    emotion_map=llm_response.emotion_map,
+                    context=f"User message: {user_message.content[:50]}..."
+                )
+                await broadcast_log_if_needed(log_entry)
+
             timeline = self.coordinator.process_message(
                 llm_response.reply,
                 emotion_map=llm_response.emotion_map
             )
+
+            # Log behavior sequence with full details
+            behavior_summary = []
+            for action in timeline:
+                detail_parts = [f"{action.type}", f"@{action.timestamp:.2f}s"]
+
+                # Add specific details based on action type
+                if action.type == "send":
+                    text_preview = action.text[:30] + "..." if len(action.text) > 30 else action.text
+                    detail_parts.append(f"text='{text_preview}'")
+                    if action.metadata and action.metadata.get('emotion'):
+                        detail_parts.append(f"emotion={action.metadata['emotion']}")
+                elif action.type == "recall":
+                    detail_parts.append(f"target={action.target_id}")
+                elif action.type in ["typing_start", "typing_end"]:
+                    pass  # No extra details needed
+                elif action.type == "wait":
+                    pass  # Duration already shown in timestamp
+
+                behavior_summary.append(" ".join(detail_parts))
+
+            log_entry = unified_logger.behavior(
+                action="Generated timeline",
+                details={
+                    "actions": behavior_summary,
+                    "total_actions": len(timeline),
+                    "reply": llm_response.reply
+                }
+            )
+            await broadcast_log_if_needed(log_entry)
 
             task = asyncio.create_task(
                 self._execute_timeline(timeline, user_message.conversation_id)
@@ -109,7 +148,13 @@ class RinClient:
         """Execute timeline with proper timing"""
         start_time = datetime.now().timestamp()
 
-        for action in timeline:
+        log_entry = unified_logger.info(
+            f"Starting timeline execution with {len(timeline)} actions",
+            category=LogCategory.BEHAVIOR
+        )
+        await broadcast_log_if_needed(log_entry)
+
+        for i, action in enumerate(timeline):
             if not self._running:
                 break
 
@@ -119,6 +164,25 @@ class RinClient:
 
             if wait_time > 0:
                 await asyncio.sleep(wait_time)
+
+            # Log action execution
+            action_desc = f"[{i+1}/{len(timeline)}] Executing: {action.type}"
+            if action.type == "send":
+                text_preview = action.text[:20] + "..." if len(action.text) > 20 else action.text
+                action_desc += f" '{text_preview}'"
+            elif action.type == "recall":
+                action_desc += f" (target={action.target_id})"
+
+            log_entry = unified_logger.debug(
+                action_desc,
+                category=LogCategory.BEHAVIOR,
+                metadata={
+                    "action_index": i + 1,
+                    "total_actions": len(timeline),
+                    "elapsed_time": f"{current_time - start_time:.2f}s"
+                }
+            )
+            await broadcast_log_if_needed(log_entry)
 
             if action.type == "typing_start":
                 await self._send_typing_state(conversation_id, True)
@@ -141,6 +205,13 @@ class RinClient:
 
             elif action.type == "wait":
                 pass
+
+        log_entry = unified_logger.info(
+            "Timeline execution completed",
+            category=LogCategory.BEHAVIOR,
+            metadata={"total_time": f"{datetime.now().timestamp() - start_time:.2f}s"}
+        )
+        await broadcast_log_if_needed(log_entry)
 
     async def _send_typing_state(self, conversation_id: str, is_typing: bool):
         """Send typing state to message service"""
@@ -177,6 +248,19 @@ class RinClient:
         event = self.message_service.create_message_event(message)
         await self.ws_manager.send_to_conversation(conversation_id, event.model_dump())
 
+        # Log the message being sent
+        log_entry = unified_logger.debug(
+            f"Sent message to frontend: '{content[:30]}...' (id={message_id})",
+            category=LogCategory.WEBSOCKET,
+            metadata={
+                "message_id": message_id,
+                "content": content,
+                "emotion": metadata.get("emotion"),
+                "emotion_map": metadata.get("emotion_map")
+            }
+        )
+        await broadcast_log_if_needed(log_entry)
+
     async def _recall_message(self, conversation_id: str, message_id: str):
         """Recall a message"""
         recall_event = await self.message_service.recall_message(
@@ -188,3 +272,11 @@ class RinClient:
         if recall_event:
             event = self.message_service.create_message_event(recall_event)
             await self.ws_manager.send_to_conversation(conversation_id, event.model_dump())
+
+            # Log the recall action
+            log_entry = unified_logger.debug(
+                f"Recalled message (id={message_id})",
+                category=LogCategory.WEBSOCKET,
+                metadata={"message_id": message_id, "action": "recall"}
+            )
+            await broadcast_log_if_needed(log_entry)

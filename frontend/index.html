@@ -60,12 +60,23 @@
                 </label>
             </div>
 
+            <div class="form-group inline">
+                <div>
+                    <label for="debugModeToggle">调试模式</label>
+                    <div class="help-text">显示系统日志，包括行为序列、感情数据和LLM文本</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="debugModeToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
             <button id="saveConfig" class="btn-primary">Save & Start Chat</button>
         </div>
 
         <!-- Chat Interface -->
         <div class="chat-container" id="chatContainer" style="display: none;">
-            <div class="wechat-shell">
+            <div class="wechat-shell" id="wechatShell">
                 <div class="wechat-statusbar">
                     <div class="status-left">
                         <span class="status-time" id="statusTime">
@@ -108,6 +119,11 @@
                     <button id="toggleBtn" class="toggle-btn hidden" type="button" aria-label="send"
                         disabled>发送</button>
                 </div>
+            </div>
+
+            <!-- Debug Log Panel -->
+            <div class="debug-log-panel" id="debugLogPanel" style="display: none;">
+                <div class="debug-log-content" id="debugLogContent"></div>
             </div>
         </div>
     </div>

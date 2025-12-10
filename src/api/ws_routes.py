@@ -2,9 +2,16 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from datetime import datetime
 import logging
 
-from ..message_server import MessageService, WebSocketManager, Message, MessageType, TypingState
+from ..message_server import (
+    MessageService,
+    WebSocketManager,
+    Message,
+    MessageType,
+    TypingState,
+)
 from ..rin_client import RinClient
 from ..config import character_config, llm_defaults, ui_defaults
+from ..utils.logger import unified_logger
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +21,9 @@ message_service = MessageService()
 ws_manager = WebSocketManager()
 rin_clients = {}
 
+# Set WebSocket manager for unified logger
+unified_logger.set_ws_manager(ws_manager)
+
 
 @router.get("/health")
 async def health_check():
@@ -22,7 +32,9 @@ async def health_check():
         "status": "ok",
         "service": "Yuzuriha Rin Virtual Character System",
         "active_conversations": len(ws_manager.active_connections),
-        "active_websockets": sum(len(ws_set) for ws_set in ws_manager.active_connections.values())
+        "active_websockets": sum(
+            len(ws_set) for ws_set in ws_manager.active_connections.values()
+        ),
     }
 
 
@@ -43,7 +55,7 @@ async def get_config_defaults():
         },
         "ui": {
             "enable_emotion_theme": ui_defaults.enable_emotion_theme,
-        }
+        },
     }
 
 
@@ -53,16 +65,14 @@ def get_or_create_rin_client(conversation_id: str, llm_config: dict) -> RinClien
         rin_clients[conversation_id] = RinClient(
             message_service=message_service,
             ws_manager=ws_manager,
-            llm_config=llm_config
+            llm_config=llm_config,
         )
     return rin_clients[conversation_id]
 
 
 @router.websocket("/ws/{conversation_id}")
 async def websocket_endpoint(
-    websocket: WebSocket,
-    conversation_id: str,
-    user_id: str = Query(default="user")
+    websocket: WebSocket, conversation_id: str, user_id: str = Query(default="user")
 ):
     await ws_manager.connect(websocket, conversation_id, user_id)
 
@@ -85,10 +95,7 @@ async def websocket_endpoint(
 
 
 async def handle_client_message(
-    websocket: WebSocket,
-    conversation_id: str,
-    user_id: str,
-    data: dict
+    websocket: WebSocket, conversation_id: str, user_id: str, data: dict
 ):
     """Handle incoming client message"""
     msg_type = data.get("type")
@@ -111,18 +118,16 @@ async def handle_client_message(
     elif msg_type == "init_rin":
         await handle_init_rin(conversation_id, data)
 
+    elif msg_type == "debug_mode":
+        await handle_debug_mode(websocket, conversation_id, data)
 
-async def handle_sync(
-    websocket: WebSocket,
-    conversation_id: str,
-    data: dict
-):
+
+async def handle_sync(websocket: WebSocket, conversation_id: str, data: dict):
     """Handle incremental sync request"""
     after_timestamp = data.get("after_timestamp", 0)
 
     messages = await message_service.get_messages(
-        conversation_id,
-        after_timestamp=after_timestamp
+        conversation_id, after_timestamp=after_timestamp
     )
 
     event = message_service.create_history_event(messages)
@@ -130,12 +135,11 @@ async def handle_sync(
 
 
 async def handle_user_message(
-    websocket: WebSocket,
-    conversation_id: str,
-    user_id: str,
-    data: dict
+    websocket: WebSocket, conversation_id: str, user_id: str, data: dict
 ):
     """Handle user message"""
+    from ..utils.logger import LogCategory, broadcast_log_if_needed
+
     content = data.get("content", "").strip()
     if not content:
         return
@@ -149,16 +153,22 @@ async def handle_user_message(
         type=MessageType.TEXT,
         content=content,
         timestamp=datetime.now().timestamp(),
-        metadata=data.get("metadata", {})
+        metadata=data.get("metadata", {}),
     )
+
+    # Log user message
+    log_entry = unified_logger.info(
+        f"User message received: '{content[:50]}{'...' if len(content) > 50 else ''}'",
+        category=LogCategory.MESSAGE,
+        metadata={"content": content, "message_id": message.id}
+    )
+    await broadcast_log_if_needed(log_entry)
 
     await message_service.save_message(message)
 
     event = message_service.create_message_event(message)
     await ws_manager.send_to_conversation(
-        conversation_id,
-        event.model_dump(),
-        exclude_ws=None
+        conversation_id, event.model_dump(), exclude_ws=None
     )
 
     if conversation_id in rin_clients:
@@ -167,10 +177,7 @@ async def handle_user_message(
 
 
 async def handle_typing_state(
-    websocket: WebSocket,
-    conversation_id: str,
-    user_id: str,
-    data: dict
+    websocket: WebSocket, conversation_id: str, user_id: str, data: dict
 ):
     """Handle typing state update"""
     is_typing = data.get("is_typing", False)
@@ -179,24 +186,19 @@ async def handle_typing_state(
         user_id=user_id,
         conversation_id=conversation_id,
         is_typing=is_typing,
-        timestamp=datetime.now().timestamp()
+        timestamp=datetime.now().timestamp(),
     )
 
     await message_service.set_typing_state(typing_state)
 
     event = message_service.create_typing_event(typing_state)
     await ws_manager.send_to_conversation(
-        conversation_id,
-        event.model_dump(),
-        exclude_ws=websocket
+        conversation_id, event.model_dump(), exclude_ws=websocket
     )
 
 
 async def handle_recall(
-    websocket: WebSocket,
-    conversation_id: str,
-    user_id: str,
-    data: dict
+    websocket: WebSocket, conversation_id: str, user_id: str, data: dict
 ):
     """
     Handle message recall
@@ -209,35 +211,25 @@ async def handle_recall(
 
     # 创建撤回事件消息
     recall_event = await message_service.recall_message(
-        message_id,
-        conversation_id,
-        recalled_by=user_id
+        message_id, conversation_id, recalled_by=user_id
     )
 
     if recall_event:
         # 广播撤回事件作为普通消息
         event = message_service.create_message_event(recall_event)
         await ws_manager.send_to_conversation(
-            conversation_id,
-            event.model_dump(),
-            exclude_ws=None
+            conversation_id, event.model_dump(), exclude_ws=None
         )
 
 
-async def handle_clear(
-    websocket: WebSocket,
-    conversation_id: str,
-    user_id: str
-):
+async def handle_clear(websocket: WebSocket, conversation_id: str, user_id: str):
     """Handle conversation clear"""
     success = await message_service.clear_conversation(conversation_id)
 
     if success:
         event = message_service.create_clear_event(conversation_id)
         await ws_manager.send_to_conversation(
-            conversation_id,
-            event.model_dump(),
-            exclude_ws=None
+            conversation_id, event.model_dump(), exclude_ws=None
         )
 
 
@@ -255,3 +247,19 @@ async def handle_init_rin(conversation_id: str, data: dict):
         logger.info(f"Rin client initialized for conversation {conversation_id}")
     except Exception as e:
         logger.error(f"Failed to initialize Rin client: {e}", exc_info=True)
+
+
+async def handle_debug_mode(websocket: WebSocket, conversation_id: str, data: dict):
+    """Handle debug mode toggle"""
+    from ..utils.logger import LogCategory
+
+    enabled = data.get("enabled", False)
+
+    if enabled:
+        ws_manager.enable_debug_mode(websocket, conversation_id)
+        unified_logger.enable_debug_mode(True)
+        logger.info(f"Debug mode enabled for conversation {conversation_id}")
+    else:
+        ws_manager.disable_debug_mode(websocket, conversation_id)
+        unified_logger.enable_debug_mode(False)
+        logger.info(f"Debug mode disabled for conversation {conversation_id}")

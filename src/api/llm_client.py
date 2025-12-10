@@ -7,6 +7,7 @@ from typing import Any, Dict, List
 import httpx
 
 from .schemas import ChatMessage, LLMConfig
+from ..utils.logger import unified_logger, LogCategory, broadcast_log_if_needed
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +39,14 @@ class LLMClient:
         self, messages: List[ChatMessage], character_name: str = "Rin"
     ) -> LLMStructuredResponse:
         try:
+            # Log LLM request
+            log_entry = unified_logger.llm_request(
+                provider=self.config.provider,
+                model=self.config.model,
+                messages=[{"role": m.role, "content": m.content} for m in messages]
+            )
+            await broadcast_log_if_needed(log_entry)
+
             if self.config.provider == "deepseek":
                 raw = await self._deepseek_chat(messages, character_name)
             elif self.config.provider == "openai":
@@ -50,11 +59,22 @@ class LLMClient:
                 raise ValueError(f"Unsupported provider: {self.config.provider}")
 
             parsed = self._parse_structured_response(raw)
-            return LLMStructuredResponse(
+            response = LLMStructuredResponse(
                 reply=parsed.get("reply", "").strip(),
                 emotion_map=parsed.get("emotion", {}) or {},
                 raw_text=raw,
             )
+
+            # Log LLM response
+            log_entry = unified_logger.llm_response(
+                provider=self.config.provider,
+                model=self.config.model,
+                response=response.reply,
+                emotion_map=response.emotion_map
+            )
+            await broadcast_log_if_needed(log_entry)
+
+            return response
         except httpx.HTTPError as e:
             logger.error(f"HTTP error calling {self.config.provider} API: {e}", exc_info=True)
             raise

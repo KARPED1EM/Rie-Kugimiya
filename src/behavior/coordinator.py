@@ -13,6 +13,7 @@ from .emotion import EmotionDetector
 from .typo import TypoInjector
 from .pause import PausePredictor
 from .timeline import TimelineBuilder
+from ..utils.logger import unified_logger, LogCategory
 
 
 class BehaviorCoordinator:
@@ -81,7 +82,10 @@ class BehaviorCoordinator:
             try:
                 segments = self.segmenter.segment(text)
             except Exception as exc:
-                print(f"[behavior] segmentation failed, fallback to raw text: {exc}")
+                unified_logger.warning(
+                    f"Segmentation failed, fallback to raw text: {exc}",
+                    category=LogCategory.BEHAVIOR
+                )
                 segments = [text]
 
         cleaned = [self._trim_trailing_punctuation(seg) for seg in segments]

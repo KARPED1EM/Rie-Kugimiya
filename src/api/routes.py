@@ -5,6 +5,7 @@ from .llm_client import LLMClient
 from ..behavior import BehaviorCoordinator
 from ..behavior.models import BehaviorConfig
 from .conversation_store import conversation_store
+from ..utils.logger import unified_logger
 
 router = APIRouter()
 
@@ -87,7 +88,9 @@ async def chat(request: ChatRequest):
             "type": type(e).__name__,
             "traceback": traceback.format_exc()
         }
-        print(f"Error in chat endpoint: {error_detail}")  # Server-side logging
+        unified_logger.error(
+            f"Error in chat endpoint: {error_detail}"
+        )
         raise HTTPException(
             status_code=500,
             detail=f"{type(e).__name__}: {str(e)}"

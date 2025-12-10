@@ -11,6 +11,7 @@ from typing import List, Optional, Tuple
 import jieba
 
 from .same_pinyin_finder import SamePinyinFinder
+from ..utils.logger import unified_logger, LogCategory
 
 
 class TypoInjector:
@@ -202,7 +203,10 @@ class TypoInjector:
                 # Even without a word list we can still do char-level pinyin swaps
                 self._same_pinyin_finder = SamePinyinFinder()
         except Exception as exc:  # pragma: no cover - defensive logging
-            print(f"[behavior] failed to init SamePinyinFinder: {exc}")
+            unified_logger.warning(
+                f"Failed to init SamePinyinFinder: {exc}",
+                category=LogCategory.BEHAVIOR
+            )
             self._same_pinyin_finder = None
 
         return self._same_pinyin_finder

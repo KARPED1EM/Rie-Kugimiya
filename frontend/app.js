@@ -102,10 +102,11 @@ class ChatApp {
         this.personaInput = document.getElementById('personaInput');
         this.characterNameInput = document.getElementById('characterName');
         this.emotionThemeToggle = document.getElementById('emotionThemeToggle');
+        this.debugModeToggle = document.getElementById('debugModeToggle');
         this.saveConfigBtn = document.getElementById('saveConfig');
 
         this.chatContainer = document.getElementById('chatContainer');
-        this.wechatShell = document.querySelector('.wechat-shell');
+        this.wechatShell = document.getElementById('wechatShell');
         this.chatTitle = document.getElementById('chatTitle');
         this.messagesDiv = document.getElementById('messages');
         this.userInput = document.getElementById('userInput');
@@ -116,8 +117,11 @@ class ChatApp {
         this.statusClock = document.getElementById('statusClock');
         this.statusAmPm = document.getElementById('statusAmPm');
         this.plusBtn = document.querySelector('.plus-btn');
+        this.debugLogPanel = document.getElementById('debugLogPanel');
+        this.debugLogContent = document.getElementById('debugLogContent');
 
         this.defaultTitle = this.chatTitle.textContent || 'Rin';
+        this.debugMode = false;
 
         if (this.statusTime) {
             this.startStatusClock();
@@ -180,6 +184,12 @@ class ChatApp {
                 } else {
                     this.clearEmotionTheme();
                 }
+            });
+        }
+
+        if (this.debugModeToggle) {
+            this.debugModeToggle.addEventListener('change', () => {
+                this.toggleDebugMode(this.debugModeToggle.checked);
             });
         }
 
@@ -291,6 +301,14 @@ class ChatApp {
             this.emotionThemeToggle.checked = config.enable_emotion_theme !== false;
         }
 
+        if (this.debugModeToggle) {
+            this.debugModeToggle.checked = config.debug_mode || false;
+            // Apply debug mode UI immediately if enabled
+            if (config.debug_mode) {
+                this.toggleDebugMode(true);
+            }
+        }
+
         this.providerSelect.dispatchEvent(new Event('change'));
     }
 
@@ -308,7 +326,8 @@ class ChatApp {
             model: this.modelInput.value.trim(),
             persona: this.personaInput.value.trim(),
             character_name: this.characterNameInput.value.trim() || 'Rin',
-            enable_emotion_theme: this.emotionThemeToggle ? this.emotionThemeToggle.checked : false
+            enable_emotion_theme: this.emotionThemeToggle ? this.emotionThemeToggle.checked : false,
+            debug_mode: this.debugModeToggle ? this.debugModeToggle.checked : false
         };
 
         localStorage.setItem('chatConfig', JSON.stringify(this.config));
@@ -386,6 +405,17 @@ class ChatApp {
             console.log('WebSocket connected');
             this.syncMessages();
             this.sendInitRin();
+
+            // Send debug mode state if enabled
+            if (this.config && this.config.debug_mode) {
+                console.log('Sending initial debug_mode=true to backend');
+                this.ws.send(JSON.stringify({
+                    type: 'debug_mode',
+                    enabled: true
+                }));
+            } else {
+                console.log('Debug mode not enabled in config');
+            }
         };
 
         this.ws.onmessage = (event) => {
@@ -437,6 +467,8 @@ class ChatApp {
             this.handleTyping(data.data);
         } else if (type === 'clear') {
             this.handleClear(data.data);
+        } else if (type === 'debug_log') {
+            this.handleDebugLog(data.data);
         }
         // 注意：不再单独处理'recall'类型，撤回事件现在作为type='recall_event'的消息
     }
@@ -890,6 +922,211 @@ class ChatApp {
         const ampm = hours >= 12 ? '下午' : '上午';
         hours = hours % 12 || 12;
         return { ampm, clock: `${hours}:${minutes}` };
+    }
+
+    toggleDebugMode(enabled) {
+        this.debugMode = enabled;
+
+        if (enabled) {
+            this.chatContainer.classList.add('debug-mode');
+            this.debugLogPanel.style.display = 'flex';
+            console.log('Debug mode enabled on frontend');
+        } else {
+            this.chatContainer.classList.remove('debug-mode');
+            this.debugLogPanel.style.display = 'none';
+            console.log('Debug mode disabled on frontend');
+        }
+
+        // Notify backend if WebSocket is connected
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            console.log('Sending debug_mode message to backend:', enabled);
+            this.ws.send(JSON.stringify({
+                type: 'debug_mode',
+                enabled: enabled
+            }));
+        } else {
+            console.log('WebSocket not ready, debug mode will be sent when connected');
+        }
+    }
+
+    handleDebugLog(logEntry) {
+        console.log('Received debug log:', logEntry);
+
+        if (!this.debugMode) {
+            console.log('Debug mode is off, ignoring log');
+            return;
+        }
+
+        const logDiv = document.createElement('div');
+        logDiv.className = `debug-log-entry level-${logEntry.level}`;
+
+        const timestamp = new Date(logEntry.timestamp * 1000);
+        const timeStr = timestamp.toLocaleTimeString('zh-CN', {
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            fractionalSecondDigits: 3
+        });
+
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'log-time';
+        timeSpan.textContent = timeStr;
+
+        const categorySpan = document.createElement('span');
+        categorySpan.className = 'log-category';
+        categorySpan.textContent = `[${logEntry.category}]`;
+
+        const messageSpan = document.createElement('span');
+        messageSpan.className = 'log-message';
+        messageSpan.textContent = logEntry.message;
+
+        logDiv.appendChild(timeSpan);
+        logDiv.appendChild(categorySpan);
+        logDiv.appendChild(messageSpan);
+
+        // Add metadata if present and useful
+        if (logEntry.metadata && Object.keys(logEntry.metadata).length > 0) {
+            // Show compact metadata for specific categories
+            if (logEntry.category === 'llm') {
+                // Show full response
+                if (logEntry.metadata.response) {
+                    const metaDiv = document.createElement('div');
+                    metaDiv.className = 'log-message';
+                    metaDiv.style.marginLeft = '12px';
+                    metaDiv.style.opacity = '0.7';
+                    metaDiv.textContent = `→ Response: ${logEntry.metadata.response}`;
+                    logDiv.appendChild(metaDiv);
+                }
+                // Show emotion map if present
+                if (logEntry.metadata.emotion_map) {
+                    const emotionDiv = document.createElement('div');
+                    emotionDiv.className = 'log-message';
+                    emotionDiv.style.marginLeft = '12px';
+                    emotionDiv.style.opacity = '0.7';
+                    emotionDiv.textContent = `→ Emotions: ${JSON.stringify(logEntry.metadata.emotion_map)}`;
+                    logDiv.appendChild(emotionDiv);
+                }
+                // Show messages preview
+                if (logEntry.metadata.preview) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'log-message';
+                    previewDiv.style.marginLeft = '12px';
+                    previewDiv.style.opacity = '0.6';
+                    previewDiv.style.fontSize = '10px';
+                    previewDiv.textContent = logEntry.metadata.preview.slice(0, 3).join('\n');
+                    logDiv.appendChild(previewDiv);
+                }
+            }
+
+            if (logEntry.category === 'emotion') {
+                // Show emotion map
+                if (logEntry.metadata.emotion_map) {
+                    const emotionDiv = document.createElement('div');
+                    emotionDiv.className = 'log-message';
+                    emotionDiv.style.marginLeft = '12px';
+                    emotionDiv.style.opacity = '0.7';
+                    emotionDiv.textContent = `→ ${JSON.stringify(logEntry.metadata.emotion_map)}`;
+                    logDiv.appendChild(emotionDiv);
+                }
+                // Show context
+                if (logEntry.metadata.context) {
+                    const contextDiv = document.createElement('div');
+                    contextDiv.className = 'log-message';
+                    contextDiv.style.marginLeft = '12px';
+                    contextDiv.style.opacity = '0.6';
+                    contextDiv.textContent = `→ Context: ${logEntry.metadata.context}`;
+                    logDiv.appendChild(contextDiv);
+                }
+            }
+
+            if (logEntry.category === 'behavior') {
+                // Show action details
+                if (logEntry.metadata.details) {
+                    const details = logEntry.metadata.details;
+
+                    // Show reply text
+                    if (details.reply) {
+                        const replyDiv = document.createElement('div');
+                        replyDiv.className = 'log-message';
+                        replyDiv.style.marginLeft = '12px';
+                        replyDiv.style.opacity = '0.7';
+                        replyDiv.textContent = `→ Reply: ${details.reply}`;
+                        logDiv.appendChild(replyDiv);
+                    }
+
+                    // Show action sequence
+                    if (details.actions && Array.isArray(details.actions)) {
+                        const actionsDiv = document.createElement('div');
+                        actionsDiv.className = 'log-message';
+                        actionsDiv.style.marginLeft = '12px';
+                        actionsDiv.style.opacity = '0.6';
+                        actionsDiv.style.fontSize = '10px';
+                        actionsDiv.textContent = `→ Timeline:\n  ${details.actions.join('\n  ')}`;
+                        logDiv.appendChild(actionsDiv);
+                    }
+
+                    // Show total count
+                    if (details.total_actions !== undefined) {
+                        const countDiv = document.createElement('div');
+                        countDiv.className = 'log-message';
+                        countDiv.style.marginLeft = '12px';
+                        countDiv.style.opacity = '0.5';
+                        countDiv.style.fontSize = '10px';
+                        countDiv.textContent = `→ Total actions: ${details.total_actions}`;
+                        logDiv.appendChild(countDiv);
+                    }
+                }
+            }
+
+            if (logEntry.category === 'websocket') {
+                // Show WebSocket message details
+                if (logEntry.metadata) {
+                    const meta = logEntry.metadata;
+
+                    // Show message content if available
+                    if (meta.content) {
+                        const contentDiv = document.createElement('div');
+                        contentDiv.className = 'log-message';
+                        contentDiv.style.marginLeft = '12px';
+                        contentDiv.style.opacity = '0.7';
+                        contentDiv.textContent = `→ ${meta.content}`;
+                        logDiv.appendChild(contentDiv);
+                    }
+
+                    // Show emotion data if available
+                    if (meta.emotion_map) {
+                        const emotionDiv = document.createElement('div');
+                        emotionDiv.className = 'log-message';
+                        emotionDiv.style.marginLeft = '12px';
+                        emotionDiv.style.opacity = '0.6';
+                        emotionDiv.style.fontSize = '10px';
+                        emotionDiv.textContent = `→ Emotions: ${JSON.stringify(meta.emotion_map)}`;
+                        logDiv.appendChild(emotionDiv);
+                    }
+
+                    // Show message ID
+                    if (meta.message_id) {
+                        const idDiv = document.createElement('div');
+                        idDiv.className = 'log-message';
+                        idDiv.style.marginLeft = '12px';
+                        idDiv.style.opacity = '0.4';
+                        idDiv.style.fontSize = '9px';
+                        idDiv.textContent = `→ ID: ${meta.message_id}`;
+                        logDiv.appendChild(idDiv);
+                    }
+                }
+            }
+        }
+
+        this.debugLogContent.appendChild(logDiv);
+
+        // Keep only last 200 logs to prevent memory issues
+        while (this.debugLogContent.children.length > 200) {
+            this.debugLogContent.removeChild(this.debugLogContent.firstChild);
+        }
+
+        // Auto-scroll to bottom (since we're using column-reverse, scroll stays at bottom)
     }
 
 }
