@@ -1,10 +1,13 @@
 import sqlite3
 import json
+import logging
 from typing import List, Optional
 from pathlib import Path
 from contextlib import contextmanager
 from .models import Message, MessageType
 from ..config import database_config
+
+logger = logging.getLogger(__name__)
 
 
 class MessageDatabase:
@@ -68,7 +71,7 @@ class MessageDatabase:
                 conn.commit()
                 return True
         except Exception as e:
-            print(f"Error saving message: {e}")
+            logger.error(f"Error saving message: {e}", exc_info=True)
             return False
 
     def get_messages(
@@ -111,7 +114,7 @@ class MessageDatabase:
                     ))
                 return messages
         except Exception as e:
-            print(f"Error getting messages: {e}")
+            logger.error(f"Error getting messages: {e}", exc_info=True)
             return []
 
     def get_message_by_id(self, message_id: str) -> Optional[Message]:
@@ -135,7 +138,7 @@ class MessageDatabase:
                     )
                 return None
         except Exception as e:
-            print(f"Error getting message by id: {e}")
+            logger.error(f"Error getting message by id: {e}", exc_info=True)
             return None
 
     def clear_conversation(self, conversation_id: str) -> bool:
@@ -146,6 +149,6 @@ class MessageDatabase:
                 conn.commit()
                 return True
         except Exception as e:
-            print(f"Error clearing conversation: {e}")
+            logger.error(f"Error clearing conversation: {e}", exc_info=True)
             return False
 

@@ -200,4 +200,4 @@ class TimelineBuilder:
         elif text_length > self.config.typing_lead_time_threshold_1:
             return self.config.typing_lead_time_1 / 1000.0
         else:
-            return self.config.typing_lead_time_default / 1000.0
+            return self.config.typing_lead_time_1 / 1000.0

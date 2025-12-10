@@ -16,7 +16,7 @@ def test_database_initialization():
     with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
         db_path = tmp.name
 
-    db = MessageDatabase(db_path)
+    MessageDatabase(db_path)
     assert os.path.exists(db_path)
     os.unlink(db_path)
     print("✓ Database initialization successful")

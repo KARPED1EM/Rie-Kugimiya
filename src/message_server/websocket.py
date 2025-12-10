@@ -1,6 +1,8 @@
+import logging
 from typing import Dict, Set
 from fastapi import WebSocket
 
+logger = logging.getLogger(__name__)
 
 
 class WebSocketManager:
@@ -37,7 +39,7 @@ class WebSocketManager:
             try:
                 await websocket.send_json(message)
             except Exception as e:
-                print(f"Error sending message: {e}")
+                logger.error(f"Error sending message to websocket: {e}", exc_info=True)
                 disconnected.add(websocket)
 
         for ws in disconnected:
@@ -47,7 +49,7 @@ class WebSocketManager:
         try:
             await websocket.send_json(message)
         except Exception as e:
-            print(f"Error sending message to websocket: {e}")
+            logger.error(f"Error sending message to single websocket: {e}", exc_info=True)
 
     def get_user_id(self, websocket: WebSocket) -> str:
         return self.user_websockets.get(websocket, "unknown")

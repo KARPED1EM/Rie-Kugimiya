@@ -9,7 +9,6 @@ import asyncio
 import tempfile
 from datetime import datetime
 
-
 from src.message_server.service import MessageService
 from src.message_server.websocket import WebSocketManager
 from src.message_server.models import Message, MessageType, TypingState
@@ -43,7 +42,6 @@ async def test_complete_message_flow():
         db_path = tmp.name
 
     message_service = MessageService(db_path)
-    ws_manager = WebSocketManager()
 
     user_message = Message(
         id="user-msg-1",

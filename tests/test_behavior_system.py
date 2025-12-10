@@ -51,10 +51,6 @@ def test_smart_segmenter():
     assert len(segments) > 0, "Should produce segments"
     assert all(isinstance(s, str) for s in segments), "All segments should be strings"
 
-    combined = "".join(segments)
-    original_cleaned = text.replace("。", "").replace("，", "").replace(" ", "")
-    combined_cleaned = combined.replace(" ", "")
-
     print("✓ Smart segmenter test successful")
 
 

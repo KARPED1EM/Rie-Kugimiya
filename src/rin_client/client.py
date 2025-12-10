@@ -2,7 +2,6 @@ import asyncio
 from datetime import datetime
 from typing import Optional, Dict, Any
 
-
 from ..api.llm_client import LLMClient
 from ..behavior.coordinator import BehaviorCoordinator
 from ..behavior.models import BehaviorConfig, PlaybackAction
