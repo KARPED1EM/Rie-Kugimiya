@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 SYSTEM_BEHAVIOR_PROMPT = """
 你正在扮演微信聊天里的真人对话者。严格遵守以下协议并只返回 JSON：
 1) 只输出 JSON 对象，格式: {"emotion": {"<emotion>": "<low|medium|high|extreme>"}, "reply": "<wechat_style_message>"}
-2) emotion 是当前你扮演角色的内心活动的情绪，请根据对话上下文选择合适的当前情绪并标注强度，留空表示当前情绪完全平静
+2) emotion 是当前你扮演角色的内心活动的情绪，请根据对话上下文选择合适的当前情绪并标注强度，不得留空，需至少一种情绪
 2) 允许的 emotion keys（请只用以下之一，可多选）：neutral, happy, excited, sad, angry, anxious, confused, shy, embarrassed, surprised, playful, affectionate, tired, bored, serious, caring
-3) emotion 字典的取值必须是 low / medium / high / extreme
+3) emotion 字典的取值必须是以下之一（单选）：low / medium / high / extreme
 4) reply 是要发送给对方的微信消息，不要包含内心活动、动作描述、旁白或格式化符号，长度保持简短，像真人打字
 5) 角色设定将在下文补充，请在生成 reply 时完全遵守角色设定的人设，同时尽力模仿真人微信对话风格
 6) 使用聊天历史保持上下文连贯，永远只返回 JSON，切勿输出解释或多余文本
@@ -36,9 +36,7 @@ class LLMClient:
         self.config = config
         self.client = httpx.AsyncClient(timeout=60.0)
 
-    async def chat(
-        self, messages: List[ChatMessage], character_name: str = "Rin"
-    ) -> LLMStructuredResponse:
+    async def chat(self, messages: List[ChatMessage]) -> LLMStructuredResponse:
         try:
             # Log LLM request
             log_entry = unified_logger.llm_request(
@@ -49,13 +47,13 @@ class LLMClient:
             await broadcast_log_if_needed(log_entry)
 
             if self.config.provider == "deepseek":
-                raw = await self._deepseek_chat(messages, character_name)
+                raw = await self._deepseek_chat(messages)
             elif self.config.provider == "openai":
-                raw = await self._openai_chat(messages, character_name)
+                raw = await self._openai_chat(messages)
             elif self.config.provider == "anthropic":
-                raw = await self._anthropic_chat(messages, character_name)
+                raw = await self._anthropic_chat(messages)
             elif self.config.provider == "custom":
-                raw = await self._custom_chat(messages, character_name)
+                raw = await self._custom_chat(messages)
             else:
                 raise ValueError(f"Unsupported provider: {self.config.provider}")
 
@@ -88,14 +86,12 @@ class LLMClient:
     # ------------------------------------------------------------------ #
     # Provider adapters
     # ------------------------------------------------------------------ #
-    async def _openai_chat(
-        self, messages: List[ChatMessage], character_name: str
-    ) -> str:
+    async def _openai_chat(self, messages: List[ChatMessage]) -> str:
         base_url = self.config.base_url or "https://api.openai.com/v1"
 
         payload = {
             "model": self.config.model,
-            "messages": self._build_openai_messages(messages, character_name),
+            "messages": self._build_openai_messages(messages),
             "response_format": {"type": "json_object"},
         }
 
@@ -111,15 +107,13 @@ class LLMClient:
         data = response.json()
         return data["choices"][0]["message"]["content"]
 
-    async def _anthropic_chat(
-        self, messages: List[ChatMessage], character_name: str
-    ) -> str:
+    async def _anthropic_chat(self, messages: List[ChatMessage]) -> str:
         base_url = self.config.base_url or "https://api.anthropic.com/v1"
 
         payload = {
             "model": self.config.model,
             "max_tokens": 1024,
-            "system": self._build_system_block(character_name),
+            "system": self._build_system_block(),
             "messages": [{"role": m.role, "content": m.content} for m in messages],
         }
 
@@ -136,14 +130,12 @@ class LLMClient:
         data = response.json()
         return data["content"][0]["text"]
 
-    async def _deepseek_chat(
-        self, messages: List[ChatMessage], character_name: str
-    ) -> str:
+    async def _deepseek_chat(self, messages: List[ChatMessage]) -> str:
         base_url = self.config.base_url or "https://api.deepseek.com"
 
         payload = {
             "model": self.config.model,
-            "messages": self._build_openai_messages(messages, character_name),
+            "messages": self._build_openai_messages(messages),
             "stream": False,
         }
 
@@ -161,15 +153,13 @@ class LLMClient:
         data = response.json()
         return data["choices"][0]["message"]["content"]
 
-    async def _custom_chat(
-        self, messages: List[ChatMessage], character_name: str
-    ) -> str:
+    async def _custom_chat(self, messages: List[ChatMessage]) -> str:
         if not self.config.base_url:
             raise ValueError("base_url required for custom provider")
 
         payload = {
             "model": self.config.model,
-            "messages": self._build_openai_messages(messages, character_name),
+            "messages": self._build_openai_messages(messages),
         }
 
         response = await self.client.post(
@@ -188,22 +178,26 @@ class LLMClient:
     # Helpers
     # ------------------------------------------------------------------ #
     def _build_openai_messages(
-        self, history: List[ChatMessage], character_name: str
+        self, history: List[ChatMessage]
     ) -> List[Dict[str, str]]:
-        system_prompt = self._build_system_block(character_name)
+        system_prompt = self._build_system_block()
 
         return [
             {"role": "system", "content": system_prompt},
             *[{"role": m.role, "content": m.content} for m in history],
         ]
 
-    def _build_system_block(self, character_name: str) -> str:
+    def _build_system_block(self) -> str:
         """Build complete system prompt from behavior rules and character persona"""
-        char_name = character_name or "Rin"
+        user_nickname = self.config.user_nickname or "鲨鲨"
         persona_section = ""
         if self.config.persona:
             persona_section = f"\n角色设定：【{self.config.persona.strip()}】"
-        return f"{SYSTEM_BEHAVIOR_PROMPT}\n{persona_section}"
+
+        # Add user nickname context
+        user_context = f"\n对方的微信昵称是：{user_nickname}"
+
+        return f"{SYSTEM_BEHAVIOR_PROMPT}{persona_section}{user_context}"
 
     def _parse_structured_response(self, raw_text: str) -> Dict[str, Any]:
         """

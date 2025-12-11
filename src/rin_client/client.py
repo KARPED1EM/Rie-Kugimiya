@@ -39,7 +39,8 @@ class RinClient:
         self.llm_client = LLMClient(llm_config)
         self.coordinator = BehaviorCoordinator(behavior_config or BehaviorConfig())
         self.user_id = "rin"
-        self.character_name = character_config.default_name
+        # Get character name from llm_config if available, otherwise use default
+        self.character_name = getattr(llm_config, 'character_name', character_config.default_name) or character_config.default_name
         self._running = False
         self._tasks = []
 
@@ -72,10 +73,7 @@ class RinClient:
                         ChatMessage(role=role, content=msg.content)
                     )
 
-            llm_response = await self.llm_client.chat(
-                conversation_history,
-                character_name=self.character_name
-            )
+            llm_response = await self.llm_client.chat(conversation_history)
 
             # Log emotion data
             if llm_response.emotion_map:

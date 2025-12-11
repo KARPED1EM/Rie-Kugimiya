@@ -106,6 +106,7 @@ class ChatApp {
         this.modelInput = document.getElementById('model');
         this.personaInput = document.getElementById('personaInput');
         this.characterNameInput = document.getElementById('characterName');
+        this.userNicknameInput = document.getElementById('userNickname');
         this.emotionThemeToggle = document.getElementById('emotionThemeToggle');
         this.debugModeToggle = document.getElementById('debugModeToggle');
         this.saveConfigBtn = document.getElementById('saveConfig');
@@ -386,17 +387,19 @@ class ChatApp {
         this.loadUserAvatar();
     }
 
-    loadSavedConfig() {
-        const saved = localStorage.getItem('chatConfig');
-        if (saved) {
-            try {
-                const config = JSON.parse(saved);
+    async loadSavedConfig() {
+        try {
+            // Load config from backend database (single source of truth)
+            const response = await fetch('/api/config');
+            if (response.ok) {
+                const config = await response.json();
                 this.applyConfig(config);
-            } catch (e) {
-                console.error('Failed to load config:', e);
+            } else {
+                console.error('Failed to load config from backend');
                 this.applyDefaults();
             }
-        } else {
+        } catch (e) {
+            console.error('Failed to load config:', e);
             this.applyDefaults();
         }
     }
@@ -422,6 +425,7 @@ class ChatApp {
 
         this.personaInput.value = this.defaults.character.persona;
         this.characterNameInput.value = this.defaults.character.name;
+        this.userNicknameInput.value = '鲨鲨';
 
         if (this.emotionThemeToggle) {
             this.emotionThemeToggle.checked = this.defaults.ui.enable_emotion_theme;
@@ -437,6 +441,7 @@ class ChatApp {
         this.modelInput.value = config.model || (this.defaults?.llm.model_deepseek || 'deepseek-chat');
         this.personaInput.value = config.persona || (this.defaults?.character.persona || '');
         this.characterNameInput.value = config.character_name || (this.defaults?.character.name || 'Rin');
+        this.userNicknameInput.value = config.user_nickname || '鲨鲨';
 
         if (this.emotionThemeToggle) {
             this.emotionThemeToggle.checked = config.enable_emotion_theme !== false;
@@ -453,28 +458,49 @@ class ChatApp {
         this.providerSelect.dispatchEvent(new Event('change'));
     }
 
-    saveConfig() {
+    async saveConfig() {
         const apiKey = this.apiKeyInput.value.trim();
         if (!apiKey) {
             alert('Please enter API key');
             return;
         }
 
-        this.config = {
+        const config = {
             provider: this.providerSelect.value,
             api_key: apiKey,
             base_url: this.baseUrlInput.value.trim() || null,
             model: this.modelInput.value.trim(),
             persona: this.personaInput.value.trim(),
             character_name: this.characterNameInput.value.trim() || 'Rin',
+            user_nickname: this.userNicknameInput.value.trim() || '鲨鲨',
             enable_emotion_theme: this.emotionThemeToggle ? this.emotionThemeToggle.checked : false,
             debug_mode: this.debugModeToggle ? this.debugModeToggle.checked : false
         };
 
-        localStorage.setItem('chatConfig', JSON.stringify(this.config));
-        this.toggleView();
-        this.enableChat();
-        this.connectWebSocket();
+        try {
+            // Save to backend database (single source of truth)
+            const response = await fetch('/api/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(config)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save config');
+            }
+
+            // Keep in memory for this session
+            this.config = config;
+
+            this.toggleView();
+            this.enableChat();
+            this.connectWebSocket();
+        } catch (error) {
+            console.error('Error saving config:', error);
+            alert('Failed to save configuration. Please try again.');
+        }
     }
 
     toggleView() {
@@ -529,7 +555,16 @@ class ChatApp {
                     }
                 }
 
-                const role = msg.sender_id === 'user' ? 'user' : 'assistant';
+                // Determine role based on sender_id
+                let role;
+                if (msg.sender_id === 'user') {
+                    role = 'user';
+                } else if (msg.sender_id === 'system') {
+                    role = 'system';
+                } else {
+                    role = 'assistant';
+                }
+
                 const messageDiv = this.addMessage(role, msg.content, {
                     messageId: msg.id,
                     emotion: msg.metadata?.emotion,
@@ -671,20 +706,18 @@ class ChatApp {
             return;
         }
 
-        this.localMessages.set(data.id, data);
-        this.saveLocalMessages();
-
-        if (data.timestamp > this.lastSyncTimestamp) {
-            this.lastSyncTimestamp = data.timestamp;
-        }
-
         // 处理撤回事件消息
         if (data.type === 'recall_event') {
+            this.localMessages.set(data.id, data);
+            this.saveLocalMessages();
+            if (data.timestamp > this.lastSyncTimestamp) {
+                this.lastSyncTimestamp = data.timestamp;
+            }
             this.handleRecallEvent(data);
             return;
         }
 
-        // Check if we need to insert a time hint before the new message
+        // Check if we need to insert a time hint BEFORE saving the message
         const lastMessageTimestamp = this.getLastVisibleMessageTimestamp();
         if (lastMessageTimestamp === null) {
             // First message - always show time hint
@@ -705,8 +738,25 @@ class ChatApp {
             }
         }
 
+        // Now save the message after checking time hints
+        this.localMessages.set(data.id, data);
+        this.saveLocalMessages();
+
+        if (data.timestamp > this.lastSyncTimestamp) {
+            this.lastSyncTimestamp = data.timestamp;
+        }
+
         // 处理普通文本消息
-        const role = data.sender_id === 'user' ? 'user' : 'assistant';
+        // Determine role based on sender_id
+        let role;
+        if (data.sender_id === 'user') {
+            role = 'user';
+        } else if (data.sender_id === 'system') {
+            role = 'system';
+        } else {
+            role = 'assistant';
+        }
+
         const messageDiv = this.addMessage(role, data.content, {
             messageId: data.id,
             emotion: data.metadata?.emotion,

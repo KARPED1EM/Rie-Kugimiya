@@ -73,6 +73,14 @@ class MessageDatabase:
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 )
             """)
+            # Configuration table for storing app configuration
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS app_config (
+                    key TEXT PRIMARY KEY,
+                    value TEXT NOT NULL,
+                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
             conn.commit()
 
     @contextmanager
@@ -228,5 +236,56 @@ class MessageDatabase:
                 return True
         except Exception as e:
             logger.error(f"Error deleting user avatar: {e}", exc_info=True)
+            return False
+
+    def get_config(self) -> Optional[dict]:
+        """Get application configuration from database"""
+        try:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT key, value FROM app_config")
+                rows = cursor.fetchall()
+
+                if not rows:
+                    return None
+
+                config = {}
+                for row in rows:
+                    key = row['key']
+                    value = row['value']
+                    # Try to parse JSON values
+                    try:
+                        config[key] = json.loads(value)
+                    except (json.JSONDecodeError, TypeError):
+                        config[key] = value
+
+                return config
+        except Exception as e:
+            logger.error(f"Error getting config: {e}", exc_info=True)
+            return None
+
+    def save_config(self, config: dict) -> bool:
+        """Save application configuration to database"""
+        try:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                for key, value in config.items():
+                    # Convert value to JSON string if it's not already a string
+                    if isinstance(value, (dict, list)):
+                        value_str = json.dumps(value)
+                    else:
+                        value_str = str(value) if value is not None else ""
+
+                    cursor.execute("""
+                        INSERT INTO app_config (key, value, updated_at)
+                        VALUES (?, ?, CURRENT_TIMESTAMP)
+                        ON CONFLICT(key) DO UPDATE SET
+                            value = excluded.value,
+                            updated_at = CURRENT_TIMESTAMP
+                    """, (key, value_str))
+                conn.commit()
+                return True
+        except Exception as e:
+            logger.error(f"Error saving config: {e}", exc_info=True)
             return False
 

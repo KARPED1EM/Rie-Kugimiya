@@ -1,6 +1,7 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from typing import Optional
 from datetime import datetime
 import asyncio
 import logging
@@ -69,6 +70,59 @@ async def get_config_defaults():
     }
 
 
+@router.get("/config")
+async def get_config():
+    """Get saved configuration from database"""
+    try:
+        config = message_service.db.get_config()
+        if config:
+            return JSONResponse(content=config)
+        else:
+            # Return defaults if no config saved
+            return JSONResponse(content={
+                "provider": llm_defaults.provider,
+                "model": llm_defaults.model_deepseek,
+                "persona": character_config.default_persona,
+                "character_name": character_config.default_name,
+                "user_nickname": "鲨鲨",
+                "enable_emotion_theme": ui_defaults.enable_emotion_theme,
+                "debug_mode": False
+            })
+    except Exception as e:
+        logger.error(f"Error getting config: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to get config")
+
+
+class ConfigSaveRequest(BaseModel):
+    provider: str
+    api_key: str
+    base_url: Optional[str] = None
+    model: str
+    persona: str = ""
+    character_name: str = "Rin"
+    user_nickname: str = "鲨鲨"
+    enable_emotion_theme: bool = True
+    debug_mode: bool = False
+
+
+@router.post("/config")
+async def save_config(request: ConfigSaveRequest):
+    """Save configuration to database"""
+    try:
+        config_dict = request.dict()
+        success = message_service.db.save_config(config_dict)
+
+        if success:
+            return JSONResponse(content={"success": True, "message": "Config saved successfully"})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to save config")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error saving config: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to save config")
+
+
 @router.post("/shutdown")
 async def shutdown_server():
     """Request graceful shutdown of the backend process"""
@@ -100,6 +154,13 @@ async def websocket_endpoint(
     await ws_manager.connect(websocket, conversation_id, user_id)
 
     try:
+        # 确保打招呼消息存在（使用默认名称，后续会通过init_rin更新）
+        await message_service.ensure_greeting_messages(
+            conversation_id,
+            assistant_name=character_config.default_name,
+            user_name="鲨鲨"
+        )
+
         history = await message_service.get_messages(conversation_id)
         history_event = message_service.create_history_event(history)
         await ws_manager.send_to_websocket(websocket, history_event.model_dump())
@@ -250,10 +311,38 @@ async def handle_clear(websocket: WebSocket, conversation_id: str, user_id: str)
     success = await message_service.clear_conversation(conversation_id)
 
     if success:
+        # First, send clear event to all clients
         event = message_service.create_clear_event(conversation_id)
         await ws_manager.send_to_conversation(
             conversation_id, event.model_dump(), exclude_ws=None
         )
+
+        # Get character name and user nickname from rin_clients if available
+        assistant_name = character_config.default_name
+        user_nickname = "鲨鲨"
+        if conversation_id in rin_clients:
+            rin_client = rin_clients[conversation_id]
+            if hasattr(rin_client, 'character_name'):
+                assistant_name = rin_client.character_name
+            # Get user nickname from llm_client config
+            if hasattr(rin_client, 'llm_client') and hasattr(rin_client.llm_client, 'config'):
+                user_nickname = rin_client.llm_client.config.user_nickname or "鲨鲨"
+
+        # Immediately create greeting messages after clearing
+        created = await message_service.ensure_greeting_messages(
+            conversation_id,
+            assistant_name=assistant_name,
+            user_name=user_nickname
+        )
+
+        # If greeting messages were created, broadcast them to all clients
+        if created:
+            greeting_messages = await message_service.get_messages(conversation_id)
+            for msg in greeting_messages:
+                msg_event = message_service.create_message_event(msg)
+                await ws_manager.send_to_conversation(
+                    conversation_id, msg_event.model_dump(), exclude_ws=None
+                )
 
 
 async def handle_init_rin(conversation_id: str, data: dict):

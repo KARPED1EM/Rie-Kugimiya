@@ -1,5 +1,7 @@
 from typing import Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
+import random
+import uuid
 from .database import MessageDatabase
 from .models import Message, MessageType, TypingState, WSMessage
 
@@ -137,3 +139,102 @@ class MessageService:
             },
             timestamp=datetime.now().timestamp()
         )
+
+    async def ensure_greeting_messages(
+        self,
+        conversation_id: str,
+        assistant_name: str = "Rin",
+        user_name: str = "鲨鲨"
+    ) -> bool:
+        """
+        确保对话开头有打招呼消息。
+        只在对话为空或没有打招呼标记时创建。
+
+        Args:
+            conversation_id: 会话ID
+            assistant_name: 助手名称
+            user_name: 用户名称
+
+        Returns:
+            是否创建了新的打招呼消息
+        """
+        # 获取所有消息
+        messages = await self.get_messages(conversation_id)
+
+        # 如果已经有消息，不再创建打招呼消息
+        # 只在对话完全为空时创建打招呼消息
+        if messages:
+            return False  # 已经有消息，不需要创建打招呼
+
+        # 生成昨天的随机时间戳（昨天的00:00到23:59之间）
+        now = datetime.now()
+        yesterday = now - timedelta(days=1)
+        # 设置为昨天的开始时间
+        yesterday_start = yesterday.replace(hour=0, minute=0, second=0, microsecond=0)
+        # 随机选择昨天的某个时间点（8:00到22:00之间）
+        random_hour = random.randint(8, 22)
+        random_minute = random.randint(0, 59)
+        random_second = random.randint(0, 59)
+        base_time = yesterday_start.replace(
+            hour=random_hour,
+            minute=random_minute,
+            second=random_second
+        )
+        base_timestamp = base_time.timestamp()
+
+        # 创建4条打招呼消息（时间提示由前端自动生成）
+        greeting_messages = []
+
+        # 1. 添加好友提示（前端会自动在第一条消息前显示时间）
+        add_friend_msg = Message(
+            id=f"greeting-add-{uuid.uuid4().hex[:8]}",
+            conversation_id=conversation_id,
+            sender_id="system",
+            type=MessageType.TEXT,
+            content=f"你已添加了{assistant_name}，现在可以开始聊天了。",
+            timestamp=base_timestamp,
+            metadata={"is_greeting": True, "greeting_type": "add_friend"}
+        )
+        greeting_messages.append(add_friend_msg)
+
+        # 2. 用户打招呼 (延后1秒)
+        user_greeting = Message(
+            id=f"greeting-user-{uuid.uuid4().hex[:8]}",
+            conversation_id=conversation_id,
+            sender_id="user",
+            type=MessageType.TEXT,
+            content=f"我是{user_name}",
+            timestamp=base_timestamp + 1,
+            metadata={"is_greeting": True, "greeting_type": "user_intro"}
+        )
+        greeting_messages.append(user_greeting)
+
+        # 3. 助手打招呼 (延后2秒)
+        assistant_greeting = Message(
+            id=f"greeting-assistant-{uuid.uuid4().hex[:8]}",
+            conversation_id=conversation_id,
+            sender_id="rin",
+            type=MessageType.TEXT,
+            content=f"我是{assistant_name}",
+            timestamp=base_timestamp + 2,
+            metadata={"is_greeting": True, "greeting_type": "assistant_intro"}
+        )
+        greeting_messages.append(assistant_greeting)
+
+        # 4. 结束提示 (延后3秒)
+        end_msg = Message(
+            id=f"greeting-end-{uuid.uuid4().hex[:8]}",
+            conversation_id=conversation_id,
+            sender_id="system",
+            type=MessageType.TEXT,
+            content="以上是打招呼的消息",
+            timestamp=base_timestamp + 3,
+            metadata={"is_greeting": True, "greeting_type": "end"}
+        )
+        greeting_messages.append(end_msg)
+
+        # 保存所有打招呼消息到数据库
+        for msg in greeting_messages:
+            self.db.save_message(msg)
+
+        return True

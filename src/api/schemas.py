@@ -9,6 +9,8 @@ class LLMConfig(BaseModel):
     base_url: Optional[str] = None
     model: str = "deepseek-chat"
     persona: str = ""  # Will be populated from config defaults
+    character_name: str = "Rin"  # Character name for display only, not used in prompts
+    user_nickname: str = "鲨鲨"  # User's WeChat nickname
 
 
 class ChatMessage(BaseModel):
