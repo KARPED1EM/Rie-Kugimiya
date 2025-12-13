@@ -26,10 +26,26 @@ class BehaviorCoordinator:
         self.typo_injector = TypoInjector()
         self.timeline_builder = TimelineBuilder(timeline_config)
         self.sticker_packs = []
+        self.sticker_send_probability = 0.4
+        self.sticker_confidence_threshold_positive = 0.6
+        self.sticker_confidence_threshold_neutral = 0.7
+        self.sticker_confidence_threshold_negative = 0.8
         self.pending_log_entries = []
 
     def set_sticker_packs(self, packs: List[str]):
         self.sticker_packs = packs or []
+
+    def set_sticker_config(
+        self,
+        send_probability: float = 0.4,
+        threshold_positive: float = 0.6,
+        threshold_neutral: float = 0.7,
+        threshold_negative: float = 0.8,
+    ):
+        self.sticker_send_probability = send_probability
+        self.sticker_confidence_threshold_positive = threshold_positive
+        self.sticker_confidence_threshold_neutral = threshold_neutral
+        self.sticker_confidence_threshold_negative = threshold_negative
 
     def get_and_clear_log_entries(self) -> List:
         entries = self.pending_log_entries
@@ -72,7 +88,13 @@ class BehaviorCoordinator:
             )
 
         should_send, sticker_path, log_entry = StickerSelector.select_sticker(
-            cleaned_input, self.sticker_packs, normalized_emotion_map
+            cleaned_input,
+            self.sticker_packs,
+            normalized_emotion_map,
+            self.sticker_send_probability,
+            self.sticker_confidence_threshold_positive,
+            self.sticker_confidence_threshold_neutral,
+            self.sticker_confidence_threshold_negative,
         )
         
         if log_entry:

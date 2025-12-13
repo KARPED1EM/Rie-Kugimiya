@@ -57,10 +57,12 @@ class CharacterRepository(BaseRepository[Character]):
                         enable_segmentation, enable_typo, enable_recall, enable_emotion_detection,
                         max_segment_length, min_pause_duration, max_pause_duration,
                         base_typo_rate, typo_recall_rate, recall_delay, retype_delay,
-                        sticker_packs
+                        sticker_packs, sticker_send_probability,
+                        sticker_confidence_threshold_positive, sticker_confidence_threshold_neutral,
+                        sticker_confidence_threshold_negative
                     ) VALUES (
                         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                     )
                 """, (
                     character.id, character.name, character.avatar, character.persona, character.is_builtin,
@@ -81,7 +83,9 @@ class CharacterRepository(BaseRepository[Character]):
                     character.enable_segmentation, character.enable_typo, character.enable_recall, character.enable_emotion_detection,
                     character.max_segment_length, character.min_pause_duration, character.max_pause_duration,
                     character.base_typo_rate, character.typo_recall_rate, character.recall_delay, character.retype_delay,
-                    json.dumps(character.sticker_packs)
+                    json.dumps(character.sticker_packs), character.sticker_send_probability,
+                    character.sticker_confidence_threshold_positive, character.sticker_confidence_threshold_neutral,
+                    character.sticker_confidence_threshold_negative
                 ))
                 return True
         except Exception as e:
@@ -112,7 +116,9 @@ class CharacterRepository(BaseRepository[Character]):
                         enable_segmentation = ?, enable_typo = ?, enable_recall = ?, enable_emotion_detection = ?,
                         max_segment_length = ?, min_pause_duration = ?, max_pause_duration = ?,
                         base_typo_rate = ?, typo_recall_rate = ?, recall_delay = ?, retype_delay = ?,
-                        sticker_packs = ?,
+                        sticker_packs = ?, sticker_send_probability = ?,
+                        sticker_confidence_threshold_positive = ?, sticker_confidence_threshold_neutral = ?,
+                        sticker_confidence_threshold_negative = ?,
                         updated_at = CURRENT_TIMESTAMP
                     WHERE id = ?
                 """, (
@@ -134,7 +140,9 @@ class CharacterRepository(BaseRepository[Character]):
                     character.enable_segmentation, character.enable_typo, character.enable_recall, character.enable_emotion_detection,
                     character.max_segment_length, character.min_pause_duration, character.max_pause_duration,
                     character.base_typo_rate, character.typo_recall_rate, character.recall_delay, character.retype_delay,
-                    json.dumps(character.sticker_packs),
+                    json.dumps(character.sticker_packs), character.sticker_send_probability,
+                    character.sticker_confidence_threshold_positive, character.sticker_confidence_threshold_neutral,
+                    character.sticker_confidence_threshold_negative,
                     character.id
                 ))
                 return cursor.rowcount > 0
@@ -203,6 +211,10 @@ class CharacterRepository(BaseRepository[Character]):
             recall_delay=row['recall_delay'],
             retype_delay=row['retype_delay'],
             sticker_packs=sticker_packs,
+            sticker_send_probability=row.get('sticker_send_probability', 0.4),
+            sticker_confidence_threshold_positive=row.get('sticker_confidence_threshold_positive', 0.6),
+            sticker_confidence_threshold_neutral=row.get('sticker_confidence_threshold_neutral', 0.7),
+            sticker_confidence_threshold_negative=row.get('sticker_confidence_threshold_negative', 0.8),
             created_at=datetime.fromisoformat(row['created_at']) if row['created_at'] else None,
             updated_at=datetime.fromisoformat(row['updated_at']) if row['updated_at'] else None
         )

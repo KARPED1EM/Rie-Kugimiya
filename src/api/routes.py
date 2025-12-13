@@ -193,6 +193,10 @@ async def get_character_behavior_schema():
             "typo_recall_rate",
             "recall_delay",
             "retype_delay",
+            "sticker_send_probability",
+            "sticker_confidence_threshold_positive",
+            "sticker_confidence_threshold_neutral",
+            "sticker_confidence_threshold_negative",
         }:
             group = "behavior"
         else:

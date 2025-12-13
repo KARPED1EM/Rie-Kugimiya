@@ -85,6 +85,12 @@ class RinClient:
             config=behavior_config, timeline_config=timeline_config
         )
         self.coordinator.set_sticker_packs(character.sticker_packs or [])
+        self.coordinator.set_sticker_config(
+            send_probability=character.sticker_send_probability,
+            threshold_positive=character.sticker_confidence_threshold_positive,
+            threshold_neutral=character.sticker_confidence_threshold_neutral,
+            threshold_negative=character.sticker_confidence_threshold_negative,
+        )
         self._running = False
         self._tasks = []
         self.session_id = None

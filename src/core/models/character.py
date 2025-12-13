@@ -60,6 +60,10 @@ class Character(BaseModel):
     retype_delay: float = 2.5
 
     sticker_packs: List[str] = Field(default_factory=list)
+    sticker_send_probability: float = 0.4
+    sticker_confidence_threshold_positive: float = 0.6
+    sticker_confidence_threshold_neutral: float = 0.7
+    sticker_confidence_threshold_negative: float = 0.8
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

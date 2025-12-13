@@ -287,7 +287,13 @@ class StickerSelector:
 
     @staticmethod
     def select_sticker(
-        text: str, sticker_packs: List[str], emotion_map: Dict[str, str]
+        text: str,
+        sticker_packs: List[str],
+        emotion_map: Dict[str, str],
+        send_probability: float = 0.4,
+        confidence_threshold_positive: float = 0.6,
+        confidence_threshold_neutral: float = 0.7,
+        confidence_threshold_negative: float = 0.8,
     ) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
         if not sticker_packs:
             log_entry = unified_logger.info(
@@ -327,6 +333,19 @@ class StickerSelector:
             )
             return False, "", log_entry
 
+        probability_roll = random.random()
+        if probability_roll >= send_probability:
+            log_entry = unified_logger.info(
+                "Sticker blocked by probability check",
+                category=LogCategory.BEHAVIOR,
+                metadata={
+                    "send_probability": send_probability,
+                    "roll": probability_roll,
+                    "reason": "probability_filter",
+                },
+            )
+            return False, "", log_entry
+
         try:
             intent, confidence = StickerSelector.predict_intent(text)
             predictor = IntentPredictor.get_instance()
@@ -339,7 +358,13 @@ class StickerSelector:
             )
             return False, "", log_entry
 
-        threshold = StickerSelector.get_confidence_threshold(emotion_map)
+        emotion_category = StickerSelector.get_emotion_category(emotion_map)
+        if emotion_category == "positive":
+            threshold = confidence_threshold_positive
+        elif emotion_category == "negative":
+            threshold = confidence_threshold_negative
+        else:
+            threshold = confidence_threshold_neutral
 
         log_entry = unified_logger.info(
             f"Intent predicted: {intent}",
@@ -348,7 +373,7 @@ class StickerSelector:
                 "intent": intent,
                 "confidence": confidence,
                 "threshold": threshold,
-                "emotion_category": StickerSelector.get_emotion_category(emotion_map),
+                "emotion_category": emotion_category,
                 "text_preview": text[:50],
                 "model_type": "BERT" if use_bert else "fallback_keyword",
             },
