@@ -115,6 +115,19 @@ class TimelineBuilder:
                 recall_action.timestamp = current_time
                 timeline.append(recall_action)
 
+            elif action.type == "image":
+                if typing_active:
+                    timeline.append(
+                        PlaybackAction(
+                            type="typing_end", timestamp=current_time, metadata={}
+                        )
+                    )
+                    typing_active = False
+
+                image_action = action.model_copy()
+                image_action.timestamp = current_time
+                timeline.append(image_action)
+
         if typing_active:
             timeline.append(
                 PlaybackAction(type="typing_end", timestamp=current_time, metadata={})
