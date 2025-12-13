@@ -136,10 +136,10 @@ class IntentPredictor:
 
 class StickerSelector:
     CONFIDENCE_THRESHOLDS = {
-        "positive": 0.6,
-        "neutral": 0.7,
-        "negative": 0.8,
-        "default": 0.7,
+        "positive": 0.7,
+        "neutral": 0.8,
+        "negative": 0.9,
+        "default": 0.8,
     }
 
     POSITIVE_EMOTIONS = ["happy", "excited", "playful", "affectionate", "surprised"]
