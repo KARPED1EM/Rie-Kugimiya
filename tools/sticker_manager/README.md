@@ -44,9 +44,16 @@ uv pip install -e .
 
 ### 启动工具
 
-在项目根目录运行：
+从项目根目录运行：
 
 ```bash
+python tools/sticker_manager/sticker_manager.py
+```
+
+或进入工具目录运行：
+
+```bash
+cd tools/sticker_manager
 python sticker_manager.py
 ```
 
@@ -175,7 +182,7 @@ pip install pyqt6
 ```
 
 ### 找不到表情包目录
-工具会自动在当前目录下查找 `data/stickers`，确保在项目根目录运行。
+工具会自动定位到项目根目录下的 `data/stickers`，无论从哪里运行都能正确找到。
 
 ### 拖放不工作
 某些Linux发行版可能需要额外的系统依赖，请查阅PyQt6文档。

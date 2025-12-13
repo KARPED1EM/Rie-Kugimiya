@@ -42,7 +42,8 @@ def test_sticker_directory():
     print("测试表情包目录")
     print("=" * 60)
     
-    sticker_base = Path(__file__).parent / "data" / "stickers"
+    # 使用与主程序相同的路径逻辑
+    sticker_base = Path(__file__).parent.parent.parent / "data" / "stickers"
     
     if not sticker_base.exists():
         print(f"\n⚠ 表情包目录不存在: {sticker_base}")
@@ -85,7 +86,7 @@ def test_mapping_coverage():
     print("测试映射覆盖率")
     print("=" * 60)
     
-    sticker_base = Path(__file__).parent / "data" / "stickers"
+    sticker_base = Path(__file__).parent.parent.parent / "data" / "stickers"
     
     if not sticker_base.exists():
         print("\n⚠ 表情包目录不存在，跳过覆盖率测试")
