@@ -17,6 +17,7 @@ dependencies = [
     "pydantic>=2.12.4",
     "pydantic-settings>=2.12.0",
     "pypinyin>=0.55.0",
+    "pyqt6>=6.6.0",
     "pytest>=9.0.2",
     "pywebview>=6.1",
     "scikit-learn>=1.7.2",
