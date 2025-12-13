@@ -406,8 +406,11 @@ async def delete_user_avatar(user_id: str = DEFAULT_USER_ID):
 @router.get("/stickers/{path:path}")
 async def get_sticker(path: str):
     sticker_path = (STICKER_BASE_DIR / path).resolve()
+    base_resolved = STICKER_BASE_DIR.resolve()
     
-    if not str(sticker_path).startswith(str(STICKER_BASE_DIR.resolve())):
+    try:
+        sticker_path.relative_to(base_resolved)
+    except ValueError:
         raise HTTPException(status_code=403, detail="Access denied")
     
     if not sticker_path.exists() or not sticker_path.is_file():
