@@ -18,7 +18,11 @@ class IntentPredictor:
         return cls._instance
 
     def __init__(self):
-        self.model_path = Path(__file__).parent.parent.parent.parent / "models" / "wechat_intent_model"
+        self.model_path = (
+            Path(__file__).parent.parent.parent.parent
+            / "models"
+            / "wechat_intent_model"
+        )
         self._load_model()
 
     def _load_model(self):
@@ -54,7 +58,9 @@ class IntentPredictor:
                 self._id2intent = {int(k): v for k, v in mapping["id2intent"].items()}
 
             self._tokenizer = AutoTokenizer.from_pretrained(str(self.model_path))
-            self._model = AutoModelForSequenceClassification.from_pretrained(str(self.model_path))
+            self._model = AutoModelForSequenceClassification.from_pretrained(
+                str(self.model_path)
+            )
             self._model.eval()
 
             unified_logger.info(
@@ -76,26 +82,32 @@ class IntentPredictor:
             self._model_loaded = True
 
     def predict(self, text: str) -> Tuple[str, float]:
-        use_bert = self._model is not None and self._tokenizer is not None and self._id2intent is not None
-        
+        use_bert = (
+            self._model is not None
+            and self._tokenizer is not None
+            and self._id2intent is not None
+        )
+
         if use_bert:
             try:
                 import torch
-                
-                inputs = self._tokenizer(text, return_tensors="pt", truncation=True, max_length=128)
-                
+
+                inputs = self._tokenizer(
+                    text, return_tensors="pt", truncation=True, max_length=128
+                )
+
                 with torch.no_grad():
                     outputs = self._model(**inputs)
                     logits = outputs.logits
                     probs = torch.nn.functional.softmax(logits, dim=-1)
                     confidence, predicted_id = torch.max(probs, dim=-1)
-                    
+
                 predicted_id = predicted_id.item()
                 confidence = confidence.item()
                 intent = self._id2intent.get(predicted_id, "未知意图")
-                
+
                 return intent, confidence
-                
+
             except Exception as e:
                 unified_logger.error(
                     f"BERT prediction failed: {e}",
@@ -216,6 +228,7 @@ class StickerSelector:
             return False
 
         high_negative_rules = [
+            ("serious", ["low", "medium", "high", "extreme"]),
             ("sad", ["high", "extreme"]),
             ("angry", ["high", "extreme"]),
             ("anxious", ["extreme"]),
@@ -327,7 +340,7 @@ class StickerSelector:
             return False, "", log_entry
 
         threshold = StickerSelector.get_confidence_threshold(emotion_map)
-        
+
         log_entry = unified_logger.info(
             f"Intent predicted: {intent}",
             category=LogCategory.BEHAVIOR,
