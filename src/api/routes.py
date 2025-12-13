@@ -194,7 +194,7 @@ async def get_character_behavior_schema():
             "retype_delay",
         }:
             group = "behavior"
-        elif key.startswith("sticker_") or key == "sticker_packs":
+        elif key.startswith("sticker_"):
             group = "sticker"
         else:
             group = "timeline"
@@ -233,7 +233,11 @@ async def create_character(data: CharacterCreate):
 
     character = await character_service.create_character(
         name=data.name,
-        avatar=_validate_avatar_value(data.avatar, allow_local=True) if data.avatar is not None else None,
+        avatar=(
+            _validate_avatar_value(data.avatar, allow_local=True)
+            if data.avatar is not None
+            else None
+        ),
         persona=(data.persona or ""),
         sticker_packs=data.sticker_packs,
         behavior_params=data.behavior_params,
@@ -352,7 +356,9 @@ async def update_config(data: ConfigUpdate):
     await initialize_services()
     config_updates = data.config.copy()
     if "llm_base_url" in config_updates:
-        config_updates["llm_base_url"] = sanitize_base_url(config_updates.get("llm_base_url"))
+        config_updates["llm_base_url"] = sanitize_base_url(
+            config_updates.get("llm_base_url")
+        )
     success = await config_service.set_config(config_updates)
     if not success:
         raise HTTPException(status_code=500, detail="Failed to update config")
@@ -408,13 +414,13 @@ async def delete_user_avatar(user_id: str = DEFAULT_USER_ID):
 async def get_sticker(path: str):
     sticker_path = (STICKER_BASE_DIR / path).resolve()
     base_resolved = STICKER_BASE_DIR.resolve()
-    
+
     try:
         sticker_path.relative_to(base_resolved)
     except ValueError:
         raise HTTPException(status_code=403, detail="Access denied")
-    
+
     if not sticker_path.exists() or not sticker_path.is_file():
         raise HTTPException(status_code=404, detail="Sticker not found")
-    
+
     return FileResponse(sticker_path)
