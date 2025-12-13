@@ -1784,7 +1784,7 @@ textarea {
     width: 48px;
     height: 48px;
     border: none;
-    background: #ffffff;
+    background-color: #ffffff;
     background-image: url("/static/images/github.svg");
     background-repeat: no-repeat;
     background-position: center;
