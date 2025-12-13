@@ -211,10 +211,10 @@ class CharacterRepository(BaseRepository[Character]):
             recall_delay=row['recall_delay'],
             retype_delay=row['retype_delay'],
             sticker_packs=sticker_packs,
-            sticker_send_probability=row['sticker_send_probability'] if 'sticker_send_probability' in row.keys() else 0.4,
-            sticker_confidence_threshold_positive=row['sticker_confidence_threshold_positive'] if 'sticker_confidence_threshold_positive' in row.keys() else 0.6,
-            sticker_confidence_threshold_neutral=row['sticker_confidence_threshold_neutral'] if 'sticker_confidence_threshold_neutral' in row.keys() else 0.7,
-            sticker_confidence_threshold_negative=row['sticker_confidence_threshold_negative'] if 'sticker_confidence_threshold_negative' in row.keys() else 0.8,
+            sticker_send_probability=row['sticker_send_probability'],
+            sticker_confidence_threshold_positive=row['sticker_confidence_threshold_positive'],
+            sticker_confidence_threshold_neutral=row['sticker_confidence_threshold_neutral'],
+            sticker_confidence_threshold_negative=row['sticker_confidence_threshold_negative'],
             created_at=datetime.fromisoformat(row['created_at']) if row['created_at'] else None,
             updated_at=datetime.fromisoformat(row['updated_at']) if row['updated_at'] else None
         )
