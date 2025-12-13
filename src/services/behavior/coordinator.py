@@ -26,9 +26,15 @@ class BehaviorCoordinator:
         self.typo_injector = TypoInjector()
         self.timeline_builder = TimelineBuilder(timeline_config)
         self.sticker_packs = []
+        self.pending_log_entries = []
 
     def set_sticker_packs(self, packs: List[str]):
         self.sticker_packs = packs or []
+
+    def get_and_clear_log_entries(self) -> List:
+        entries = self.pending_log_entries
+        self.pending_log_entries = []
+        return entries
 
     def process_message(
         self, text: str, emotion_map: dict | None = None
@@ -65,9 +71,12 @@ class BehaviorCoordinator:
                 )
             )
 
-        should_send, sticker_path = StickerSelector.select_sticker(
+        should_send, sticker_path, log_entry = StickerSelector.select_sticker(
             cleaned_input, self.sticker_packs, normalized_emotion_map
         )
+        
+        if log_entry:
+            self.pending_log_entries.append(log_entry)
 
         if should_send and sticker_path:
             actions = self._insert_sticker_action(actions, sticker_path)

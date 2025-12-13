@@ -1,6 +1,6 @@
 import random
 from pathlib import Path
-from typing import Tuple, Dict, List
+from typing import Tuple, Dict, List, Optional, Any
 from src.infrastructure.utils.logger import unified_logger, LogCategory
 
 
@@ -169,9 +169,14 @@ class StickerSelector:
     @staticmethod
     def select_sticker(
         text: str, sticker_packs: List[str], emotion_map: Dict[str, str]
-    ) -> Tuple[bool, str]:
+    ) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
         if not sticker_packs:
-            return False, ""
+            log_entry = unified_logger.info(
+                "No sticker packs configured",
+                category=LogCategory.BEHAVIOR,
+                metadata={"reason": "no_packs"},
+            )
+            return False, "", log_entry
 
         sticker_base = Path(__file__).parent.parent.parent.parent / "data" / "stickers"
 
@@ -182,30 +187,75 @@ class StickerSelector:
                 available_packs.append(pack)
 
         if not available_packs:
-            unified_logger.warning(
-                f"No valid sticker packs found in {sticker_packs}",
+            log_entry = unified_logger.warning(
+                f"No valid sticker packs found",
                 category=LogCategory.BEHAVIOR,
+                metadata={
+                    "configured_packs": sticker_packs,
+                    "reason": "packs_not_found",
+                },
             )
-            return False, ""
+            return False, "", log_entry
 
         if not StickerSelector.should_send_sticker(emotion_map):
-            return False, ""
+            log_entry = unified_logger.info(
+                "Sticker blocked by emotion state",
+                category=LogCategory.BEHAVIOR,
+                metadata={
+                    "emotion_map": emotion_map,
+                    "reason": "emotion_filter",
+                },
+            )
+            return False, "", log_entry
 
         try:
             intent, confidence = StickerSelector.predict_intent(text)
         except Exception as e:
-            unified_logger.error(
-                f"Intent prediction failed: {e}", category=LogCategory.BEHAVIOR
+            log_entry = unified_logger.error(
+                f"Intent prediction failed: {e}",
+                category=LogCategory.BEHAVIOR,
+                metadata={"text_preview": text[:50], "reason": "prediction_error"},
             )
-            return False, ""
+            return False, "", log_entry
 
         threshold = StickerSelector.get_confidence_threshold(emotion_map)
+        
+        log_entry = unified_logger.info(
+            f"Intent predicted: {intent}",
+            category=LogCategory.BEHAVIOR,
+            metadata={
+                "intent": intent,
+                "confidence": confidence,
+                "threshold": threshold,
+                "emotion_category": StickerSelector.get_emotion_category(emotion_map),
+                "text_preview": text[:50],
+            },
+        )
+
         if confidence < threshold:
-            return False, ""
+            log_entry = unified_logger.info(
+                f"Confidence too low for sticker",
+                category=LogCategory.BEHAVIOR,
+                metadata={
+                    "intent": intent,
+                    "confidence": confidence,
+                    "threshold": threshold,
+                    "reason": "low_confidence",
+                },
+            )
+            return False, "", log_entry
 
         romaji = StickerSelector.INTENT_ROMAJI_MAP.get(intent)
         if not romaji:
-            return False, ""
+            log_entry = unified_logger.warning(
+                f"No romaji mapping for intent",
+                category=LogCategory.BEHAVIOR,
+                metadata={
+                    "intent": intent,
+                    "reason": "no_mapping",
+                },
+            )
+            return False, "", log_entry
 
         sticker_files = []
         for pack in available_packs:
@@ -223,7 +273,28 @@ class StickerSelector:
                         sticker_files.append(str(rel_path))
 
         if not sticker_files:
-            return False, ""
+            log_entry = unified_logger.warning(
+                f"No sticker files found for intent",
+                category=LogCategory.BEHAVIOR,
+                metadata={
+                    "intent": intent,
+                    "romaji": romaji,
+                    "available_packs": available_packs,
+                    "reason": "no_files",
+                },
+            )
+            return False, "", log_entry
 
         selected = random.choice(sticker_files)
-        return True, selected
+        log_entry = unified_logger.info(
+            f"Sticker selected: {selected}",
+            category=LogCategory.BEHAVIOR,
+            metadata={
+                "intent": intent,
+                "confidence": confidence,
+                "sticker_path": selected,
+                "available_count": len(sticker_files),
+                "packs_used": available_packs,
+            },
+        )
+        return True, selected, log_entry

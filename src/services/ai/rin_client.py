@@ -157,6 +157,10 @@ class RinClient:
                 llm_response.reply, emotion_map=llm_response.emotion_map
             )
 
+            sticker_log_entries = self.coordinator.get_and_clear_log_entries()
+            for entry in sticker_log_entries:
+                await broadcast_log_if_needed(entry)
+
             behavior_summary = []
             for action in timeline:
                 parts = [f"{action.type}@{action.timestamp:.2f}s"]
