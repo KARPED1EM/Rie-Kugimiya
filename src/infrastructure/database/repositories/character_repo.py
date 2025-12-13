@@ -57,7 +57,7 @@ class CharacterRepository(BaseRepository[Character]):
                         enable_segmentation, enable_typo, enable_recall, enable_emotion_detection,
                         max_segment_length, min_pause_duration, max_pause_duration,
                         base_typo_rate, typo_recall_rate, recall_delay, retype_delay,
-                        emoticon_packs
+                        sticker_packs
                     ) VALUES (
                         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
@@ -81,7 +81,7 @@ class CharacterRepository(BaseRepository[Character]):
                     character.enable_segmentation, character.enable_typo, character.enable_recall, character.enable_emotion_detection,
                     character.max_segment_length, character.min_pause_duration, character.max_pause_duration,
                     character.base_typo_rate, character.typo_recall_rate, character.recall_delay, character.retype_delay,
-                    json.dumps(character.emoticon_packs)
+                    json.dumps(character.sticker_packs)
                 ))
                 return True
         except Exception as e:
@@ -112,7 +112,7 @@ class CharacterRepository(BaseRepository[Character]):
                         enable_segmentation = ?, enable_typo = ?, enable_recall = ?, enable_emotion_detection = ?,
                         max_segment_length = ?, min_pause_duration = ?, max_pause_duration = ?,
                         base_typo_rate = ?, typo_recall_rate = ?, recall_delay = ?, retype_delay = ?,
-                        emoticon_packs = ?,
+                        sticker_packs = ?,
                         updated_at = CURRENT_TIMESTAMP
                     WHERE id = ?
                 """, (
@@ -134,7 +134,7 @@ class CharacterRepository(BaseRepository[Character]):
                     character.enable_segmentation, character.enable_typo, character.enable_recall, character.enable_emotion_detection,
                     character.max_segment_length, character.min_pause_duration, character.max_pause_duration,
                     character.base_typo_rate, character.typo_recall_rate, character.recall_delay, character.retype_delay,
-                    json.dumps(character.emoticon_packs),
+                    json.dumps(character.sticker_packs),
                     character.id
                 ))
                 return cursor.rowcount > 0
@@ -153,7 +153,7 @@ class CharacterRepository(BaseRepository[Character]):
             return False
 
     def _row_to_character(self, row) -> Character:
-        emoticon_packs = json.loads(row['emoticon_packs']) if row['emoticon_packs'] else []
+        sticker_packs = json.loads(row['sticker_packs']) if row['sticker_packs'] else []
         return Character(
             id=row['id'],
             name=row['name'],
@@ -202,7 +202,7 @@ class CharacterRepository(BaseRepository[Character]):
             typo_recall_rate=row['typo_recall_rate'],
             recall_delay=row['recall_delay'],
             retype_delay=row['retype_delay'],
-            emoticon_packs=emoticon_packs,
+            sticker_packs=sticker_packs,
             created_at=datetime.fromisoformat(row['created_at']) if row['created_at'] else None,
             updated_at=datetime.fromisoformat(row['updated_at']) if row['updated_at'] else None
         )

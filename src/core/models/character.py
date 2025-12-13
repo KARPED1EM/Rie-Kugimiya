@@ -59,7 +59,7 @@ class Character(BaseModel):
     recall_delay: float = 2.0
     retype_delay: float = 2.5
 
-    emoticon_packs: List[str] = Field(default_factory=list)
+    sticker_packs: List[str] = Field(default_factory=list)
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

@@ -84,6 +84,7 @@ class RinClient:
         self.coordinator = BehaviorCoordinator(
             config=behavior_config, timeline_config=timeline_config
         )
+        self.coordinator.set_sticker_packs(character.sticker_packs or [])
         self._running = False
         self._tasks = []
         self.session_id = None
@@ -264,6 +265,25 @@ class RinClient:
                         sender_id=self.user_id,
                         message_type=MessageType.TEXT,
                         content=action.text,
+                        metadata=action.metadata,
+                        message_id=action.message_id,
+                    )
+                    for message in messages:
+                        await self._broadcast_message(message)
+                    if messages:
+                        last_msg = messages[-1]
+                        if last_msg and last_msg.id and last_msg.timestamp:
+                            sent_timestamps_by_id[str(last_msg.id)] = float(
+                                last_msg.timestamp
+                            )
+
+                elif action.type == "image":
+                    sticker_url = f"/api/stickers/{action.text}"
+                    messages = await self.message_service.send_message_with_time(
+                        session_id=session_id,
+                        sender_id=self.user_id,
+                        message_type=MessageType.IMAGE,
+                        content=sticker_url,
                         metadata=action.metadata,
                         message_id=action.message_id,
                     )

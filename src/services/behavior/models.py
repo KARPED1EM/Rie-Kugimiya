@@ -19,7 +19,7 @@ class MessageSegment(BaseModel):
 
 
 class PlaybackAction(BaseModel):
-    type: Literal["send", "pause", "recall", "typing_start", "typing_end", "wait"]
+    type: Literal["send", "pause", "recall", "typing_start", "typing_end", "wait", "image"]
     text: Optional[str] = None
     timestamp: float = Field(default=0.0, ge=0.0)
     duration: float = Field(default=0.0, ge=0.0)

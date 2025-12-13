@@ -107,7 +107,7 @@ class DatabaseConnection:
                     recall_delay REAL DEFAULT 2.0,
                     retype_delay REAL DEFAULT 2.5,
 
-                    emoticon_packs TEXT,
+                    sticker_packs TEXT,
 
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -146,7 +146,26 @@ class DatabaseConnection:
                 )
             """)
 
+            self._migrate_emoticon_to_sticker_packs(cursor)
+
             conn.commit()
+
+    def _migrate_emoticon_to_sticker_packs(self, cursor):
+        cursor.execute("PRAGMA table_info(characters)")
+        columns = [col[1] for col in cursor.fetchall()]
+        
+        if "emoticon_packs" in columns and "sticker_packs" not in columns:
+            cursor.execute("""
+                ALTER TABLE characters
+                RENAME COLUMN emoticon_packs TO sticker_packs
+            """)
+            logger.info("Migrated emoticon_packs to sticker_packs")
+        elif "emoticon_packs" not in columns and "sticker_packs" not in columns:
+            cursor.execute("""
+                ALTER TABLE characters
+                ADD COLUMN sticker_packs TEXT
+            """)
+            logger.info("Added sticker_packs column")
 
     @contextmanager
     def transaction(self) -> Generator[sqlite3.Connection, None, None]:

@@ -57,7 +57,7 @@ class CharacterCreate(BaseModel):
     name: str
     avatar: Optional[str] = None
     persona: Optional[str] = None
-    emoticon_packs: Optional[List[str]] = None
+    sticker_packs: Optional[List[str]] = None
     behavior_params: Optional[Dict[str, Any]] = None
 
 
@@ -65,7 +65,7 @@ class CharacterUpdate(BaseModel):
     name: Optional[str] = None
     avatar: Optional[str] = None
     persona: Optional[str] = None
-    emoticon_packs: Optional[List[str]] = None
+    sticker_packs: Optional[List[str]] = None
     behavior_params: Optional[Dict[str, Any]] = None
 
 
@@ -166,7 +166,7 @@ async def get_character_behavior_schema():
         "name",
         "avatar",
         "persona",
-        "emoticon_packs",
+        "sticker_packs",
         "is_builtin",
         "created_at",
         "updated_at",
@@ -229,7 +229,7 @@ async def create_character(data: CharacterCreate):
         name=data.name,
         avatar=_validate_avatar_value(data.avatar, allow_local=True) if data.avatar is not None else None,
         persona=(data.persona or ""),
-        emoticon_packs=data.emoticon_packs,
+        sticker_packs=data.sticker_packs,
         behavior_params=data.behavior_params,
     )
 
@@ -256,8 +256,8 @@ async def update_character(character_id: str, data: CharacterUpdate):
         character.avatar = _validate_avatar_value(data.avatar, allow_local=True)
     if data.persona is not None:
         character.persona = data.persona or ""
-    if data.emoticon_packs is not None:
-        character.emoticon_packs = _normalize_string_list(data.emoticon_packs)
+    if data.sticker_packs is not None:
+        character.sticker_packs = _normalize_string_list(data.sticker_packs)
     if data.behavior_params:
         for key, value in data.behavior_params.items():
             if hasattr(character, key):
@@ -396,3 +396,22 @@ async def delete_user_avatar(user_id: str = DEFAULT_USER_ID):
         raise HTTPException(status_code=500, detail="Failed to delete avatar")
 
     return {"success": True}
+
+
+@router.get("/stickers/{path:path}")
+async def get_sticker(path: str):
+    import os
+    from fastapi.responses import FileResponse
+    
+    sticker_base = os.path.join(
+        os.path.dirname(__file__), "../../data/stickers"
+    )
+    sticker_path = os.path.normpath(os.path.join(sticker_base, path))
+    
+    if not sticker_path.startswith(os.path.normpath(sticker_base)):
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    if not os.path.exists(sticker_path) or not os.path.isfile(sticker_path):
+        raise HTTPException(status_code=404, detail="Sticker not found")
+    
+    return FileResponse(sticker_path)
