@@ -141,7 +141,7 @@ python sticker_manager.py
 - 问题异议类
 - 状态确认类
 
-完整映射参见 `models/scripts/intent_romaji_mapping.py`
+完整映射参见 `sticker_categories.py`
 
 ## 目录结构
 
