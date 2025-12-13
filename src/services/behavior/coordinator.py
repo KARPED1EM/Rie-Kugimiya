@@ -1,56 +1,37 @@
-"""
-Behavior Coordinator
-
-Produces a one-shot playback sequence that mimics messaging apps such as WeChat.
-"""
-
 from typing import List
 import uuid
 
-from src.behavior.models import (
+from src.services.behavior.models import (
     BehaviorConfig,
     EmotionState,
     PlaybackAction,
     TimelineConfig,
 )
-from src.behavior.segmenter import SmartSegmenter
-from src.behavior.emotion import EmotionFetcher
-from src.behavior.typo import TypoInjector
-from src.behavior.pause import PausePredictor
-from src.behavior.timeline import TimelineBuilder
+from src.services.behavior.segmenter import SmartSegmenter
+from src.services.behavior.emotion import EmotionFetcher
+from src.services.behavior.typo import TypoInjector
+from src.services.behavior.pause import PausePredictor
+from src.services.behavior.timeline import TimelineBuilder
 from src.infrastructure.utils.logger import unified_logger, LogCategory
 
 
 class BehaviorCoordinator:
-    """
-    Coordinates segmentation, typo injection, and recall behaviors to create the
-    final playback timeline consumed by the frontend.
-    """
-
     def __init__(
         self, config: BehaviorConfig = None, timeline_config: TimelineConfig = None
     ):
         self.config = config or BehaviorConfig()
-
-        self.segmenter = SmartSegmenter(
-            max_length=self.config.max_segment_length,
-        )
-        self.emotion_fetcher = EmotionFetcher()
+        self.segmenter = SmartSegmenter(max_length=self.config.max_segment_length)
         self.typo_injector = TypoInjector()
-        self.pause_predictor = PausePredictor()
         self.timeline_builder = TimelineBuilder(timeline_config)
 
     def process_message(
         self, text: str, emotion_map: dict | None = None
     ) -> List[PlaybackAction]:
-        """
-        Convert text into a playback sequence with timestamps.
-        """
         cleaned_input = text.strip()
         if not cleaned_input:
             return []
 
-        normalized_emotion_map = self.emotion_fetcher.normalize_map(emotion_map)
+        normalized_emotion_map = EmotionFetcher.normalize_map(emotion_map)
         emotion = self._fetch_emotion(cleaned_input, normalized_emotion_map)
         segments = self._segment_and_clean(cleaned_input)
         total_segments = len(segments)
@@ -71,19 +52,14 @@ class BehaviorCoordinator:
         return timeline
 
     def update_config(self, config: BehaviorConfig):
-        """Update behavior configuration at runtime."""
         self.config = config
+        self.segmenter = SmartSegmenter(max_length=config.max_segment_length)
 
     def get_emotion(self, text: str, emotion_map: dict | None = None) -> EmotionState:
-        """Expose emotion fetch for API metadata."""
-        normalized_map = self.emotion_fetcher.normalize_map(emotion_map)
+        normalized_map = EmotionFetcher.normalize_map(emotion_map)
         return self._fetch_emotion(text, normalized_map)
 
-    # --------------------------------------------------------------------- #
-    # Internal helpers
-    # --------------------------------------------------------------------- #
     def _segment_and_clean(self, text: str) -> List[str]:
-        """Segment text and clean up trailing punctuation from each segment"""
         segments = [text]
         if self.config.enable_segmentation:
             try:
@@ -120,19 +96,13 @@ class BehaviorCoordinator:
             "emotion_map": emotion_map or {},
         }
 
-        # Typo injection (if enabled)
         has_typo, typo_text = False, None
         if self.config.enable_typo:
             emotion_multiplier = self.config.emotion_typo_multiplier.get(emotion, 1.0)
             typo_rate = self.config.base_typo_rate * emotion_multiplier
-            (
-                has_typo,
-                typo_variant,
-                _,
-                _,
-            ) = self.typo_injector.inject_typo(
+            (has_typo, typo_variant, _, _) = self.typo_injector.inject_typo(
                 segment_text, typo_rate=typo_rate
-            )  # TODO: pass real configs
+            )
             if has_typo and typo_variant:
                 typo_text = typo_variant
 
@@ -149,7 +119,7 @@ class BehaviorCoordinator:
         actions.append(send_action)
 
         if has_typo and typo_text and self.config.enable_recall:
-            if self.typo_injector.should_recall_typo(self.config.typo_recall_rate):
+            if TypoInjector.should_recall_typo(self.config.typo_recall_rate):
                 actions.extend(
                     self._build_recall_sequence(
                         typo_action=send_action,
@@ -159,10 +129,10 @@ class BehaviorCoordinator:
                     )
                 )
 
-        # Interval after this segment (unless it's the last one)
         if segment_index < total_segments - 1:
-            interval = self.pause_predictor.segment_interval(
+            interval = PausePredictor.segment_interval(
                 emotion=emotion,
+                emotion_multipliers=self.config.emotion_pause_multiplier,
                 min_duration=self.config.min_pause_duration,
                 max_duration=self.config.max_pause_duration,
             )
@@ -235,11 +205,10 @@ class BehaviorCoordinator:
     ) -> EmotionState:
         if not self.config.enable_emotion_fetch:
             return EmotionState.NEUTRAL
-        return self.emotion_fetcher.fetch(emotion_map=emotion_map, fallback_text=text)
+        return EmotionFetcher.fetch(emotion_map=emotion_map, fallback_text=text)
 
     @staticmethod
     def _trim_trailing_punctuation(text: str) -> str:
-        """Remove trailing commas and periods from text"""
         trimmed = text.strip()
         while trimmed and trimmed[-1] in {",", "，", "。"}:
             trimmed = trimmed[:-1].rstrip()

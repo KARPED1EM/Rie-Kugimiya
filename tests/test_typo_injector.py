@@ -1,7 +1,6 @@
 import random
-import pytest
 
-from src.behavior.typo import TypoInjector
+from src.services.behavior.typo import TypoInjector
 
 
 # ----------------------------------------------------------------------

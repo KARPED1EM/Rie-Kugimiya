@@ -1,12 +1,10 @@
 import random
 from typing import List, Optional
-from src.behavior.models import PlaybackAction, TimelineConfig
+from src.services.behavior.models import PlaybackAction, TimelineConfig
 from src.config import typing_state_defaults
 
 
 class TimelineBuilder:
-    """Build timeline with typing states and hesitation"""
-
     def __init__(self, config: Optional[TimelineConfig] = None):
         if config:
             self.config = config
@@ -14,7 +12,6 @@ class TimelineBuilder:
             self.config = typing_state_defaults
 
     def build_timeline(self, actions: List[PlaybackAction]) -> List[PlaybackAction]:
-        """Convert relative duration-based actions to absolute timestamp-based timeline"""
         timeline = []
         current_time = 0.0
 
@@ -126,7 +123,6 @@ class TimelineBuilder:
         return timeline
 
     def _generate_hesitation_sequence(self) -> List[PlaybackAction]:
-        """Generate hesitation sequence at the beginning"""
         if random.random() > self.config.hesitation_probability:
             return []
 
@@ -180,7 +176,6 @@ class TimelineBuilder:
         return sequence
 
     def _sample_initial_delay(self) -> float:
-        """Sample initial delay before first action"""
         roll = random.random()
 
         if roll < self.config.initial_delay_weight_1:
@@ -205,7 +200,6 @@ class TimelineBuilder:
             )
 
     def _calculate_typing_lead_time(self, text_length: int) -> float:
-        """Calculate typing lead time based on text length"""
         if text_length > self.config.typing_lead_time_threshold_5:
             return self.config.typing_lead_time_5 / 1000.0
         elif text_length > self.config.typing_lead_time_threshold_4:

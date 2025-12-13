@@ -4,9 +4,9 @@ from datetime import datetime, timezone
 from typing import List, Any
 from src.services.ai.llm_client import LLMClient
 from src.api.schemas import LLMConfig, ChatMessage
-from src.behavior.coordinator import BehaviorCoordinator
-from src.behavior.models import BehaviorConfig, PlaybackAction
-from src.behavior.timeline import TimelineConfig
+from src.services.behavior.coordinator import BehaviorCoordinator
+from src.services.behavior.models import BehaviorConfig, PlaybackAction
+from src.services.behavior.timeline import TimelineConfig
 from src.services.messaging.message_service import MessageService
 from src.core.models.message import Message, MessageType
 from src.core.models.character import Character

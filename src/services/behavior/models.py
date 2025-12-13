@@ -1,15 +1,9 @@
-"""
-Data models for behavior system
-"""
-
 from pydantic import BaseModel, Field
 from typing import Any, Dict, Literal, Optional
 from enum import Enum
 
 
 class EmotionState(str, Enum):
-    """Emotion states that affect message behavior"""
-
     NEUTRAL = "neutral"
     HAPPY = "happy"
     EXCITED = "excited"
@@ -20,49 +14,28 @@ class EmotionState(str, Enum):
 
 
 class MessageSegment(BaseModel):
-    """
-    A semantic unit produced by the segmenter before playback expansion.
-    Each segment becomes one or more playback actions later.
-    """
-
     text: str
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
 class PlaybackAction(BaseModel):
-    """A single step in the playback timeline."""
-
     type: Literal["send", "pause", "recall", "typing_start", "typing_end", "wait"]
     text: Optional[str] = None
-    timestamp: float = Field(
-        default=0.0,
-        ge=0.0,
-        description="Execution timestamp in seconds relative to start",
-    )
-    duration: float = Field(
-        default=0.0, ge=0.0, description="Duration in seconds for pause/wait actions"
-    )
-    message_id: Optional[str] = Field(
-        default=None, description="Identifier for the message created by this action"
-    )
-    target_id: Optional[str] = Field(
-        default=None, description="Identifier of the message affected by this action"
-    )
+    timestamp: float = Field(default=0.0, ge=0.0)
+    duration: float = Field(default=0.0, ge=0.0)
+    message_id: Optional[str] = None
+    target_id: Optional[str] = None
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
 class BehaviorConfig(BaseModel):
-    """Configuration for behavior system"""
-
-    # Segmentation
     enable_segmentation: bool = True
-    max_segment_length: int = 50  # Characters per segment
-    min_pause_duration: float = 0.8  # Minimum random interval between segments
-    max_pause_duration: float = 6.0  # Maximum random interval between segments
+    max_segment_length: int = 50
+    min_pause_duration: float = 0.8
+    max_pause_duration: float = 6.0
 
-    # Typo injection
     enable_typo: bool = True
-    base_typo_rate: float = 0.05  # 5% base chance of typo per segment
+    base_typo_rate: float = 0.05
     emotion_typo_multiplier: dict = Field(
         default_factory=lambda: {
             EmotionState.NEUTRAL: 1.0,
@@ -75,19 +48,27 @@ class BehaviorConfig(BaseModel):
         }
     )
 
-    # Recall behavior
     enable_recall: bool = True
-    typo_recall_rate: float = 0.75  # 75% chance to recall and fix typo
-    recall_delay: float = 2  # Seconds before recalling
-    retype_delay: float = 2.5  # Seconds before sending corrected version
+    typo_recall_rate: float = 0.75
+    recall_delay: float = 2.0
+    retype_delay: float = 2.5
 
-    # Emotion detection
     enable_emotion_fetch: bool = True
+
+    emotion_pause_multiplier: dict = Field(
+        default_factory=lambda: {
+            EmotionState.NEUTRAL: 1.0,
+            EmotionState.HAPPY: 0.9,
+            EmotionState.EXCITED: 0.8,
+            EmotionState.SAD: 1.4,
+            EmotionState.ANGRY: 0.7,
+            EmotionState.ANXIOUS: 1.1,
+            EmotionState.CONFUSED: 1.3,
+        }
+    )
 
 
 class TimelineConfig(BaseModel):
-    """Configuration for timeline building"""
-
     hesitation_probability: float = 0.15
     hesitation_cycles_min: int = 1
     hesitation_cycles_max: int = 2
