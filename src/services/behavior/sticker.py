@@ -4,6 +4,124 @@ from typing import Tuple, Dict, List, Optional, Any
 from src.infrastructure.utils.logger import unified_logger, LogCategory
 
 
+class IntentPredictor:
+    _instance = None
+    _model = None
+    _tokenizer = None
+    _id2intent = None
+    _model_loaded = False
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+
+    def __init__(self):
+        self.model_path = Path(__file__).parent.parent.parent.parent / "models" / "wechat_intent_model"
+        self._load_model()
+
+    def _load_model(self):
+        if self._model_loaded:
+            return
+
+        try:
+            import json
+            from transformers import AutoTokenizer, AutoModelForSequenceClassification
+            import torch
+
+            if not self.model_path.exists():
+                unified_logger.warning(
+                    "BERT model not found, using fallback keyword matching",
+                    category=LogCategory.BEHAVIOR,
+                    metadata={"model_path": str(self.model_path)},
+                )
+                self._model_loaded = True
+                return
+
+            mapping_file = self.model_path / "intent_mapping.json"
+            if not mapping_file.exists():
+                unified_logger.warning(
+                    "Intent mapping not found",
+                    category=LogCategory.BEHAVIOR,
+                    metadata={"mapping_file": str(mapping_file)},
+                )
+                self._model_loaded = True
+                return
+
+            with open(mapping_file, "r", encoding="utf-8") as f:
+                mapping = json.load(f)
+                self._id2intent = {int(k): v for k, v in mapping["id2intent"].items()}
+
+            self._tokenizer = AutoTokenizer.from_pretrained(str(self.model_path))
+            self._model = AutoModelForSequenceClassification.from_pretrained(str(self.model_path))
+            self._model.eval()
+
+            unified_logger.info(
+                "BERT intent model loaded successfully",
+                category=LogCategory.BEHAVIOR,
+                metadata={
+                    "model_path": str(self.model_path),
+                    "num_intents": len(self._id2intent),
+                },
+            )
+            self._model_loaded = True
+
+        except Exception as e:
+            unified_logger.error(
+                f"Failed to load BERT model: {e}",
+                category=LogCategory.BEHAVIOR,
+                metadata={"model_path": str(self.model_path)},
+            )
+            self._model_loaded = True
+
+    def predict(self, text: str) -> Tuple[str, float]:
+        use_bert = self._model is not None and self._tokenizer is not None and self._id2intent is not None
+        
+        if use_bert:
+            try:
+                import torch
+                
+                inputs = self._tokenizer(text, return_tensors="pt", truncation=True, max_length=128)
+                
+                with torch.no_grad():
+                    outputs = self._model(**inputs)
+                    logits = outputs.logits
+                    probs = torch.nn.functional.softmax(logits, dim=-1)
+                    confidence, predicted_id = torch.max(probs, dim=-1)
+                    
+                predicted_id = predicted_id.item()
+                confidence = confidence.item()
+                intent = self._id2intent.get(predicted_id, "未知意图")
+                
+                return intent, confidence
+                
+            except Exception as e:
+                unified_logger.error(
+                    f"BERT prediction failed: {e}",
+                    category=LogCategory.BEHAVIOR,
+                )
+                return self._fallback_predict(text)
+        else:
+            return self._fallback_predict(text)
+
+    def _fallback_predict(self, text: str) -> Tuple[str, float]:
+        if any(word in text for word in ["你好", "您好", "hi", "hello"]):
+            return "招呼用语", 0.95
+        elif any(word in text for word in ["谢谢", "感谢", "多谢"]):
+            return "礼貌用语", 0.90
+        elif any(word in text for word in ["好的", "可以", "行", "没问题"]):
+            return "肯定(好的)", 0.85
+        elif any(word in text for word in ["不", "不要", "不用", "不需要"]):
+            return "否定(不需要)", 0.80
+        elif any(word in text for word in ["什么时候", "几点", "时间"]):
+            return "疑问(时间)", 0.75
+        elif any(word in text for word in ["在哪", "地址", "位置"]):
+            return "疑问(地址)", 0.75
+        else:
+            return "未知意图", 0.30
+
+
 class StickerSelector:
     CONFIDENCE_THRESHOLDS = {
         "positive": 0.6,
@@ -151,20 +269,8 @@ class StickerSelector:
 
     @staticmethod
     def predict_intent(text: str) -> Tuple[str, float]:
-        if any(word in text for word in ["你好", "您好", "hi", "hello"]):
-            return "招呼用语", 0.95
-        elif any(word in text for word in ["谢谢", "感谢", "多谢"]):
-            return "礼貌用语", 0.90
-        elif any(word in text for word in ["好的", "可以", "行", "没问题"]):
-            return "肯定(好的)", 0.85
-        elif any(word in text for word in ["不", "不要", "不用", "不需要"]):
-            return "否定(不需要)", 0.80
-        elif any(word in text for word in ["什么时候", "几点", "时间"]):
-            return "疑问(时间)", 0.75
-        elif any(word in text for word in ["在哪", "地址", "位置"]):
-            return "疑问(地址)", 0.75
-        else:
-            return "未知意图", 0.30
+        predictor = IntentPredictor.get_instance()
+        return predictor.predict(text)
 
     @staticmethod
     def select_sticker(
@@ -210,6 +316,8 @@ class StickerSelector:
 
         try:
             intent, confidence = StickerSelector.predict_intent(text)
+            predictor = IntentPredictor.get_instance()
+            use_bert = predictor._model is not None
         except Exception as e:
             log_entry = unified_logger.error(
                 f"Intent prediction failed: {e}",
@@ -229,6 +337,7 @@ class StickerSelector:
                 "threshold": threshold,
                 "emotion_category": StickerSelector.get_emotion_category(emotion_map),
                 "text_preview": text[:50],
+                "model_type": "BERT" if use_bert else "fallback_keyword",
             },
         )
 
