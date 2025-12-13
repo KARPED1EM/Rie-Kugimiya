@@ -373,6 +373,11 @@ export function createApp() {
       menuBtn.setAttribute("aria-expanded", "false");
     });
 
+    const floatingGithubBtn = document.getElementById("floatingGithubBtn");
+    floatingGithubBtn?.addEventListener("click", () => {
+      window.open("https://github.com/KARPED1EM/Yuzuriha-Rin", "_blank");
+    });
+
     const floatingSettingsBtn = document.getElementById("floatingSettingsBtn");
     floatingSettingsBtn?.addEventListener("click", () => {
       showSettingsModal(false).then((saved) => {
@@ -428,6 +433,7 @@ export function createApp() {
 
   function showMainShell() {
     document.getElementById("wechatShell")?.classList.remove("hidden");
+    document.getElementById("floatingGithubBtn")?.classList.remove("hidden");
     document.getElementById("floatingSettingsBtn")?.classList.remove("hidden");
   }
 
