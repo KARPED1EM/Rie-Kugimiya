@@ -1982,11 +1982,19 @@ textarea {
     border: none;
 }
 
+/* Remove arrow from image message bubbles */
+.message.message-assistant .message-bubble.message-image::after,
+.message.message-user .message-bubble.message-image::after,
+.message-row.assistant .bubble.message-image::after,
+.message-row.user .bubble.message-image::after {
+    content: none;
+}
+
 .message-bubble.message-image img,
 .message-image {
     max-width: 200px;
     max-height: 200px;
-    border-radius: 8px;
+    border-radius: 0;
     object-fit: cover;
     cursor: pointer;
     display: block;
