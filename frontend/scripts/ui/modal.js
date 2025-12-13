@@ -33,6 +33,26 @@ function createOverlay() {
   return overlay;
 }
 
+/**
+ * Ensures overlay dismissal only happens when both pointer down/up occurred outside the modal.
+ * @param {HTMLDivElement} overlay
+ * @param {{onDismiss: () => void, canDismiss?: () => boolean}} options
+ */
+function attachOverlayDismiss(overlay, { onDismiss, canDismiss = () => true }) {
+  let startedOutside = false;
+
+  overlay.addEventListener("mousedown", (ev) => {
+    startedOutside = canDismiss() && ev.target === overlay;
+  });
+
+  overlay.addEventListener("mouseup", (ev) => {
+    if (startedOutside && ev.target === overlay && canDismiss()) {
+      onDismiss();
+    }
+    startedOutside = false;
+  });
+}
+
 function createModalShell(title) {
   const modal = document.createElement("div");
   modal.className = "modal";
@@ -78,11 +98,12 @@ export function showSettingsModal(forceOpen) {
     const closeBtns = modal.querySelectorAll("[data-modal-close]");
     if (forceOpen) closeBtns.forEach((b) => b.classList.add("hidden"));
 
-    overlay.addEventListener("click", (ev) => {
-      if (ev.target === overlay && !forceOpen) {
+    attachOverlayDismiss(overlay, {
+      canDismiss: () => !forceOpen,
+      onDismiss: () => {
         overlay.remove();
         resolve(false);
-      }
+      },
     });
 
     closeBtns.forEach((btn) => {
@@ -298,8 +319,8 @@ export async function showCharacterSettingsModal(character) {
   modal
     .querySelectorAll("[data-modal-close]")
     .forEach((btn) => btn.addEventListener("click", () => overlay.remove()));
-  overlay.addEventListener("click", (ev) => {
-    if (ev.target === overlay) overlay.remove();
+  attachOverlayDismiss(overlay, {
+    onDismiss: () => overlay.remove(),
   });
 
   modal.querySelector("#charSaveBtn")?.addEventListener("click", async () => {
@@ -721,11 +742,11 @@ export function showCreateCharacterModal() {
         resolve(false);
       }),
     );
-    overlay.addEventListener("click", (ev) => {
-      if (ev.target === overlay) {
+    attachOverlayDismiss(overlay, {
+      onDismiss: () => {
         overlay.remove();
         resolve(false);
-      }
+      },
     });
 
     modal.querySelector("#newCharCreateBtn")?.addEventListener("click", async () => {
