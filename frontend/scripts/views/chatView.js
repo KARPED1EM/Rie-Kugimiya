@@ -3,6 +3,7 @@
 import { state, setReadTimestamp, saveStateToStorage } from "../core/state.js";
 import { applyEmotionTheme, clearEmotionTheme } from "../ui/emotionTheme.js";
 import { formatChatTimestamp } from "../utils/time.js";
+import { attachZoomToContainer } from "../ui/imageZoom.js";
 
 /** @type {import("../core/ws.js").WsClient | null} */
 let wsClient = null;
@@ -207,6 +208,9 @@ export function renderChatSession(sessionId, opts = {}) {
 
     updateNewMessageIndicator(sessionId, container);
   }
+
+  // Attach zoom to image messages only
+  attachZoomToContainer(container);
 }
 
 /**
