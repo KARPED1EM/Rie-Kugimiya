@@ -170,6 +170,7 @@ async def get_character_behavior_schema():
     """
     Return a machine-readable schema for all character behavior-system fields.
     Frontend uses this to render editable controls without duplicating field lists.
+    Fields are automatically grouped by module prefix (timeline_, segmenter_, typo_, etc.)
     """
     exclude = {
         "id",
@@ -189,20 +190,9 @@ async def get_character_behavior_schema():
         type_name = _annotation_to_type_name(field.annotation)
         default_value = _pydantic_field_default(field)
 
-        if key.startswith("enable_") or key in {
-            "max_segment_length",
-            "min_pause_duration",
-            "max_pause_duration",
-            "base_typo_rate",
-            "typo_recall_rate",
-            "recall_delay",
-            "retype_delay",
-        }:
-            group = "behavior"
-        elif key.startswith("sticker_"):
-            group = "sticker"
-        else:
-            group = "timeline"
+        # Extract module prefix from field name (e.g., "timeline_hesitation_probability" -> "timeline")
+        # This enables automatic grouping without hardcoding field names
+        group = key.split("_")[0] if "_" in key else "other"
 
         fields.append(
             {

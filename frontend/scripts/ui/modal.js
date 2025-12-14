@@ -436,19 +436,36 @@ function renderCharacterBehaviorFields(character, fields, readonly) {
     (grouped[f.group] ||= []).push(f);
   });
 
-  const order = ["sticker", "behavior", "timeline"];
-  const sections = order
-    .filter((g) => (grouped[g] || []).length)
+  // Define module display names
+  const moduleNames = {
+    timeline: "时间轴模块",
+    segmenter: "分段模块",
+    typo: "错字模块",
+    recall: "撤回模块",
+    pause: "停顿模块",
+    sticker: "表情包模块",
+  };
+
+  // Get all modules that have fields, sorted alphabetically
+  const modules = Object.keys(grouped).sort();
+
+  const sections = modules
     .map((group) => {
-      const title =
-        group === "sticker"
-          ? "表情包"
-          : group === "behavior"
-          ? "行为参数"
-          : "打字状态";
-      const inner = grouped[group]
+      // Get display name or use capitalized group name as fallback
+      const title = moduleNames[group] || group.charAt(0).toUpperCase() + group.slice(1);
+      
+      // Sort fields within each group by type: bool -> list -> number -> text
+      const typeOrder = { bool: 0, "list[str]": 1, int: 2, float: 3, str: 4 };
+      const sortedFields = grouped[group].sort((a, b) => {
+        const orderA = typeOrder[a.type] ?? 99;
+        const orderB = typeOrder[b.type] ?? 99;
+        return orderA - orderB;
+      });
+
+      const inner = sortedFields
         .map((f) => renderBehaviorField(character, f, readonly))
         .join("");
+
       return `
         <details class="modal-details">
           <summary>${title}</summary>
