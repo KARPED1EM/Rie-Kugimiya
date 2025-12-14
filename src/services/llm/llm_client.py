@@ -186,6 +186,7 @@ class LLMClient:
             "model": self.config.model,
             "messages": self._build_openai_messages(messages),
             "max_tokens": self.config.max_tokens,
+            "response_format": {"type": "json_object"},
         }
         
         # Only include temperature if it's set (not None)

@@ -9,7 +9,7 @@ class LLMConfig(BaseModel):
     api_key: Optional[str] = None
     base_url: Optional[str] = None
     model: Optional[str] = None
-    temperature: Optional[float] = None  # Optional, don't send if empty
+    temperature: Optional[float] = Field(default=None, ge=0.0, le=2.0)  # Optional, don't send if empty
     max_tokens: int = 1000  # Required, default 1000
     persona: Optional[str] = None  # Will be populated from config defaults
     character_name: Optional[str] = None  # Display only, not used in prompts
