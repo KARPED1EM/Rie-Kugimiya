@@ -58,13 +58,12 @@ class CharacterRepository(BaseRepository[Character]):
                         typo_enable, typo_base_rate, typo_recall_rate,
                         recall_enable, recall_delay, recall_retype_delay,
                         pause_min_duration, pause_max_duration,
-                        emotion_enable,
                         sticker_packs, sticker_send_probability,
                         sticker_confidence_threshold_positive, sticker_confidence_threshold_neutral,
                         sticker_confidence_threshold_negative
                     ) VALUES (
                         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                     )
                 """, (
                     character.id, character.name, character.avatar, character.persona, character.is_builtin,
@@ -86,7 +85,6 @@ class CharacterRepository(BaseRepository[Character]):
                     character.typo_enable, character.typo_base_rate, character.typo_recall_rate,
                     character.recall_enable, character.recall_delay, character.recall_retype_delay,
                     character.pause_min_duration, character.pause_max_duration,
-                    character.emotion_enable,
                     json.dumps(character.sticker_packs), character.sticker_send_probability,
                     character.sticker_confidence_threshold_positive, character.sticker_confidence_threshold_neutral,
                     character.sticker_confidence_threshold_negative
@@ -121,7 +119,6 @@ class CharacterRepository(BaseRepository[Character]):
                         typo_enable = ?, typo_base_rate = ?, typo_recall_rate = ?,
                         recall_enable = ?, recall_delay = ?, recall_retype_delay = ?,
                         pause_min_duration = ?, pause_max_duration = ?,
-                        emotion_enable = ?,
                         sticker_packs = ?, sticker_send_probability = ?,
                         sticker_confidence_threshold_positive = ?, sticker_confidence_threshold_neutral = ?,
                         sticker_confidence_threshold_negative = ?,
@@ -147,7 +144,6 @@ class CharacterRepository(BaseRepository[Character]):
                     character.typo_enable, character.typo_base_rate, character.typo_recall_rate,
                     character.recall_enable, character.recall_delay, character.recall_retype_delay,
                     character.pause_min_duration, character.pause_max_duration,
-                    character.emotion_enable,
                     json.dumps(character.sticker_packs), character.sticker_send_probability,
                     character.sticker_confidence_threshold_positive, character.sticker_confidence_threshold_neutral,
                     character.sticker_confidence_threshold_negative,

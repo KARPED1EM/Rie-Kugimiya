@@ -233,8 +233,6 @@ class BehaviorCoordinator:
     def _fetch_emotion(
         self, text: str, emotion_map: dict | None = None
     ) -> EmotionState:
-        if not self.character.emotion_enable:
-            return EmotionState.NEUTRAL
         return EmotionFetcher.fetch(emotion_map=emotion_map, fallback_text=text)
 
     def _insert_sticker_action(

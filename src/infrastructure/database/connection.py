@@ -107,8 +107,6 @@ class DatabaseConnection:
                     pause_min_duration REAL DEFAULT 0.8,
                     pause_max_duration REAL DEFAULT 6.0,
 
-                    emotion_enable BOOLEAN DEFAULT TRUE,
-
                     sticker_packs TEXT,
                     sticker_send_probability REAL DEFAULT 0.4,
                     sticker_confidence_threshold_positive REAL DEFAULT 0.6,

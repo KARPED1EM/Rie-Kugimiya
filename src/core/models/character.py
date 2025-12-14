@@ -67,9 +67,6 @@ class Character(BaseModel):
     pause_min_duration: float = 0.8
     pause_max_duration: float = 6.0
 
-    # Emotion module
-    emotion_enable: bool = True
-
     # Sticker module
     sticker_packs: List[str] = Field(default_factory=list)
     sticker_send_probability: float = 0.4
