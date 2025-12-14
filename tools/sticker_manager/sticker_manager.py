@@ -24,6 +24,81 @@ from PyQt6.QtGui import QPixmap, QImage, QDragEnterEvent, QDropEvent, QAction, Q
 # 导入类别映射
 from sticker_categories import CATEGORY_MAP, CHINESE_TO_ROMAJI
 
+# 官方类别列表 - 来自 src/services/behavior/sticker.py 的 INTENT_ROMAJI_MAP
+# 这是权威的类别列表，所有合集必须严格遵守这 70 个类别
+OFFICIAL_CATEGORIES = [
+    "buxinren",
+    "cha_caozuo_liucheng",
+    "cha_gongsi_jieshao",
+    "cha_lianxi_fangshi",
+    "cha_shoufei_fangshi",
+    "cha_wupin_xinxi",
+    "cha_xiangxi_xinxi",
+    "cha_youhui_zhengce",
+    "cha_ziwo_jieshao",
+    "da_feisuowen",
+    "da_shijian",
+    "dacuo_dianhua",
+    "fouding_bufangbian",
+    "fouding_bukeyi",
+    "fouding_buqingchu",
+    "fouding_bushi",
+    "fouding_buxiangyao",
+    "fouding_buxuyao",
+    "fouding_buyongle",
+    "fouding_buzhidao",
+    "fouding_cuowu",
+    "fouding_dafu",
+    "fouding_meishijian",
+    "fouding_meixingqu",
+    "fouding_quxiao",
+    "gaitian_zaitan",
+    "haoma_laiyuan",
+    "hui_anshi_chuli",
+    "jiage_taigao",
+    "jieshu_yongyu",
+    "kending_enen",
+    "kending_haode",
+    "kending_haole",
+    "kending_keyi",
+    "kending_shide",
+    "kending_you",
+    "kending_zhengque",
+    "kending_zhidaole",
+    "limao_yongyu",
+    "ni_hai_zai_ma",
+    "qing_deng_yideng",
+    "qing_jiang",
+    "qing_jiang_zhongdian",
+    "qingqiu_liangjie",
+    "saorao_dianhua",
+    "shifou_jiqiren",
+    "shijian_tuichi",
+    "shiti_dizhi",
+    "ting_bu_qingchu",
+    "ting_wo_shuohua",
+    "tousu_jinggao",
+    "weineng_lijie",
+    "wen_yitu",
+    "wo_zai",
+    "yaoqiu_fushu",
+    "yi_wancheng",
+    "yiwen_dizhi",
+    "yiwen_shichang",
+    "yiwen_shijian",
+    "yiwen_shuzhi",
+    "yonghu_zhengmang",
+    "yuqi_ci",
+    "zanmei_yongyu",
+    "zaoyu_buxing",
+    "zhaohu_yongyu",
+    "zhiyi_laidian_haoma",
+    "zhuan_rengong_kefu",
+    "zhufu_yongyu",
+    "zhuhe_yongyu",
+    "zijin_kunnan",
+]
+
 # 现代化滚动条样式（模块级常量，可在多处复用）
 SCROLLBAR_STYLE = """
     QScrollBar:vertical {
@@ -323,6 +398,8 @@ class StickerManagerWindow(QMainWindow):
         self.setup_ui()
         self.apply_light_theme()
         self.load_collections()
+        # 验证所有合集的类别目录结构
+        self.validate_all_collections()
         
     def setup_ui(self):
         self.setWindowTitle("表情包管理工具")
@@ -686,6 +763,207 @@ class StickerManagerWindow(QMainWindow):
         self.current_category = romaji_name
         self.load_stickers()
     
+    def validate_all_collections(self):
+        """验证所有合集的类别目录结构"""
+        if not self.sticker_base.exists():
+            return
+        
+        # 获取所有合集（排除隐藏目录）
+        collections = [d.name for d in self.sticker_base.iterdir() 
+                      if d.is_dir() and not d.name.startswith('.')]
+        
+        if not collections:
+            return
+        
+        # 用于收集所有未知类别
+        all_unknown_categories = {}  # {collection: [unknown_dirs]}
+        
+        for collection in collections:
+            collection_path = self.sticker_base / collection
+            existing_dirs = {d.name: d for d in collection_path.iterdir() if d.is_dir()}
+            existing_names = set(existing_dirs.keys())
+            official_names = set(OFFICIAL_CATEGORIES)
+            
+            # 1. 检查缺失的类别 - 自动创建
+            missing = official_names - existing_names
+            if missing:
+                for cat_name in missing:
+                    new_dir = collection_path / cat_name
+                    new_dir.mkdir(exist_ok=True)
+            
+            # 2. 检查大小写错误 - 自动修正
+            # 创建小写映射来检测大小写问题
+            lowercase_to_official = {cat.lower(): cat for cat in OFFICIAL_CATEGORIES}
+            
+            for existing_name in list(existing_names):
+                if existing_name not in official_names:
+                    # 检查是否是大小写错误
+                    lower_name = existing_name.lower()
+                    if lower_name in lowercase_to_official:
+                        correct_name = lowercase_to_official[lower_name]
+                        old_path = existing_dirs[existing_name]
+                        new_path = collection_path / correct_name
+                        
+                        # 如果目标路径已存在，合并文件
+                        if new_path.exists():
+                            # 移动所有文件到正确的目录
+                            for file in old_path.iterdir():
+                                if file.is_file():
+                                    dest = new_path / file.name
+                                    if not dest.exists():
+                                        shutil.move(str(file), str(dest))
+                            # 删除旧目录
+                            old_path.rmdir()
+                        else:
+                            # 直接重命名
+                            old_path.rename(new_path)
+                        
+                        # 更新existing_names
+                        existing_names.remove(existing_name)
+                        existing_names.add(correct_name)
+            
+            # 3. 收集未知类别（既不在官方列表中，也不是大小写错误）
+            unknown = []
+            for existing_name in existing_names:
+                if existing_name not in official_names:
+                    unknown.append(existing_name)
+            
+            if unknown:
+                all_unknown_categories[collection] = unknown
+        
+        # 4. 如果有未知类别，显示警告对话框
+        if all_unknown_categories:
+            self.show_unknown_categories_dialog(all_unknown_categories)
+    
+    def show_unknown_categories_dialog(self, unknown_categories: Dict[str, List[str]]):
+        """显示未知类别警告对话框"""
+        dialog = QDialog(self)
+        dialog.setWindowTitle("⚠️ 发现未知类别")
+        dialog.setMinimumWidth(600)
+        dialog.setMinimumHeight(400)
+        dialog.setStyleSheet("""
+            QDialog {
+                background: white;
+            }
+            QLabel {
+                color: #333;
+                font-size: 13px;
+            }
+            QPushButton {
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-size: 13px;
+                font-weight: 500;
+            }
+        """)
+        
+        layout = QVBoxLayout(dialog)
+        layout.setSpacing(16)
+        
+        # 标题
+        title = QLabel("⚠️ 发现以下未知类别目录")
+        title.setStyleSheet("font-size: 16px; font-weight: bold; color: #f44336;")
+        layout.addWidget(title)
+        
+        # 说明
+        info = QLabel("这些目录不在官方的 70 个类别列表中。\n建议删除这些目录以保持数据结构一致性。")
+        info.setStyleSheet("color: #666;")
+        layout.addWidget(info)
+        
+        # 滚动区域显示所有未知类别
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setStyleSheet(f"""
+            QScrollArea {{
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                background: #fafafa;
+            }}
+            {SCROLLBAR_STYLE}
+        """)
+        
+        content_widget = QWidget()
+        content_layout = QVBoxLayout(content_widget)
+        
+        for collection, unknowns in sorted(unknown_categories.items()):
+            # 合集名称
+            coll_label = QLabel(f"📁 合集: {collection}")
+            coll_label.setStyleSheet("font-weight: bold; color: #2196F3; margin-top: 8px;")
+            content_layout.addWidget(coll_label)
+            
+            # 未知类别列表
+            for unknown in sorted(unknowns):
+                unknown_label = QLabel(f"   • {unknown}")
+                unknown_label.setStyleSheet("color: #666; margin-left: 20px;")
+                content_layout.addWidget(unknown_label)
+        
+        content_layout.addStretch()
+        scroll.setWidget(content_widget)
+        layout.addWidget(scroll)
+        
+        # 按钮区域
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+        
+        delete_btn = QPushButton("🗑️ 删除所有未知目录")
+        delete_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #f44336;
+                color: white;
+                border: none;
+            }
+            QPushButton:hover {
+                background-color: #d32f2f;
+            }
+        """)
+        delete_btn.clicked.connect(lambda: self.delete_unknown_categories(unknown_categories, dialog))
+        button_layout.addWidget(delete_btn)
+        
+        ignore_btn = QPushButton("忽略")
+        ignore_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #f5f5f5;
+                color: #333;
+                border: 1px solid #ddd;
+            }
+            QPushButton:hover {
+                background-color: #e0e0e0;
+            }
+        """)
+        ignore_btn.clicked.connect(dialog.close)
+        button_layout.addWidget(ignore_btn)
+        
+        layout.addLayout(button_layout)
+        
+        dialog.exec()
+    
+    def delete_unknown_categories(self, unknown_categories: Dict[str, List[str]], dialog: QDialog):
+        """删除未知类别目录"""
+        # 确认删除
+        reply = QMessageBox.question(
+            self,
+            "确认删除",
+            f"确定要删除所有未知类别目录吗？\n这将删除 {sum(len(v) for v in unknown_categories.values())} 个目录及其中的所有文件！",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        
+        if reply == QMessageBox.StandardButton.Yes:
+            deleted_count = 0
+            for collection, unknowns in unknown_categories.items():
+                collection_path = self.sticker_base / collection
+                for unknown in unknowns:
+                    unknown_path = collection_path / unknown
+                    if unknown_path.exists():
+                        shutil.rmtree(unknown_path)
+                        deleted_count += 1
+            
+            self.show_toast(f"已删除 {deleted_count} 个未知类别目录", True)
+            dialog.close()
+            
+            # 刷新当前视图
+            if self.current_collection:
+                self.load_categories()
+    
     def get_next_filename(self, category_path: Path) -> str:
         """获取下一个文件名（自动编号）"""
         existing_files = list(category_path.glob("*.*"))
@@ -875,27 +1153,14 @@ class StickerManagerWindow(QMainWindow):
                 # 创建合集目录
                 collection_path.mkdir(parents=True, exist_ok=True)
                 
-                # 获取所有需要创建的类别（从 rin 和 general 合并）
-                all_categories = set()
-                
-                # 从 rin 获取类别
-                rin_path = self.sticker_base / "rin"
-                if rin_path.exists():
-                    all_categories.update([d.name for d in rin_path.iterdir() if d.is_dir()])
-                
-                # 从 general 获取类别
-                general_path = self.sticker_base / "general"
-                if general_path.exists():
-                    all_categories.update([d.name for d in general_path.iterdir() if d.is_dir()])
-                
-                # 为新合集创建所有类别目录
-                for category_name in sorted(all_categories):
+                # 使用官方类别列表创建所有类别目录
+                for category_name in OFFICIAL_CATEGORIES:
                     category_dir = collection_path / category_name
                     category_dir.mkdir(exist_ok=True)
                 
                 self.load_collections()
                 self.collection_combo.setCurrentText(name)
-                self.show_toast(f"合集 '{name}' 创建成功，已自动创建 {len(all_categories)} 个类别", True)
+                self.show_toast(f"合集 '{name}' 创建成功，已自动创建 {len(OFFICIAL_CATEGORIES)} 个类别", True)
             except Exception as e:
                 self.show_toast(f"创建失败: {str(e)}", False)
                 
