@@ -59,7 +59,7 @@ function getLastEffectiveTimestamp(sessionId) {
   for (let i = msgs.length - 1; i >= 0; i -= 1) {
     const msg = msgs[i];
     if (msg.is_recalled) continue;
-    if (msg.type === "system-emotion" || msg.type === "system-typing") continue;
+    if (msg.type === "system-emotion" || msg.type === "system-typing" || msg.type === "system-tool") continue;
     return msg.timestamp || 0;
   }
   return 0;
@@ -139,7 +139,7 @@ function getUnreadCount(sessionId) {
   for (const msg of msgs) {
     if (msg.is_recalled) continue;
     if (msg.sender_id !== "assistant") continue;
-    if (msg.type === "system-emotion" || msg.type === "system-typing") continue;
+    if (msg.type === "system-emotion" || msg.type === "system-typing" || msg.type === "system-tool") continue;
     if (msg.timestamp > lastRead) count += 1;
   }
   return count;
@@ -150,7 +150,7 @@ function getLastPreviewText(sessionId) {
   for (let i = msgs.length - 1; i >= 0; i -= 1) {
     const msg = msgs[i];
     if (msg.is_recalled) continue;
-    if (msg.type === "system-emotion" || msg.type === "system-typing") continue;
+    if (msg.type === "system-emotion" || msg.type === "system-typing" || msg.type === "system-tool") continue;
     if (msg.type === "text") return msg.content.slice(0, 30);
     if (msg.type === "image") return "[Image]";
     if (msg.type === "system-recall") return "Message recalled";

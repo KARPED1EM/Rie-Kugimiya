@@ -5,7 +5,7 @@
  * @property {string} id
  * @property {string} session_id
  * @property {string} sender_id
- * @property {"text"|"image"|"video"|"audio"|"system-recall"|"system-time"|"system-hint"|"system-emotion"|"system-typing"} type
+ * @property {"text"|"image"|"video"|"audio"|"system-recall"|"system-time"|"system-hint"|"system-emotion"|"system-typing"|"system-tool"} type
  * @property {string} content
  * @property {Record<string, any>} metadata
  * @property {boolean} is_recalled

@@ -162,6 +162,11 @@ export function renderChatSession(sessionId, opts = {}) {
       continue;
     }
     
+    // Skip SYSTEM_TOOL messages - they are DB-only for LLM context
+    if (msg.type === "system-tool") {
+      continue;
+    }
+    
     // Skip SYSTEM_RECALL messages - they are handled by marking target messages as recalled
     if (msg.type === "system-recall") {
       continue;
@@ -539,7 +544,8 @@ function markAllRead(sessionId) {
         m.sender_id === "assistant" &&
         !m.is_recalled &&
         m.type !== "system-emotion" &&
-        m.type !== "system-typing",
+        m.type !== "system-typing" &&
+        m.type !== "system-tool",
     )
     .slice(-1)[0];
   if (!lastAssistant) return;
@@ -575,7 +581,7 @@ function getUnreadCount(sessionId) {
   for (const msg of msgs) {
     if (msg.is_recalled) continue;
     if (msg.sender_id !== "assistant") continue;
-    if (msg.type === "system-emotion" || msg.type === "system-typing") continue;
+    if (msg.type === "system-emotion" || msg.type === "system-typing" || msg.type === "system-tool") continue;
     if (msg.timestamp > lastRead) count += 1;
   }
   return count;
