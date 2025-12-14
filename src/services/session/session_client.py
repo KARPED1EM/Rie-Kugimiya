@@ -131,6 +131,8 @@ class SessionClient:
 
                     # Execute all tool calls and collect results
                     tool_results = []
+                    should_terminate = False  # Flag to exit loop after blocking
+                    
                     for tool_call in llm_response.tool_calls:
                         if not isinstance(tool_call, dict):
                             continue
@@ -180,6 +182,15 @@ class SessionClient:
                                     if msg.type == MessageType.SYSTEM_BLOCKED:
                                         await self._broadcast_message(msg)
                                         break
+                                
+                                # Set flag to terminate loop after blocking
+                                should_terminate = True
+                                log_entry = unified_logger.info(
+                                    "User blocked, terminating tool call loop",
+                                    category=LogCategory.LLM,
+                                    metadata={"session_id": user_message.session_id},
+                                )
+                                await broadcast_log_if_needed(log_entry)
                             
                             if tool_name == "recall_message_by_id" and result.get("success"):
                                 # Broadcast the recall message
@@ -210,6 +221,16 @@ class SessionClient:
                             content="",
                             metadata={"tool_results": tool_results},
                         )
+                    
+                    # If block_user was called, terminate immediately
+                    if should_terminate:
+                        log_entry = unified_logger.info(
+                            "Processing terminated due to block_user call",
+                            category=LogCategory.LLM,
+                            metadata={"session_id": user_message.session_id},
+                        )
+                        await broadcast_log_if_needed(log_entry)
+                        return
                     
                     # Continue loop to call LLM again with tool results in history
                     continue

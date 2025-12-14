@@ -781,9 +781,8 @@ textarea {
 /* Blocked message indicator */
 .blocked-indicator {
     position: absolute;
-    left: -20px;
-    top: 50%;
-    transform: translateY(-50%);
+    right: calc(100% + 6px);  /* Position to the left of the bubble with spacing */
+    bottom: 0;  /* Align to bottom of bubble */
     width: 18px;
     height: 18px;
     background: #ff5252;
@@ -798,8 +797,15 @@ textarea {
     z-index: 1;
 }
 
-.message.message-blocked {
+.message.message-blocked .message-bubble {
     position: relative;
+    /* Reduce max-width slightly to ensure space for the indicator */
+    max-width: calc(100% - 85px);
+}
+
+.message.message-user.message-blocked .message-bubble {
+    /* User messages already aligned right, no special handling needed */
+    max-width: calc(100% - 85px);
 }
 
 .wechat-input {

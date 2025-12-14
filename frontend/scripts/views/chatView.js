@@ -288,8 +288,13 @@ function addBlockedIndicator(messageElement) {
   indicator.textContent = "!";
   indicator.title = "此消息在被拉黑后发送";
   
-  // Insert the indicator at the beginning of the message
-  messageElement.insertBefore(indicator, messageElement.firstChild);
+  // Find the message bubble within the message element
+  const bubble = messageElement.querySelector(".message-bubble");
+  if (bubble) {
+    // Insert the indicator inside the bubble (at the beginning)
+    bubble.insertBefore(indicator, bubble.firstChild);
+  }
+  
   messageElement.classList.add("message-blocked");
 }
 
