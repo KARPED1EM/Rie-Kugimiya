@@ -89,7 +89,7 @@ function applyGradientWithTransition(container, gradient) {
   activeLayer = nextLayer;
 }
 
-/** Build radial / conic gradient for full-page background */
+/** Build gradient for full-page background with smooth color blending */
 function buildGlowGradient(colors) {
   const stops = colors.map(
     (c) => `hsla(${c.h} ${c.s}% ${c.l}% / ${c.a})`
@@ -97,18 +97,29 @@ function buildGlowGradient(colors) {
 
   if (stops.length === 1) {
     const c = stops[0];
-    return `radial-gradient(ellipse at center, ${c} 0%, rgba(0,0,0,0) 70%)`;
+    // Single color: use radial gradient from center
+    return `radial-gradient(ellipse at 50% 50%, ${c} 0%, transparent 70%)`;
   }
 
-  // Create a smooth multi-stop gradient for full-page background
-  const gradientStops = [];
-  for (let i = 0; i < stops.length; i++) {
-    const percent = (i / stops.length) * 100;
-    gradientStops.push(`${stops[i]} ${percent}%`);
+  if (stops.length === 2) {
+    // Two colors: diagonal gradient with smooth blending
+    return `linear-gradient(135deg, ${stops[0]} 0%, ${stops[1]} 100%)`;
   }
-  // Add first color again to complete the loop
+
+  // Multiple colors: create smooth flowing gradient
+  // Distribute colors evenly and add intermediate blend points for smoothness
+  const gradientStops = [];
+  const step = 100 / colors.length;
+  
+  for (let i = 0; i < colors.length; i++) {
+    const pos = i * step;
+    gradientStops.push(`${stops[i]} ${pos}%`);
+  }
+  
+  // Complete the loop for seamless animation
   gradientStops.push(`${stops[0]} 100%`);
 
+  // Use diagonal gradient for dynamic flow
   return `linear-gradient(135deg, ${gradientStops.join(", ")})`;
 }
 
