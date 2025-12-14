@@ -11,20 +11,20 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 def verify_update_character_method():
-    """Verify the update_character method exists in CharacterClient"""
+    """Verify the update_character method exists in SessionClient"""
     print("Verifying update_character method...")
     
-    # Read the CharacterClient file content
-    character_client_path = os.path.join(
+    # Read the SessionClient file content
+    session_client_path = os.path.join(
         os.path.dirname(__file__), 
         "..", 
         "src", 
         "services", 
-        "ai", 
-        "character_client.py"
+        "session", 
+        "session_client.py"
     )
     
-    with open(character_client_path, 'r', encoding='utf-8') as f:
+    with open(session_client_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
     # Check for the update_character method
@@ -53,7 +53,7 @@ def verify_update_character_method():
 
 
 def verify_routes_update():
-    """Verify that routes.py calls update_character on CharacterClient instances"""
+    """Verify that routes.py calls update_character on SessionClient instances"""
     print("\nVerifying routes.py updates...")
     
     routes_path = os.path.join(
@@ -68,10 +68,10 @@ def verify_routes_update():
         content = f.read()
     
     # Check for calling update_character
-    if "character_client.update_character(character)" in content:
-        print("✓ CharacterClient.update_character() call found")
+    if "session_client.update_character(character)" in content:
+        print("✓ SessionClient.update_character() call found")
     else:
-        print("✗ CharacterClient.update_character() call not found")
+        print("✗ SessionClient.update_character() call not found")
         return False
     
     # Check for updated notification message

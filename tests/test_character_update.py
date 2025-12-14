@@ -1,12 +1,12 @@
 """Test character configuration update functionality"""
 from unittest.mock import Mock
-from src.services.ai.character_client import CharacterClient
+from src.services.session.session_client import SessionClient
 from src.core.models.character import Character
 from src.api.schemas import LLMConfig
 
 
-def test_character_client_update_character():
-    """Test that CharacterClient.update_character updates the character and coordinator"""
+def test_session_client_update_character():
+    """Test that SessionClient.update_character updates the character and coordinator"""
     # Create initial character
     initial_character = Character(
         id="test_char_1",
@@ -29,8 +29,8 @@ def test_character_client_update_character():
         user_nickname=None,
     )
     
-    # Create CharacterClient
-    character_client = CharacterClient(
+    # Create SessionClient
+    session_client = SessionClient(
         message_service=message_service,
         ws_manager=ws_manager,
         llm_config=llm_config,
@@ -38,8 +38,8 @@ def test_character_client_update_character():
     )
     
     # Verify initial state
-    assert character_client.character.sticker_send_probability == 0.4
-    assert character_client.coordinator.character.sticker_send_probability == 0.4
+    assert session_client.character.sticker_send_probability == 0.4
+    assert session_client.coordinator.character.sticker_send_probability == 0.4
     
     # Create updated character with different probability
     updated_character = Character(
@@ -51,16 +51,16 @@ def test_character_client_update_character():
     )
     
     # Update the character
-    character_client.update_character(updated_character)
+    session_client.update_character(updated_character)
     
     # Verify the update
-    assert character_client.character.sticker_send_probability == 0.01
-    assert character_client.coordinator.character.sticker_send_probability == 0.01
+    assert session_client.character.sticker_send_probability == 0.01
+    assert session_client.coordinator.character.sticker_send_probability == 0.01
     
     # Verify they are the same object reference
-    assert character_client.character is character_client.coordinator.character
+    assert session_client.character is session_client.coordinator.character
 
 
 if __name__ == "__main__":
-    test_character_client_update_character()
-    print("✓ test_character_client_update_character passed")
+    test_session_client_update_character()
+    print("✓ test_session_client_update_character passed")

@@ -2,7 +2,7 @@ import asyncio
 import logging
 from datetime import datetime, timezone
 from typing import List, Any
-from src.services.ai.llm_client import LLMClient
+from src.services.llm.llm_client import LLMClient
 from src.api.schemas import LLMConfig, ChatMessage
 from src.services.behavior.coordinator import BehaviorCoordinator
 from src.core.models.behavior import PlaybackAction
@@ -18,7 +18,7 @@ from src.infrastructure.utils.logger import (
 logger = logging.getLogger(__name__)
 
 
-class CharacterClient:
+class SessionClient:
     def __init__(
         self,
         message_service: MessageService,
@@ -40,7 +40,7 @@ class CharacterClient:
     async def start(self, session_id: str):
         self._running = True
         self.session_id = session_id
-        logger.info(f"CharacterClient started for session {session_id}")
+        logger.info(f"SessionClient started for session {session_id}")
 
     async def stop(self):
         self._running = False
@@ -58,10 +58,10 @@ class CharacterClient:
 
         # Close the HTTP client
         await self.llm_client.close()
-        logger.info("CharacterClient stopped")
+        logger.info("SessionClient stopped")
 
     def update_character(self, character: Character):
-        """Update the character configuration for this CharacterClient instance.
+        """Update the character configuration for this SessionClient instance.
         
         This updates both the character reference and recreates the coordinator
         with the new character configuration.

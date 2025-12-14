@@ -11,7 +11,7 @@ from src.infrastructure.database.repositories import (
 from src.services.messaging.message_service import MessageService
 from src.services.character.character_service import CharacterService
 from src.services.config.config_service import ConfigService
-from src.services.ai.character_client import CharacterClient
+from src.services.session.session_client import SessionClient
 from src.infrastructure.network.websocket_manager import WebSocketManager
 from src.core.models.message import MessageType
 from src.api.schemas import LLMConfig
@@ -35,7 +35,7 @@ message_service: Optional[MessageService] = None
 character_service: Optional[CharacterService] = None
 config_service: Optional[ConfigService] = None
 ws_manager: Optional[WebSocketManager] = None
-character_clients: Dict[str, CharacterClient] = {}
+session_clients: Dict[str, SessionClient] = {}
 
 
 async def initialize_services():
@@ -222,9 +222,9 @@ async def handle_send_message(session_id: str, user_id: str, data: Dict[str, Any
         }
         await ws_manager.send_to_conversation(session_id, event)
 
-    character_client = character_clients.get(session_id)
-    if character_client:
-        await character_client.process_user_message(messages[-1])
+    session_client = session_clients.get(session_id)
+    if session_client:
+        await session_client.process_user_message(messages[-1])
 
 
 async def handle_set_typing(session_id: str, user_id: str, data: Dict[str, Any]):
@@ -325,10 +325,10 @@ async def handle_clear_session(session_id: str):
 
     new_session_id = await character_service.recreate_session(session.character_id)
     if new_session_id:
-        character_client = character_clients.get(session_id)
-        if character_client:
-            await character_client.stop()
-            del character_clients[session_id]
+        session_client = session_clients.get(session_id)
+        if session_client:
+            await session_client.stop()
+            del session_clients[session_id]
 
         event = {
             "type": "session_recreated",
@@ -338,13 +338,13 @@ async def handle_clear_session(session_id: str):
 
 
 async def handle_init_character(session_id: str, data: Dict[str, Any]):
-    if session_id in character_clients:
-        old_client = character_clients.get(session_id)
+    if session_id in session_clients:
+        old_client = session_clients.get(session_id)
         if old_client:
             await old_client.stop()
-        character_clients.pop(session_id, None)
+        session_clients.pop(session_id, None)
         log_entry = unified_logger.info(
-            f"CharacterClient reinitialized for session {session_id}",
+            f"SessionClient reinitialized for session {session_id}",
             category=LogCategory.WEBSOCKET,
         )
         await broadcast_log_if_needed(log_entry)
@@ -409,18 +409,18 @@ async def handle_init_character(session_id: str, data: Dict[str, Any]):
         or config.get("user_nickname"),
     )
 
-    character_client = CharacterClient(
+    session_client = SessionClient(
         message_service=message_service,
         ws_manager=ws_manager,
         llm_config=llm_config,
         character=character,
     )
 
-    await character_client.start(session_id)
-    character_clients[session_id] = character_client
+    await session_client.start(session_id)
+    session_clients[session_id] = session_client
 
     log_entry = unified_logger.info(
-        f"CharacterClient initialized for session {session_id} with character {character.name}",
+        f"SessionClient initialized for session {session_id} with character {character.name}",
         category=LogCategory.WEBSOCKET,
     )
     await broadcast_log_if_needed(log_entry)
@@ -445,30 +445,30 @@ async def cleanup_resources():
     )
     await broadcast_log_if_needed(log_entry)
 
-    # Stop all CharacterClient instances
-    if character_clients:
+    # Stop all SessionClient instances
+    if session_clients:
         log_entry = unified_logger.info(
-            f"Stopping {len(character_clients)} CharacterClient instances",
+            f"Stopping {len(session_clients)} SessionClient instances",
             category=LogCategory.WEBSOCKET,
         )
         await broadcast_log_if_needed(log_entry)
 
-        for session_id, character_client in list(character_clients.items()):
+        for session_id, session_client in list(session_clients.items()):
             try:
-                await character_client.stop()
+                await session_client.stop()
                 log_entry = unified_logger.info(
-                    f"Stopped CharacterClient for session {session_id}",
+                    f"Stopped SessionClient for session {session_id}",
                     category=LogCategory.WEBSOCKET,
                 )
                 await broadcast_log_if_needed(log_entry)
             except Exception as e:
                 log_entry = unified_logger.error(
-                    f"Error stopping CharacterClient for session {session_id}: {e}",
+                    f"Error stopping SessionClient for session {session_id}: {e}",
                     category=LogCategory.WEBSOCKET,
                 )
                 await broadcast_log_if_needed(log_entry)
 
-        character_clients.clear()
+        session_clients.clear()
 
     # Close all WebSocket connections
     if ws_manager:

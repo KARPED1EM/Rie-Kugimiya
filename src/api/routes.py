@@ -272,14 +272,14 @@ async def update_character(character_id: str, data: CharacterUpdate):
     if not success:
         raise HTTPException(status_code=500, detail="Failed to update character")
 
-    # Update character configuration in active CharacterClient instances
+    # Update character configuration in active SessionClient instances
     from src.api import ws_routes
     updated_sessions = []
-    for session_id, character_client in list(ws_routes.character_clients.items()):
-        if hasattr(character_client, 'character') and character_client.character.id == character_id:
+    for session_id, session_client in list(ws_routes.session_clients.items()):
+        if hasattr(session_client, 'character') and session_client.character.id == character_id:
             try:
-                # Update the character configuration in the CharacterClient
-                character_client.update_character(character)
+                # Update the character configuration in the SessionClient
+                session_client.update_character(character)
                 # Send notification to frontend that config is updated
                 if ws_routes.ws_manager:
                     await ws_routes.ws_manager.send_toast(
