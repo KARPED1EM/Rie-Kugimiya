@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import uuid
 from datetime import datetime, timezone
 from typing import List, Any
 from src.services.llm.llm_client import LLMClient
@@ -109,6 +110,16 @@ class SessionClient:
                     level="warning",
                 )
                 return
+
+            # Handle tool calls if present
+            if llm_response.tool_calls:
+                await self._handle_tool_calls(
+                    user_message.session_id, 
+                    llm_response.tool_calls,
+                    history
+                )
+                # After handling tools, call LLM again to get actual response
+                return await self.process_user_message(user_message)
 
             # Determine the emotion_map to use
             emotion_map_to_use = llm_response.emotion_map
@@ -241,6 +252,66 @@ class SessionClient:
                 metadata={"exc_info": True, "session_id": user_message.session_id},
             )
             await broadcast_log_if_needed(log_entry)
+
+    async def _handle_tool_calls(
+        self, session_id: str, tool_calls: List[Any], history: List[Message]
+    ):
+        """Execute tool calls and store results in database as SYSTEM_TOOL messages."""
+        for tool_call in tool_calls:
+            if not isinstance(tool_call, dict):
+                continue
+            
+            tool_name = tool_call.get("name", "")
+            arguments = tool_call.get("arguments", {})
+            
+            if tool_name == "get_image_description":
+                image_id = arguments.get("image_id", "")
+                
+                # Find the image message in history
+                image_msg = None
+                for msg in history:
+                    if msg.id == image_id and msg.type == MessageType.IMAGE:
+                        image_msg = msg
+                        break
+                
+                if image_msg:
+                    # Get the image description
+                    image_path = image_msg.content or ""
+                    description = image_alter.get_description(image_path)
+                    
+                    if description:
+                        result_text = f"工具调用结果：图片 {image_id} 的描述为：{description}"
+                    else:
+                        result_text = f"工具调用结果：图片 {image_id} 加载失败或无描述"
+                else:
+                    result_text = f"工具调用结果：未找到图片 {image_id}"
+                
+                # Store tool result as SYSTEM_TOOL message (DB only, not broadcasted)
+                tool_result_msg = Message(
+                    id=f"tool-{uuid.uuid4().hex[:12]}",
+                    session_id=session_id,
+                    sender_id="system",
+                    type=MessageType.SYSTEM_TOOL,
+                    content=result_text,
+                    metadata={"tool_name": tool_name, "image_id": image_id},
+                    is_recalled=False,
+                    is_read=False,
+                    timestamp=datetime.now(timezone.utc).timestamp(),
+                )
+                
+                await self.message_service.message_repo.create(tool_result_msg)
+                
+                log_entry = unified_logger.info(
+                    f"Tool call executed: {tool_name}",
+                    category=LogCategory.LLM,
+                    metadata={
+                        "session_id": session_id,
+                        "tool_name": tool_name,
+                        "image_id": image_id,
+                        "result": result_text[:100],
+                    },
+                )
+                await broadcast_log_if_needed(log_entry)
 
     async def _execute_timeline(self, timeline: List[PlaybackAction], session_id: str):
         start_time = datetime.now(timezone.utc).timestamp()
@@ -480,6 +551,9 @@ class SessionClient:
             meta = msg.metadata or {}
             parts = [f"{k}={v}" for k, v in meta.items()]
             return "Emotion state: " + (", ".join(parts) if parts else "neutral")
+        if msg.type == MessageType.SYSTEM_TOOL:
+            # Format tool result
+            return msg.content or ""
         # Fallback for other system messages.
         return msg.content or ""
 
@@ -487,13 +561,8 @@ class SessionClient:
         if msg.type == MessageType.TEXT:
             return msg.content or ""
         if msg.type == MessageType.IMAGE:
-            # Try to get image description
-            image_path = msg.content or ""
-            description = image_alter.get_description(image_path)
-            if description:
-                return f"[image]({description})"
-            else:
-                return "[image](图片加载失败)"
+            # Use message ID instead of description to save tokens
+            return f"[image]({msg.id})"
         if msg.type == MessageType.VIDEO:
             return "[Video]"
         if msg.type == MessageType.AUDIO:

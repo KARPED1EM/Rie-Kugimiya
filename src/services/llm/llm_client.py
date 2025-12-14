@@ -26,6 +26,7 @@ SYSTEM_BEHAVIOR_PROMPT = """
 5) reply 是要发送给对方的微信消息，不要包含内心活动、动作描述、旁白或格式化符号，长度保持简短，像真人打字
 6) 角色设定将在下文补充，请在生成 reply 时完全遵守角色设定的人设，同时尽力模仿真人微信对话风格
 7) 使用聊天历史保持上下文连贯，永远只返回 JSON，切勿输出解释或多余文本
+8) 如果需要查看图片的详细描述，可以调用工具。在 JSON 中添加 "tool_calls" 字段（数组），每个元素包含 {"name": "get_image_description", "arguments": {"image_id": "<图片id>"}}。调用工具后你会收到工具结果，然后再做出回复。
 """.strip()
 
 
@@ -58,6 +59,11 @@ class LLMStructuredResponse:
     raw_text: str
     is_invalid_json: bool = False
     is_empty_content: bool = False
+    tool_calls: List[Dict[str, Any]] = None
+    
+    def __post_init__(self):
+        if self.tool_calls is None:
+            self.tool_calls = []
 
 
 class LLMClient:
@@ -142,7 +148,9 @@ class LLMClient:
             normalized_emotion = self._normalize_emotion_map(parsed)
             
             reply = parsed.get("reply", "").strip()
-            is_empty_content = not reply
+            tool_calls = parsed.get("tool_calls", [])
+            # Allow empty content if there are tool calls
+            is_empty_content = not reply and not tool_calls
             
             response = LLMStructuredResponse(
                 reply=reply,
@@ -150,6 +158,7 @@ class LLMClient:
                 raw_text=raw,
                 is_invalid_json=is_invalid_json,
                 is_empty_content=is_empty_content,
+                tool_calls=tool_calls if isinstance(tool_calls, list) else [],
             )
 
             # Log LLM response
