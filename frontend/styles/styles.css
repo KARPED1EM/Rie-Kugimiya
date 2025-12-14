@@ -58,6 +58,7 @@ textarea {
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.8s ease;
+    will-change: opacity;
 }
 
 .app-container::before {
@@ -74,30 +75,30 @@ textarea {
 
 @keyframes emotionFlow1 {
     0%, 100% {
-        background-size: 200% 200%;
+        background-size: 150% 150%;
         background-position: 0% 0%;
     }
     33% {
-        background-size: 250% 250%;
+        background-size: 180% 180%;
         background-position: 100% 50%;
     }
     66% {
-        background-size: 220% 220%;
+        background-size: 165% 165%;
         background-position: 50% 100%;
     }
 }
 
 @keyframes emotionFlow2 {
     0%, 100% {
-        background-size: 220% 220%;
+        background-size: 165% 165%;
         background-position: 100% 100%;
     }
     33% {
-        background-size: 200% 200%;
+        background-size: 150% 150%;
         background-position: 0% 50%;
     }
     66% {
-        background-size: 240% 240%;
+        background-size: 175% 175%;
         background-position: 50% 0%;
     }
 }
