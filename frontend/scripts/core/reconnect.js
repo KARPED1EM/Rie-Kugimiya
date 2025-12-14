@@ -49,6 +49,22 @@ class ReconnectController {
     this._scheduleRetry(id);
   }
 
+  /**
+   * Unregister a connection (e.g. when character/session is deleted)
+   * @param {string} id
+   */
+  unregister(id) {
+    const item = this.items.get(id);
+    if (!item) return;
+    if (item.timer) {
+      clearTimeout(item.timer);
+      item.timer = null;
+    }
+    this.items.delete(id);
+    this._render();
+    this._maybeHide();
+  }
+
   _scheduleRetry(id) {
     const item = this.items.get(id);
     if (!item) return;

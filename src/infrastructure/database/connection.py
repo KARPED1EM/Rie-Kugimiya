@@ -58,54 +58,54 @@ class DatabaseConnection:
                     persona TEXT NOT NULL,
                     is_builtin BOOLEAN DEFAULT FALSE,
 
-                    hesitation_probability REAL DEFAULT 0.15,
-                    hesitation_cycles_min INTEGER DEFAULT 1,
-                    hesitation_cycles_max INTEGER DEFAULT 2,
-                    hesitation_duration_min INTEGER DEFAULT 1500,
-                    hesitation_duration_max INTEGER DEFAULT 5000,
-                    hesitation_gap_min INTEGER DEFAULT 500,
-                    hesitation_gap_max INTEGER DEFAULT 2000,
+                    timeline_hesitation_probability REAL DEFAULT 0.15,
+                    timeline_hesitation_cycles_min INTEGER DEFAULT 1,
+                    timeline_hesitation_cycles_max INTEGER DEFAULT 2,
+                    timeline_hesitation_duration_min INTEGER DEFAULT 1500,
+                    timeline_hesitation_duration_max INTEGER DEFAULT 5000,
+                    timeline_hesitation_gap_min INTEGER DEFAULT 500,
+                    timeline_hesitation_gap_max INTEGER DEFAULT 2000,
 
-                    typing_lead_time_threshold_1 INTEGER DEFAULT 6,
-                    typing_lead_time_1 INTEGER DEFAULT 1200,
-                    typing_lead_time_threshold_2 INTEGER DEFAULT 15,
-                    typing_lead_time_2 INTEGER DEFAULT 2000,
-                    typing_lead_time_threshold_3 INTEGER DEFAULT 28,
-                    typing_lead_time_3 INTEGER DEFAULT 3800,
-                    typing_lead_time_threshold_4 INTEGER DEFAULT 34,
-                    typing_lead_time_4 INTEGER DEFAULT 6000,
-                    typing_lead_time_threshold_5 INTEGER DEFAULT 50,
-                    typing_lead_time_5 INTEGER DEFAULT 8800,
-                    typing_lead_time_default INTEGER DEFAULT 2500,
+                    timeline_typing_lead_time_threshold_1 INTEGER DEFAULT 6,
+                    timeline_typing_lead_time_1 INTEGER DEFAULT 1200,
+                    timeline_typing_lead_time_threshold_2 INTEGER DEFAULT 15,
+                    timeline_typing_lead_time_2 INTEGER DEFAULT 2000,
+                    timeline_typing_lead_time_threshold_3 INTEGER DEFAULT 28,
+                    timeline_typing_lead_time_3 INTEGER DEFAULT 3800,
+                    timeline_typing_lead_time_threshold_4 INTEGER DEFAULT 34,
+                    timeline_typing_lead_time_4 INTEGER DEFAULT 6000,
+                    timeline_typing_lead_time_threshold_5 INTEGER DEFAULT 50,
+                    timeline_typing_lead_time_5 INTEGER DEFAULT 8800,
+                    timeline_typing_lead_time_default INTEGER DEFAULT 2500,
 
-                    entry_delay_min INTEGER DEFAULT 200,
-                    entry_delay_max INTEGER DEFAULT 2000,
+                    timeline_entry_delay_min INTEGER DEFAULT 200,
+                    timeline_entry_delay_max INTEGER DEFAULT 2000,
 
-                    initial_delay_weight_1 REAL DEFAULT 0.45,
-                    initial_delay_range_1_min INTEGER DEFAULT 3,
-                    initial_delay_range_1_max INTEGER DEFAULT 4,
-                    initial_delay_weight_2 REAL DEFAULT 0.75,
-                    initial_delay_range_2_min INTEGER DEFAULT 4,
-                    initial_delay_range_2_max INTEGER DEFAULT 6,
-                    initial_delay_weight_3 REAL DEFAULT 0.93,
-                    initial_delay_range_3_min INTEGER DEFAULT 6,
-                    initial_delay_range_3_max INTEGER DEFAULT 7,
-                    initial_delay_range_4_min INTEGER DEFAULT 8,
-                    initial_delay_range_4_max INTEGER DEFAULT 9,
+                    timeline_initial_delay_weight_1 REAL DEFAULT 0.45,
+                    timeline_initial_delay_range_1_min INTEGER DEFAULT 3,
+                    timeline_initial_delay_range_1_max INTEGER DEFAULT 4,
+                    timeline_initial_delay_weight_2 REAL DEFAULT 0.75,
+                    timeline_initial_delay_range_2_min INTEGER DEFAULT 4,
+                    timeline_initial_delay_range_2_max INTEGER DEFAULT 6,
+                    timeline_initial_delay_weight_3 REAL DEFAULT 0.93,
+                    timeline_initial_delay_range_3_min INTEGER DEFAULT 6,
+                    timeline_initial_delay_range_3_max INTEGER DEFAULT 7,
+                    timeline_initial_delay_range_4_min INTEGER DEFAULT 8,
+                    timeline_initial_delay_range_4_max INTEGER DEFAULT 9,
 
-                    enable_segmentation BOOLEAN DEFAULT TRUE,
-                    enable_typo BOOLEAN DEFAULT TRUE,
-                    enable_recall BOOLEAN DEFAULT TRUE,
-                    enable_emotion_detection BOOLEAN DEFAULT TRUE,
+                    segmenter_enable BOOLEAN DEFAULT TRUE,
+                    segmenter_max_length INTEGER DEFAULT 50,
 
-                    max_segment_length INTEGER DEFAULT 50,
-                    min_pause_duration REAL DEFAULT 0.8,
-                    max_pause_duration REAL DEFAULT 6.0,
-
-                    base_typo_rate REAL DEFAULT 0.05,
+                    typo_enable BOOLEAN DEFAULT TRUE,
+                    typo_base_rate REAL DEFAULT 0.05,
                     typo_recall_rate REAL DEFAULT 0.75,
+
+                    recall_enable BOOLEAN DEFAULT TRUE,
                     recall_delay REAL DEFAULT 2.0,
-                    retype_delay REAL DEFAULT 2.5,
+                    recall_retype_delay REAL DEFAULT 2.5,
+
+                    pause_min_duration REAL DEFAULT 0.8,
+                    pause_max_duration REAL DEFAULT 6.0,
 
                     sticker_packs TEXT,
                     sticker_send_probability REAL DEFAULT 0.4,
@@ -150,59 +150,7 @@ class DatabaseConnection:
                 )
             """)
 
-            self._migrate_emoticon_to_sticker_packs(cursor)
-            self._migrate_add_sticker_config_columns(cursor)
-
             conn.commit()
-
-    def _migrate_emoticon_to_sticker_packs(self, cursor):
-        cursor.execute("PRAGMA table_info(characters)")
-        columns = [col[1] for col in cursor.fetchall()]
-        
-        if "emoticon_packs" in columns and "sticker_packs" not in columns:
-            cursor.execute("""
-                ALTER TABLE characters
-                RENAME COLUMN emoticon_packs TO sticker_packs
-            """)
-            logger.info("Migrated emoticon_packs to sticker_packs")
-        elif "emoticon_packs" not in columns and "sticker_packs" not in columns:
-            cursor.execute("""
-                ALTER TABLE characters
-                ADD COLUMN sticker_packs TEXT
-            """)
-            logger.info("Added sticker_packs column")
-
-    def _migrate_add_sticker_config_columns(self, cursor):
-        cursor.execute("PRAGMA table_info(characters)")
-        columns = [col[1] for col in cursor.fetchall()]
-        
-        if "sticker_send_probability" not in columns:
-            cursor.execute("""
-                ALTER TABLE characters
-                ADD COLUMN sticker_send_probability REAL DEFAULT 0.4
-            """)
-            logger.info("Added sticker_send_probability column")
-        
-        if "sticker_confidence_threshold_positive" not in columns:
-            cursor.execute("""
-                ALTER TABLE characters
-                ADD COLUMN sticker_confidence_threshold_positive REAL DEFAULT 0.6
-            """)
-            logger.info("Added sticker_confidence_threshold_positive column")
-        
-        if "sticker_confidence_threshold_neutral" not in columns:
-            cursor.execute("""
-                ALTER TABLE characters
-                ADD COLUMN sticker_confidence_threshold_neutral REAL DEFAULT 0.7
-            """)
-            logger.info("Added sticker_confidence_threshold_neutral column")
-        
-        if "sticker_confidence_threshold_negative" not in columns:
-            cursor.execute("""
-                ALTER TABLE characters
-                ADD COLUMN sticker_confidence_threshold_negative REAL DEFAULT 0.8
-            """)
-            logger.info("Added sticker_confidence_threshold_negative column")
 
     @contextmanager
     def transaction(self) -> Generator[sqlite3.Connection, None, None]:

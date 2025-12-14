@@ -88,6 +88,13 @@ async def websocket_endpoint(
 ):
     await initialize_services()
 
+    # Verify session exists before accepting connection
+    session = await session_repo.get_by_id(session_id)
+    if not session:
+        # Session not found - close connection immediately without logging error
+        await websocket.close(code=1008, reason="Session not found")
+        return
+
     await ws_manager.connect(websocket, session_id, user_id)
 
     try:
@@ -126,12 +133,14 @@ async def websocket_endpoint(
         await broadcast_log_if_needed(log_entry)
 
     except Exception as e:
-        log_entry = unified_logger.error(
-            f"WebSocket error: {e}",
-            category=LogCategory.WEBSOCKET,
-            metadata={"exc_info": True},
-        )
-        await broadcast_log_if_needed(log_entry)
+        # Log unexpected errors but suppress common connection errors
+        if not isinstance(e, (ConnectionResetError, ConnectionAbortedError)):
+            log_entry = unified_logger.error(
+                f"WebSocket error: {e}",
+                category=LogCategory.WEBSOCKET,
+                metadata={"exc_info": True},
+            )
+            await broadcast_log_if_needed(log_entry)
         ws_manager.disconnect(websocket, session_id)
 
 
@@ -342,11 +351,7 @@ async def handle_init_rin(session_id: str, data: Dict[str, Any]):
 
     session = await session_repo.get_by_id(session_id)
     if not session:
-        log_entry = unified_logger.error(
-            f"Session {session_id} not found",
-            category=LogCategory.WEBSOCKET,
-        )
-        await broadcast_log_if_needed(log_entry)
+        # Silently ignore - likely stale session ID from frontend localStorage after DB changes
         return
 
     character = await character_service.get_character(session.character_id)

@@ -20,6 +20,11 @@ from src.core.config import database_config
 from src.core.models.constants import DEFAULT_USER_ID
 from src.core.models.character import Character
 from src.utils.url_utils import sanitize_base_url
+from src.infrastructure.utils.logger import (
+    unified_logger,
+    broadcast_log_if_needed,
+    LogCategory,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -165,6 +170,7 @@ async def get_character_behavior_schema():
     """
     Return a machine-readable schema for all character behavior-system fields.
     Frontend uses this to render editable controls without duplicating field lists.
+    Fields are automatically grouped by module prefix (timeline_, segmenter_, typo_, etc.)
     """
     exclude = {
         "id",
@@ -184,20 +190,9 @@ async def get_character_behavior_schema():
         type_name = _annotation_to_type_name(field.annotation)
         default_value = _pydantic_field_default(field)
 
-        if key.startswith("enable_") or key in {
-            "max_segment_length",
-            "min_pause_duration",
-            "max_pause_duration",
-            "base_typo_rate",
-            "typo_recall_rate",
-            "recall_delay",
-            "retype_delay",
-        }:
-            group = "behavior"
-        elif key.startswith("sticker_"):
-            group = "sticker"
-        else:
-            group = "timeline"
+        # Extract module prefix from field name (e.g., "timeline_hesitation_probability" -> "timeline")
+        # This enables automatic grouping without hardcoding field names
+        group = key.split("_")[0] if "_" in key else "other"
 
         fields.append(
             {
@@ -276,6 +271,40 @@ async def update_character(character_id: str, data: CharacterUpdate):
     success = await character_service.update_character(character)
     if not success:
         raise HTTPException(status_code=500, detail="Failed to update character")
+
+    # Notify active sessions to reinitialize RinClient for this character
+    # This is simpler and more reliable than trying to update config in-place
+    from src.api import ws_routes
+    reinitialized_sessions = []
+    for session_id, rin_client in list(ws_routes.rin_clients.items()):
+        if hasattr(rin_client, 'character') and rin_client.character.id == character_id:
+            try:
+                # Send notification to frontend that client is reinitializing
+                if ws_routes.ws_manager:
+                    await ws_routes.ws_manager.send_toast(
+                        session_id,
+                        "角色配置已更新，正在重新初始化...",
+                        level="info"
+                    )
+                reinitialized_sessions.append(session_id)
+            except Exception as e:
+                log_entry = unified_logger.warning(
+                    f"Failed to notify session {session_id}: {e}",
+                    category=LogCategory.BEHAVIOR,
+                )
+                await broadcast_log_if_needed(log_entry)
+    
+    if reinitialized_sessions:
+        log_entry = unified_logger.info(
+            f"Character config updated, {len(reinitialized_sessions)} sessions need reinitialization",
+            category=LogCategory.BEHAVIOR,
+            metadata={
+                "character_id": character_id,
+                "sessions": reinitialized_sessions,
+                "note": "Clients will reinitialize on next init_rin message",
+            },
+        )
+        await broadcast_log_if_needed(log_entry)
 
     return {"character": character.model_dump()}
 

@@ -160,8 +160,8 @@ class WebSocketManager:
                     disconnected.add(websocket)
                     continue
                 await websocket.send_json({"type": "debug_log", "data": log_entry})
-            except Exception as e:
-                logger.error(f"Error sending global debug log: {e}", exc_info=True)
+            except Exception:
+                # Silently remove disconnected websockets (expected during normal operation)
                 disconnected.add(websocket)
         for ws in disconnected:
             self.disable_global_debug_mode(ws)

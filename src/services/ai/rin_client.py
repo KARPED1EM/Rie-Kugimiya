@@ -5,8 +5,7 @@ from typing import List, Any
 from src.services.ai.llm_client import LLMClient
 from src.api.schemas import LLMConfig, ChatMessage
 from src.services.behavior.coordinator import BehaviorCoordinator
-from src.services.behavior.models import BehaviorConfig, PlaybackAction
-from src.services.behavior.timeline import TimelineConfig
+from src.core.models.behavior import PlaybackAction
 from src.services.messaging.message_service import MessageService
 from src.core.models.message import Message, MessageType
 from src.core.models.character import Character
@@ -33,64 +32,7 @@ class RinClient:
         self.character = character
         self.user_id = "assistant"
 
-        behavior_config = BehaviorConfig(
-            enable_segmentation=character.enable_segmentation,
-            enable_typo=character.enable_typo,
-            enable_recall=character.enable_recall,
-            enable_emotion_fetch=character.enable_emotion_detection,
-            max_segment_length=character.max_segment_length,
-            min_pause_duration=character.min_pause_duration,
-            max_pause_duration=character.max_pause_duration,
-            base_typo_rate=character.base_typo_rate,
-            typo_recall_rate=character.typo_recall_rate,
-            recall_delay=character.recall_delay,
-            retype_delay=character.retype_delay,
-        )
-
-        timeline_config = TimelineConfig(
-            hesitation_probability=character.hesitation_probability,
-            hesitation_cycles_min=character.hesitation_cycles_min,
-            hesitation_cycles_max=character.hesitation_cycles_max,
-            hesitation_duration_min=character.hesitation_duration_min,
-            hesitation_duration_max=character.hesitation_duration_max,
-            hesitation_gap_min=character.hesitation_gap_min,
-            hesitation_gap_max=character.hesitation_gap_max,
-            typing_lead_time_threshold_1=character.typing_lead_time_threshold_1,
-            typing_lead_time_1=character.typing_lead_time_1,
-            typing_lead_time_threshold_2=character.typing_lead_time_threshold_2,
-            typing_lead_time_2=character.typing_lead_time_2,
-            typing_lead_time_threshold_3=character.typing_lead_time_threshold_3,
-            typing_lead_time_3=character.typing_lead_time_3,
-            typing_lead_time_threshold_4=character.typing_lead_time_threshold_4,
-            typing_lead_time_4=character.typing_lead_time_4,
-            typing_lead_time_threshold_5=character.typing_lead_time_threshold_5,
-            typing_lead_time_5=character.typing_lead_time_5,
-            typing_lead_time_default=character.typing_lead_time_default,
-            entry_delay_min=character.entry_delay_min,
-            entry_delay_max=character.entry_delay_max,
-            initial_delay_weight_1=character.initial_delay_weight_1,
-            initial_delay_range_1_min=character.initial_delay_range_1_min,
-            initial_delay_range_1_max=character.initial_delay_range_1_max,
-            initial_delay_weight_2=character.initial_delay_weight_2,
-            initial_delay_range_2_min=character.initial_delay_range_2_min,
-            initial_delay_range_2_max=character.initial_delay_range_2_max,
-            initial_delay_weight_3=character.initial_delay_weight_3,
-            initial_delay_range_3_min=character.initial_delay_range_3_min,
-            initial_delay_range_3_max=character.initial_delay_range_3_max,
-            initial_delay_range_4_min=character.initial_delay_range_4_min,
-            initial_delay_range_4_max=character.initial_delay_range_4_max,
-        )
-
-        self.coordinator = BehaviorCoordinator(
-            config=behavior_config, timeline_config=timeline_config
-        )
-        self.coordinator.set_sticker_packs(character.sticker_packs or [])
-        self.coordinator.set_sticker_config(
-            send_probability=character.sticker_send_probability,
-            threshold_positive=character.sticker_confidence_threshold_positive,
-            threshold_neutral=character.sticker_confidence_threshold_neutral,
-            threshold_negative=character.sticker_confidence_threshold_negative,
-        )
+        self.coordinator = BehaviorCoordinator(character)
         self._running = False
         self._tasks = []
         self.session_id = None
@@ -129,6 +71,66 @@ class RinClient:
 
             llm_response = await self.llm_client.chat(conversation_history)
 
+            # Handle invalid JSON or empty content - skip processing entirely
+            if llm_response.is_invalid_json or llm_response.is_empty_content:
+                reason = "invalid_json" if llm_response.is_invalid_json else "empty_content"
+                message = (
+                    "LLM 返回了非法 JSON，本次不处理"
+                    if llm_response.is_invalid_json
+                    else "LLM 返回了空内容，本次不处理"
+                )
+                
+                log_entry = unified_logger.warning(
+                    f"Skipping LLM response: {reason}",
+                    category=LogCategory.LLM,
+                    metadata={
+                        "session_id": user_message.session_id,
+                        "reason": reason,
+                        "raw_text_preview": llm_response.raw_text[:200] if llm_response.raw_text else "",
+                    },
+                )
+                await broadcast_log_if_needed(log_entry)
+                
+                # Send toast notification to frontend
+                await self.ws_manager.send_toast(
+                    user_message.session_id,
+                    message,
+                    level="warning",
+                )
+                return
+
+            # Determine the emotion_map to use
+            emotion_map_to_use = llm_response.emotion_map
+            
+            # If emotion_map is empty, reuse the last emotion state
+            if not emotion_map_to_use:
+                last_emotion = await self.message_service.get_latest_emotion_state(
+                    user_message.session_id
+                )
+                if last_emotion:
+                    emotion_map_to_use = last_emotion
+                    log_entry = unified_logger.info(
+                        "Reusing last emotion state (LLM returned no emotions)",
+                        category=LogCategory.EMOTION,
+                        metadata={
+                            "session_id": user_message.session_id,
+                            "last_emotion": last_emotion,
+                        },
+                    )
+                    await broadcast_log_if_needed(log_entry)
+                else:
+                    # No previous emotion state exists, use neutral as absolute fallback
+                    emotion_map_to_use = {"neutral": "low"}
+                    log_entry = unified_logger.info(
+                        "No emotion from LLM and no previous state, using neutral fallback",
+                        category=LogCategory.EMOTION,
+                        metadata={
+                            "session_id": user_message.session_id,
+                        },
+                    )
+                    await broadcast_log_if_needed(log_entry)
+
+            # Only update emotion state if we have valid emotions from LLM
             if llm_response.emotion_map:
                 log_entry = unified_logger.emotion(
                     emotion_map=llm_response.emotion_map,
@@ -159,8 +161,9 @@ class RinClient:
                 except Exception:
                     pass
 
+            # Use emotion_map_to_use for behavior processing (either new or reused)
             timeline = self.coordinator.process_message(
-                llm_response.reply, emotion_map=llm_response.emotion_map
+                llm_response.reply, emotion_map=emotion_map_to_use
             )
 
             sticker_log_entries = self.coordinator.get_and_clear_log_entries()

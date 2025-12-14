@@ -46,6 +46,9 @@ export function createApp() {
       return;
     }
 
+    // Pre-fetch behavior schema to avoid delay on first character settings open
+    import("../ui/modal.js").then((m) => m.prefetchBehaviorSchema?.());
+
     if (!serverHash) {
       await handleStartupError("Server hash empty.", syncStartup);
       return;
@@ -241,6 +244,7 @@ export function createApp() {
 
         wsClientsBySession.get(old_session_id)?.close();
         wsClientsBySession.delete(old_session_id);
+        reconnectController.unregister(old_session_id);
         const newClient = new WsClient(new_session_id);
         newClient.onMessage((e) => handleWsMessage(e, new_session_id));
         newClient.onOpen(() => {
@@ -405,6 +409,7 @@ export function createApp() {
         wsClientsBySession.get(sessionId)?.close();
         wsClientsBySession.delete(sessionId);
         dropChatSessionContainer(sessionId);
+        reconnectController.unregister(sessionId);
       }
       setActiveSessionId(null);
       showSessionListView();
@@ -493,16 +498,24 @@ export function createApp() {
     return chatView?.classList.contains("hidden");
   }
 
+  let isOpeningCharacterModal = false;
+  
   function showCharacterSettings() {
+    if (isOpeningCharacterModal) return; // Prevent multiple clicks
+    
     const session = state.sessions.find((s) => s.id === state.activeSessionId);
     if (!session) return;
     const character = state.characters.find(
       (c) => c.id === session.character_id,
     );
     if (!character) return;
-    import("../ui/modal.js").then((m) =>
-      m.showCharacterSettingsModal(character),
-    );
+    
+    isOpeningCharacterModal = true;
+    import("../ui/modal.js").then((m) => {
+      m.showCharacterSettingsModal(character).finally(() => {
+        isOpeningCharacterModal = false;
+      });
+    });
   }
 
   function isConfigValid(config) {
