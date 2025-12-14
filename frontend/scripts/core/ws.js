@@ -77,10 +77,12 @@ export class WsClient {
   initCharacter(config) {
     this.send("init_character", {
       llm_config: {
-        provider: config.llm_provider,
+        protocol: config.llm_protocol,
         api_key: config.llm_api_key,
         model: config.llm_model,
         base_url: config.llm_base_url,
+        temperature: config.llm_temperature || null,
+        max_tokens: parseInt(config.llm_max_tokens, 10) || 1000,
         user_nickname: config.user_nickname,
       },
     });

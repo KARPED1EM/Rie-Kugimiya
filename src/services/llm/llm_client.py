@@ -1,4 +1,4 @@
-# LLM API client supporting multiple providers with structured JSON output
+# LLM API client supporting protocol-based configuration with structured JSON output
 import json
 import logging
 import re
@@ -61,90 +61,52 @@ class LLMStructuredResponse:
 
 
 class LLMClient:
+    """
+    Protocol-based LLM client. Backend is no longer sensitive to specific service
+    providers; it only provides differentiated support based on Protocol.
+    
+    Supported protocols:
+    - completions: OpenAI-compatible /chat/completions endpoint
+    - responses: /responses endpoint (not yet implemented)
+    - messages: /messages endpoint (not yet implemented)
+    """
+
     def __init__(self, config: LLMConfig):
         self.config = config
         self.client = httpx.AsyncClient(timeout=60.0)
 
     async def chat(self, messages: List[ChatMessage]) -> LLMStructuredResponse:
         try:
-            if self.config.provider != "custom" and (
-                not self.config.api_key or self.config.api_key == "DUMMY_API_KEY"
-            ):
+            # Validate configuration
+            if not self.config.api_key or self.config.api_key == "DUMMY_API_KEY":
                 raise ValueError("LLM api_key not configured")
+            
+            if not self.config.base_url:
+                raise ValueError("LLM base_url not configured")
+            
+            if not self.config.model:
+                raise ValueError("LLM model not configured")
 
-            messages_for_log: List[Dict[str, str]] = []
+            protocol = self.config.protocol or "completions"
+            
+            # Build messages for logging
+            openai_style_messages = self._build_openai_messages(messages)
+            
             payload_for_log: Dict[str, Any] = {
-                "provider": self.config.provider,
+                "protocol": protocol,
                 "model": self.config.model,
-                "base_url": self.config.base_url or "",
+                "base_url": self.config.base_url,
+                "max_tokens": self.config.max_tokens,
             }
-
-            if self.config.provider == "anthropic":
-                base_url = self.config.base_url or "https://api.anthropic.com/v1"
-                is_openai_compatible = (
-                    "gptsapi" in base_url.lower()
-                    or "openai" in base_url.lower()
-                    or base_url != "https://api.anthropic.com/v1"
-                )
-
-                if is_openai_compatible:
-                    # OpenAI-compatible proxy
-                    openai_style_messages = self._build_openai_messages(messages)
-                    messages_for_log = openai_style_messages
-                    payload_for_log["request"] = {
-                        "url": f"{base_url}/chat/completions",
-                        "model": self.config.model,
-                        "messages": openai_style_messages,
-                        "max_tokens": 1024,
-                    }
-                else:
-                    # Official Anthropic API
-                    system_block = self._build_system_block()
-                    messages_for_log = [
-                        {"role": "system", "content": system_block},
-                        *[{"role": m.role, "content": m.content} for m in messages],
-                    ]
-                    payload_for_log["request"] = {
-                        "url": f"{base_url}/messages",
-                        "model": self.config.model,
-                        "max_tokens": 1024,
-                        "system": system_block,
-                        "messages": [
-                            {"role": m.role, "content": m.content} for m in messages
-                        ],
-                    }
-            else:
-                openai_style_messages = self._build_openai_messages(messages)
-                messages_for_log = openai_style_messages
-                if self.config.provider == "openai":
-                    base_url = self.config.base_url or "https://api.openai.com/v1"
-                    payload_for_log["request"] = {
-                        "url": f"{base_url}/chat/completions",
-                        "model": self.config.model,
-                        "messages": openai_style_messages,
-                        "response_format": {"type": "json_object"},
-                    }
-                elif self.config.provider == "deepseek":
-                    base_url = self.config.base_url or "https://api.deepseek.com"
-                    payload_for_log["request"] = {
-                        "url": f"{base_url}/v1/chat/completions",
-                        "model": self.config.model,
-                        "messages": openai_style_messages,
-                        "stream": False,
-                        "response_format": {"type": "json_object"},
-                    }
-                elif self.config.provider == "custom":
-                    payload_for_log["request"] = {
-                        "url": f"{self.config.base_url}/chat/completions",
-                        "model": self.config.model,
-                        "messages": openai_style_messages,
-                    }
+            
+            if self.config.temperature is not None:
+                payload_for_log["temperature"] = self.config.temperature
 
             # Log LLM request (full messages + sanitized payload; never log api_key).
             log_entry = unified_logger.llm_request(
-                provider=self.config.provider,
+                provider=protocol,
                 model=self.config.model,
-                messages=messages_for_log,
+                messages=openai_style_messages,
             )
             await broadcast_log_if_needed(log_entry)
             log_entry = unified_logger.info(
@@ -154,23 +116,22 @@ class LLMClient:
             )
             await broadcast_log_if_needed(log_entry)
 
-            if self.config.provider == "deepseek":
-                raw = await self._deepseek_chat(messages)
-            elif self.config.provider == "openai":
-                raw = await self._openai_chat(messages)
-            elif self.config.provider == "anthropic":
-                raw = await self._anthropic_chat(messages)
-            elif self.config.provider == "custom":
-                raw = await self._custom_chat(messages)
+            # Dispatch to appropriate protocol handler
+            if protocol == "completions":
+                raw = await self._completions_chat(messages)
+            elif protocol == "responses":
+                raise ValueError("Protocol 'responses' is not yet implemented")
+            elif protocol == "messages":
+                raise ValueError("Protocol 'messages' is not yet implemented")
             else:
-                raise ValueError(f"Unsupported provider: {self.config.provider}")
+                raise ValueError(f"Unsupported protocol: {protocol}")
 
             # Log full raw response for debugging (may be large).
             log_entry = unified_logger.info(
                 "LLM raw response",
                 category=LogCategory.LLM,
                 metadata={
-                    "provider": self.config.provider,
+                    "protocol": protocol,
                     "model": self.config.model,
                     "raw_text": raw,
                 },
@@ -193,7 +154,7 @@ class LLMClient:
 
             # Log LLM response
             log_entry = unified_logger.llm_response(
-                provider=self.config.provider,
+                provider=protocol,
                 model=self.config.model,
                 response=response.reply,
                 emotion_map=response.emotion_map,
@@ -202,8 +163,9 @@ class LLMClient:
 
             return response
         except httpx.HTTPError as e:
+            protocol = self.config.protocol or "completions"
             logger.error(
-                f"HTTP error calling {self.config.provider} API: {e}", exc_info=True
+                f"HTTP error calling {protocol} API: {e}", exc_info=True
             )
             raise
         except Exception as e:
@@ -211,115 +173,28 @@ class LLMClient:
             raise
 
     # ------------------------------------------------------------------ #
-    # Provider adapters
+    # Protocol handlers
     # ------------------------------------------------------------------ #
-    async def _openai_chat(self, messages: List[ChatMessage]) -> str:
-        base_url = self.config.base_url or "https://api.openai.com/v1"
-
-        payload = {
+    async def _completions_chat(self, messages: List[ChatMessage]) -> str:
+        """
+        Handle /chat/completions protocol (OpenAI-compatible).
+        This is the most common protocol used by most LLM providers.
+        """
+        base_url = self.config.base_url.rstrip("/")
+        
+        payload: Dict[str, Any] = {
             "model": self.config.model,
             "messages": self._build_openai_messages(messages),
+            "max_tokens": self.config.max_tokens,
             "response_format": {"type": "json_object"},
         }
+        
+        # Only include temperature if it's set (not None)
+        if self.config.temperature is not None:
+            payload["temperature"] = self.config.temperature
 
         response = await self.client.post(
             f"{base_url}/chat/completions",
-            json=payload,
-            headers={
-                "Authorization": f"Bearer {self.config.api_key}",
-                "Content-Type": "application/json",
-            },
-        )
-        response.raise_for_status()
-        data = response.json()
-        return data["choices"][0]["message"]["content"]
-
-    async def _anthropic_chat(self, messages: List[ChatMessage]) -> str:
-        base_url = self.config.base_url or "https://api.anthropic.com/v1"
-
-        # Detect if using OpenAI-compatible proxy (like api.gptsapi.net)
-        is_openai_compatible = (
-            "gptsapi" in base_url.lower()
-            or "openai" in base_url.lower()
-            or base_url != "https://api.anthropic.com/v1"
-        )
-
-        if is_openai_compatible:
-            # Use OpenAI-compatible format
-            payload = {
-                "model": self.config.model,
-                "messages": self._build_openai_messages(messages),
-                "max_tokens": 1024,
-            }
-
-            response = await self.client.post(
-                f"{base_url}/chat/completions",
-                json=payload,
-                headers={
-                    "Authorization": f"Bearer {self.config.api_key}",
-                    "Content-Type": "application/json",
-                },
-            )
-            response.raise_for_status()
-            data = response.json()
-            return data["choices"][0]["message"]["content"]
-        else:
-            # Use official Anthropic API format
-            payload = {
-                "model": self.config.model,
-                "max_tokens": 1024,
-                "system": self._build_system_block(),
-                "messages": [{"role": m.role, "content": m.content} for m in messages],
-            }
-
-            response = await self.client.post(
-                f"{base_url}/messages",
-                json=payload,
-                headers={
-                    "x-api-key": self.config.api_key,
-                    "anthropic-version": "2023-06-01",
-                    "Content-Type": "application/json",
-                },
-            )
-            response.raise_for_status()
-            data = response.json()
-            return data["content"][0]["text"]
-
-    async def _deepseek_chat(self, messages: List[ChatMessage]) -> str:
-        base_url = self.config.base_url or "https://api.deepseek.com"
-
-        payload = {
-            "model": self.config.model,
-            "messages": self._build_openai_messages(messages),
-            "stream": False,
-            "response_format": {"type": "json_object"},
-        }
-
-        url = f"{base_url}/v1/chat/completions"
-
-        response = await self.client.post(
-            url,
-            json=payload,
-            headers={
-                "Authorization": f"Bearer {self.config.api_key}",
-                "Content-Type": "application/json",
-            },
-        )
-        response.raise_for_status()
-        data = response.json()
-        return data["choices"][0]["message"]["content"]
-
-    async def _custom_chat(self, messages: List[ChatMessage]) -> str:
-        if not self.config.base_url:
-            raise ValueError("base_url required for custom provider")
-
-        payload = {
-            "model": self.config.model,
-            "messages": self._build_openai_messages(messages),
-        }
-
-        response = await self.client.post(
-            f"{self.config.base_url}/chat/completions",
             json=payload,
             headers={
                 "Authorization": f"Bearer {self.config.api_key}",

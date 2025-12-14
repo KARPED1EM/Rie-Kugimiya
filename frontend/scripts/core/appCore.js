@@ -519,10 +519,10 @@ export function createApp() {
   }
 
   function isConfigValid(config) {
-    const provider = config.llm_provider;
+    const protocol = config.llm_protocol;
     const apiKey = config.llm_api_key;
-    const model = config.llm_model;
-    if (!provider || !apiKey || !model) return false;
+    // model and base_url have defaults, so only protocol and apiKey are required
+    if (!protocol || !apiKey) return false;
     return true;
   }
 

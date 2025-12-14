@@ -6,15 +6,13 @@ from src.core.config import llm_defaults, ui_defaults, app_config
 logger = logging.getLogger(__name__)
 
 DEFAULT_CONFIG = {
-    "llm_provider": llm_defaults.provider,
-    "llm_model": getattr(
-        llm_defaults,
-        f"model_{llm_defaults.provider}",
-        llm_defaults.model_deepseek,
-    ),
-    # Empty by default; UI can populate. Backend will warn if missing.
-    "llm_api_key": "",
-    "llm_base_url": "",
+    # Protocol-based LLM configuration
+    "llm_protocol": llm_defaults.protocol,
+    "llm_base_url": llm_defaults.base_url,
+    "llm_api_key": llm_defaults.api_key,
+    "llm_model": llm_defaults.model,
+    "llm_temperature": "",  # Optional, empty by default (don't send when empty)
+    "llm_max_tokens": str(llm_defaults.max_tokens),
     # Default user nickname used in prompts if not set in UI.
     "user_nickname": "鲨鲨",
     "enable_emotion_theme": str(ui_defaults.enable_emotion_theme).lower(),

@@ -148,10 +148,12 @@ export function showSettingsModal(forceOpen) {
 }
 
 function getSettingsContent() {
-  const provider = state.config.llm_provider || "deepseek";
+  const protocol = state.config.llm_protocol || "completions";
   const apiKey = state.config.llm_api_key || "";
-  const model = state.config.llm_model || "";
-  const baseUrl = normalizeBaseUrl(state.config.llm_base_url) || "";
+  const model = state.config.llm_model || "deepseek-chat";
+  const baseUrl = normalizeBaseUrl(state.config.llm_base_url) || "https://api.deepseek.com";
+  const temperature = state.config.llm_temperature || "";
+  const maxTokens = state.config.llm_max_tokens || "1000";
   const nickname = state.config.user_nickname || "";
   const emotionTheme = state.config.enable_emotion_theme !== "false";
   const debugMode = state.debugEnabled === true;
@@ -159,18 +161,26 @@ function getSettingsContent() {
   return `
     <div class="modal-section">
       <div class="form-group">
-        <label>服务商</label>
-        <select id="settingsProvider">
-          <option value="deepseek" ${
-            provider === "deepseek" ? "selected" : ""
-          }>DeepSeek</option>
-          <option value="openai" ${
-            provider === "openai" ? "selected" : ""
-          }>OpenAI</option>
-          <option value="anthropic" ${
-            provider === "anthropic" ? "selected" : ""
-          }>Anthropic</option>
+        <label>协议</label>
+        <select id="settingsProtocol">
+          <option value="completions" ${
+            protocol === "completions" ? "selected" : ""
+          }>completions (/chat/completions)</option>
+          <option value="responses" disabled>responses (/responses) - 暂未实现</option>
+          <option value="messages" disabled>messages (/messages) - 暂未实现</option>
         </select>
+      </div>
+      <div class="form-group">
+        <label>Base URL</label>
+        <input
+          id="settingsBaseUrl"
+          type="text"
+          value="${baseUrl}"
+          placeholder="https://api.deepseek.com"
+        />
+        <div class="help-text">
+          API 服务的基础地址，默认 https://api.deepseek.com
+        </div>
       </div>
       <div class="form-group">
         <label>API Key</label>
@@ -178,19 +188,18 @@ function getSettingsContent() {
       </div>
       <div class="form-group">
         <label>模型</label>
-        <input id="settingsModel" type="text" value="${model}" placeholder="必填" />
+        <input id="settingsModel" type="text" value="${model}" placeholder="deepseek-chat" />
       </div>
       <div class="form-group">
-        <label>Base URL（可选覆盖服务商域名）</label>
-        <input
-          id="settingsBaseUrl"
-          type="text"
-          value="${baseUrl}"
-          placeholder="https://example.com/proxy"
-        />
+        <label>Temperature（可选）</label>
+        <input id="settingsTemperature" type="number" step="0.1" min="0" max="2" value="${temperature}" placeholder="留空则不传" />
         <div class="help-text">
-          留空或填写格式非法不会改变默认 URL，填写合法 http/https 地址则强制替换服务商的域名部分。
+          留空则调用时不传此参数。
         </div>
+      </div>
+      <div class="form-group">
+        <label>Max Tokens</label>
+        <input id="settingsMaxTokens" type="number" step="1" min="1" value="${maxTokens}" placeholder="必填，默认 1000" />
       </div>
       <div class="form-group">
         <label>用户昵称</label>
@@ -226,10 +235,12 @@ function getSettingsContent() {
 }
 
 async function saveSettings(modal) {
-  const provider = modal.querySelector("#settingsProvider")?.value;
+  const protocol = modal.querySelector("#settingsProtocol")?.value;
   const apiKey = modal.querySelector("#settingsApiKey")?.value?.trim();
-  const model = modal.querySelector("#settingsModel")?.value?.trim();
+  const modelRaw = modal.querySelector("#settingsModel")?.value?.trim();
   const rawBaseUrl = modal.querySelector("#settingsBaseUrl")?.value?.trim();
+  const temperatureRaw = modal.querySelector("#settingsTemperature")?.value?.trim();
+  const maxTokensRaw = modal.querySelector("#settingsMaxTokens")?.value?.trim();
   const nickname = modal.querySelector("#settingsNickname")?.value?.trim();
   const emotionTheme = modal.querySelector("#settingsEmotionTheme")?.checked;
   const debugMode = modal.querySelector("#settingsDebugMode")?.checked;
@@ -238,19 +249,39 @@ async function saveSettings(modal) {
   );
   const newAvatar = avatarEditor ? getAvatarEditorValue(avatarEditor) : "";
 
-  if (!provider || !apiKey || !model) {
-    showToast("服务商、API Key 和模型为必填项。", "error");
+  if (!protocol || !apiKey) {
+    showToast("协议和 API Key 为必填项。", "error");
     return false;
   }
-  const baseUrl = normalizeBaseUrl(rawBaseUrl);
-  if (rawBaseUrl && !baseUrl) {
-    showToast("Base URL 格式非法，将回退为默认服务商域名。", "warning");
+  
+  // Use defaults for base_url and model if not provided
+  const baseUrl = normalizeBaseUrl(rawBaseUrl) || "https://api.deepseek.com";
+  const model = modelRaw || "deepseek-chat";
+  
+  // Validate max_tokens
+  const maxTokens = parseInt(maxTokensRaw, 10);
+  if (isNaN(maxTokens) || maxTokens < 1) {
+    showToast("Max Tokens 必须是大于 0 的整数。", "error");
+    return false;
+  }
+  
+  // Temperature is optional, only validate if provided
+  let temperature = "";
+  if (temperatureRaw !== "") {
+    const tempValue = parseFloat(temperatureRaw);
+    if (isNaN(tempValue) || tempValue < 0 || tempValue > 2) {
+      showToast("Temperature 必须是 0 到 2 之间的数值。", "error");
+      return false;
+    }
+    temperature = temperatureRaw;
   }
 
-  state.config.llm_provider = provider;
+  state.config.llm_protocol = protocol;
   state.config.llm_api_key = apiKey;
   state.config.llm_model = model;
-  state.config.llm_base_url = baseUrl || "";
+  state.config.llm_base_url = baseUrl;
+  state.config.llm_temperature = temperature;
+  state.config.llm_max_tokens = String(maxTokens);
   state.config.user_nickname = nickname || "";
   state.config.enable_emotion_theme = String(Boolean(emotionTheme));
   state.debugEnabled = Boolean(debugMode);
@@ -258,10 +289,12 @@ async function saveSettings(modal) {
   try {
     await api.updateUserAvatar(newAvatar || "");
     await api.updateConfig({
-      llm_provider: provider,
+      llm_protocol: protocol,
       llm_api_key: apiKey,
       llm_model: model,
-      llm_base_url: baseUrl || "",
+      llm_base_url: baseUrl,
+      llm_temperature: temperature,
+      llm_max_tokens: String(maxTokens),
       user_nickname: nickname || "",
       enable_emotion_theme: String(Boolean(emotionTheme)).toLowerCase(),
     });

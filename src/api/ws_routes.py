@@ -366,19 +366,17 @@ async def handle_init_character(session_id: str, data: Dict[str, Any]):
     config = await config_service.get_all_config()
     llm_config_dict = data.get("llm_config") or {}
 
-    resolved_provider = (
-        llm_config_dict.get("provider")
-        or config.get("llm_provider")
-        or llm_defaults.provider
+    resolved_protocol = (
+        llm_config_dict.get("protocol")
+        or config.get("llm_protocol")
+        or llm_defaults.protocol
     )
 
-    resolved_model = llm_config_dict.get("model") or config.get("llm_model")
-    if not resolved_model:
-        resolved_model = getattr(
-            llm_defaults,
-            f"model_{resolved_provider}",
-            llm_defaults.model_deepseek,
-        )
+    resolved_model = (
+        llm_config_dict.get("model")
+        or config.get("llm_model")
+        or llm_defaults.model
+    )
 
     resolved_api_key = llm_config_dict.get("api_key") or config.get("llm_api_key") or ""
     if not resolved_api_key:
@@ -398,11 +396,33 @@ async def handle_init_character(session_id: str, data: Dict[str, Any]):
     normalized_base_url = sanitize_base_url(
         llm_config_dict.get("base_url") or config.get("llm_base_url")
     )
+    
+    # Handle temperature - can be None (optional)
+    resolved_temperature = llm_config_dict.get("temperature")
+    if resolved_temperature is None:
+        temp_str = config.get("llm_temperature", "")
+        if temp_str and temp_str.strip():
+            try:
+                resolved_temperature = float(temp_str)
+            except ValueError:
+                resolved_temperature = None
+    
+    # Handle max_tokens - required, default 1000
+    resolved_max_tokens = llm_config_dict.get("max_tokens")
+    if resolved_max_tokens is None:
+        max_tokens_str = config.get("llm_max_tokens", str(llm_defaults.max_tokens))
+        try:
+            resolved_max_tokens = int(max_tokens_str)
+        except ValueError:
+            resolved_max_tokens = llm_defaults.max_tokens
+    
     llm_config = LLMConfig(
-        provider=resolved_provider,
+        protocol=resolved_protocol,
         api_key=resolved_api_key,
         model=resolved_model,
         base_url=normalized_base_url,
+        temperature=resolved_temperature,
+        max_tokens=resolved_max_tokens,
         persona=character.persona,
         character_name=character.name,
         user_nickname=llm_config_dict.get("user_nickname")
