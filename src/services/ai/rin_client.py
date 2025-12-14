@@ -129,6 +129,66 @@ class RinClient:
 
             llm_response = await self.llm_client.chat(conversation_history)
 
+            # Handle invalid JSON or empty content - skip processing entirely
+            if llm_response.is_invalid_json or llm_response.is_empty_content:
+                reason = "invalid_json" if llm_response.is_invalid_json else "empty_content"
+                message = (
+                    "LLM 返回了非法 JSON，本次不处理"
+                    if llm_response.is_invalid_json
+                    else "LLM 返回了空内容，本次不处理"
+                )
+                
+                log_entry = unified_logger.warning(
+                    f"Skipping LLM response: {reason}",
+                    category=LogCategory.LLM,
+                    metadata={
+                        "session_id": user_message.session_id,
+                        "reason": reason,
+                        "raw_text_preview": llm_response.raw_text[:200] if llm_response.raw_text else "",
+                    },
+                )
+                await broadcast_log_if_needed(log_entry)
+                
+                # Send toast notification to frontend
+                await self.ws_manager.send_toast(
+                    user_message.session_id,
+                    message,
+                    level="warning",
+                )
+                return
+
+            # Determine the emotion_map to use
+            emotion_map_to_use = llm_response.emotion_map
+            
+            # If emotion_map is empty, reuse the last emotion state
+            if not emotion_map_to_use:
+                last_emotion = await self.message_service.get_latest_emotion_state(
+                    user_message.session_id
+                )
+                if last_emotion:
+                    emotion_map_to_use = last_emotion
+                    log_entry = unified_logger.info(
+                        "Reusing last emotion state (LLM returned no emotions)",
+                        category=LogCategory.EMOTION,
+                        metadata={
+                            "session_id": user_message.session_id,
+                            "last_emotion": last_emotion,
+                        },
+                    )
+                    await broadcast_log_if_needed(log_entry)
+                else:
+                    # No previous emotion state exists, use neutral as absolute fallback
+                    emotion_map_to_use = {"neutral": "low"}
+                    log_entry = unified_logger.info(
+                        "No emotion from LLM and no previous state, using neutral fallback",
+                        category=LogCategory.EMOTION,
+                        metadata={
+                            "session_id": user_message.session_id,
+                        },
+                    )
+                    await broadcast_log_if_needed(log_entry)
+
+            # Only update emotion state if we have valid emotions from LLM
             if llm_response.emotion_map:
                 log_entry = unified_logger.emotion(
                     emotion_map=llm_response.emotion_map,
@@ -159,8 +219,9 @@ class RinClient:
                 except Exception:
                     pass
 
+            # Use emotion_map_to_use for behavior processing (either new or reused)
             timeline = self.coordinator.process_message(
-                llm_response.reply, emotion_map=llm_response.emotion_map
+                llm_response.reply, emotion_map=emotion_map_to_use
             )
 
             sticker_log_entries = self.coordinator.get_and_clear_log_entries()

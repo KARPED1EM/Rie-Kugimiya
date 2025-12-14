@@ -56,6 +56,8 @@ class LLMStructuredResponse:
     reply: str
     emotion_map: Dict[str, str]
     raw_text: str
+    is_invalid_json: bool = False
+    is_empty_content: bool = False
 
 
 class LLMClient:
@@ -175,12 +177,18 @@ class LLMClient:
             )
             await broadcast_log_if_needed(log_entry)
 
-            parsed = self._parse_structured_response(raw)
+            parsed, is_invalid_json = self._parse_structured_response(raw)
             normalized_emotion = self._normalize_emotion_map(parsed)
+            
+            reply = parsed.get("reply", "").strip()
+            is_empty_content = not reply
+            
             response = LLMStructuredResponse(
-                reply=parsed.get("reply", "").strip(),
+                reply=reply,
                 emotion_map=normalized_emotion,
                 raw_text=raw,
+                is_invalid_json=is_invalid_json,
+                is_empty_content=is_empty_content,
             )
 
             # Log LLM response
@@ -353,12 +361,14 @@ class LLMClient:
 
         return f"{SYSTEM_BEHAVIOR_PROMPT}{persona_section}{additional_context}"
 
-    def _parse_structured_response(self, raw_text: str) -> Dict[str, Any]:
+    def _parse_structured_response(self, raw_text: str) -> tuple[Dict[str, Any], bool]:
         """
         Parse JSON returned by the LLM. Falls back to best-effort extraction.
+        Returns (parsed_dict, is_invalid_json)
         """
+        # Try direct JSON parse
         try:
-            return json.loads(raw_text)
+            return json.loads(raw_text), False
         except Exception:
             pass
 
@@ -367,7 +377,7 @@ class LLMClient:
         end = raw_text.rfind("}")
         if start != -1 and end != -1 and end > start:
             try:
-                return json.loads(raw_text[start : end + 1])
+                return json.loads(raw_text[start : end + 1]), False
             except Exception:
                 pass
 
@@ -378,26 +388,26 @@ class LLMClient:
             logger.warning(
                 f"LLM JSON parse failed, extracted reply field: {reply_text[:100]}..."
             )
-            return {"reply": reply_text, "emotion": {}}
+            return {"reply": reply_text, "emotion": {}}, True
 
         # Last resort: check if raw_text looks like JSON (starts with {)
-        # If so, it's likely a malformed JSON - log error and return empty reply
+        # If so, it's likely a malformed JSON - mark as invalid
         if raw_text.strip().startswith("{"):
             logger.error(
                 f"LLM returned malformed JSON, cannot extract reply: {raw_text[:200]}..."
             )
-            return {"reply": "", "emotion": {"neutral": "low"}}
+            return {"reply": "", "emotion": {}}, True
 
-        # Otherwise treat as plain text
-        return {"reply": raw_text.strip(), "emotion": {}}
+        # Otherwise treat as plain text (also considered invalid JSON)
+        return {"reply": raw_text.strip(), "emotion": {}}, True
 
     def _normalize_emotion_map(self, parsed: Dict[str, Any]) -> Dict[str, str]:
         """
         Normalize various LLM payload shapes to a stable {emotion: intensity} dict.
-        Ensures at least one key exists; falls back to {"neutral": "low"}.
+        Returns empty dict if no valid emotions found (no longer adds fallback).
         """
         if not isinstance(parsed, dict):
-            return {"neutral": "low"}
+            return {}
 
         emotion = parsed.get("emotion")
         if emotion is None:
@@ -435,8 +445,7 @@ class LLMClient:
                 val = "medium"
             normalized[key] = val
 
-        if not normalized:
-            return {"neutral": "low"}
+        # No longer add fallback - return empty dict if no valid emotions
         return normalized
 
     async def close(self):
