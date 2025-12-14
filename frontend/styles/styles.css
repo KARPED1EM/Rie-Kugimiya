@@ -72,14 +72,6 @@ textarea {
     animation: emotionFlow2 20s ease-in-out infinite;
 }
 
-.app-container.emotion-enabled::before {
-    opacity: var(--emotion-opacity-1);
-}
-
-.app-container.emotion-enabled::after {
-    opacity: var(--emotion-opacity-2);
-}
-
 @keyframes emotionFlow1 {
     0%, 100% {
         background-size: 200% 200%;

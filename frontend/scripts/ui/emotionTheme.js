@@ -39,7 +39,7 @@ export function applyEmotionTheme(emotionMap) {
     low:     { alpha: 0.10, dl: 20, ds: -46 },
     medium:  { alpha: 0.20, dl: 14, ds: -32 },
     high:    { alpha: 0.35, dl: 8,  ds: -16 },
-    extreme: { alpha: 0.50, dl: -4, ds: -8 },
+    extreme: { alpha: 0.50, dl: -4, ds: 0 },
   };
 
   const colors = [];
