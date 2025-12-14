@@ -62,6 +62,18 @@ TOOL_DEFINITIONS = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "request_followup_call",
+            "description": "请求稍后再次调用。如果当前消息发送完毕后还有事情需要处理，使用此工具。注意：此工具只能单独使用，不能与其他工具同时调用。",
+            "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+            },
+        },
+    },
 ]
 
 
@@ -103,6 +115,8 @@ class ToolService:
             return await self.recall_message_by_id(session_id, message_id)
         elif tool_name == "block_user":
             return await self.block_user(session_id)
+        elif tool_name == "request_followup_call":
+            return await self.request_followup_call(session_id)
         else:
             return {"error": f"Unknown tool: {tool_name}"}
 
@@ -242,4 +256,20 @@ class ToolService:
             "success": True,
             "blocked": True,
             "blocked_message_id": blocked_msg.id,
+        }
+
+    async def request_followup_call(self, session_id: str) -> Dict[str, Any]:
+        """
+        Request a followup LLM call after current message processing.
+        This is a special tool that doesn't interrupt normal message processing.
+        
+        Args:
+            session_id: Current session ID
+            
+        Returns:
+            Dictionary with request result
+        """
+        return {
+            "success": True,
+            "followup_requested": True,
         }

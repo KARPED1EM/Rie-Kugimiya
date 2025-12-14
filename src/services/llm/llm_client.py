@@ -33,6 +33,7 @@ SYSTEM_BEHAVIOR_PROMPT = """
 - get_recallable_messages: 查看2分钟内你发送的可撤回消息列表。无需参数。示例: {"name": "get_recallable_messages", "arguments": {}}
 - recall_message_by_id: 撤回指定ID的消息（2分钟内有效）。参数: message_id。示例: {"name": "recall_message_by_id", "arguments": {"message_id": "msg-abc123"}}
 - block_user: 拉黑用户。可随心情使用，符合人设即可。无需参数。示例: {"name": "block_user", "arguments": {}}
+- request_followup_call: 请求稍后再次调用。如果当前消息发送后还有后续事情要处理，使用此工具。注意：只能单独使用，不能与其他工具同时调用。示例: {"name": "request_followup_call", "arguments": {}}
 """.strip()
 
 

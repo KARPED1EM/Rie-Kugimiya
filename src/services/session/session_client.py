@@ -85,6 +85,7 @@ class SessionClient:
             # Loop until LLM returns without tool calls
             iteration = 0
             reached_max_iterations = False
+            is_followup_only = False  # Track if request_followup_call was the only tool
             
             while iteration < MAX_TOOL_CALL_ITERATIONS:
                 iteration += 1
@@ -129,6 +130,39 @@ class SessionClient:
                         metadata={"tool_calls": llm_response.tool_calls},
                     )
                     await broadcast_log_if_needed(log_entry)
+
+                    # Check if this is a special case: single request_followup_call tool
+                    is_followup_only = (
+                        len(llm_response.tool_calls) == 1 
+                        and llm_response.tool_calls[0].get("name") == "request_followup_call"
+                    )
+                    
+                    if is_followup_only:
+                        # Special case: process message/emotion normally, then request followup
+                        log_entry = unified_logger.info(
+                            "request_followup_call detected - processing message normally then requesting followup",
+                            category=LogCategory.LLM,
+                            metadata={"session_id": user_message.session_id},
+                        )
+                        await broadcast_log_if_needed(log_entry)
+                        
+                        # Store a SYSTEM_TOOL message indicating followup was requested
+                        await self.message_service.send_message(
+                            session_id=user_message.session_id,
+                            sender_id="system",
+                            message_type=MessageType.SYSTEM_TOOL,
+                            content="",
+                            metadata={
+                                "tool_results": [{
+                                    "tool_name": "request_followup_call",
+                                    "result": {"success": True, "followup_requested": True}
+                                }]
+                            },
+                        )
+                        
+                        # Break out of loop to process message normally
+                        # We'll handle the followup after normal processing
+                        break
 
                     # Execute all tool calls and collect results
                     tool_results = []
@@ -374,6 +408,22 @@ class SessionClient:
             )
             self._tasks.append(task)
 
+            # Check if request_followup_call was used
+            if is_followup_only:
+                log_entry = unified_logger.info(
+                    "Triggering followup LLM call as requested",
+                    category=LogCategory.LLM,
+                    metadata={"session_id": user_message.session_id},
+                )
+                await broadcast_log_if_needed(log_entry)
+                
+                # Create a synthetic message to trigger another LLM call
+                # Use the same user message to continue the conversation
+                followup_task = asyncio.create_task(
+                    self._trigger_followup_call(user_message.session_id)
+                )
+                self._tasks.append(followup_task)
+
         except Exception as e:
             logger.error(f"Error processing user message: {e}", exc_info=True)
             # Do not inject synthetic assistant messages on failure.
@@ -387,6 +437,61 @@ class SessionClient:
                 "LLM request failed",
                 category=LogCategory.LLM,
                 metadata={"exc_info": True, "session_id": user_message.session_id},
+            )
+            await broadcast_log_if_needed(log_entry)
+
+    async def _trigger_followup_call(self, session_id: str):
+        """
+        Trigger a followup LLM call after a delay.
+        This is used by the request_followup_call tool.
+        """
+        # Wait a bit for the timeline to start executing
+        await asyncio.sleep(1.0)
+        
+        if not self._running:
+            return
+        
+        try:
+            # Get current message history
+            history = await self.message_service.get_messages(session_id)
+            conversation_history = self._build_llm_history(history)
+            
+            # Call LLM again
+            llm_response = await self.llm_client.chat(conversation_history)
+            
+            # Handle invalid JSON or empty content
+            if llm_response.is_invalid_json or llm_response.is_empty_content:
+                log_entry = unified_logger.warning(
+                    "Followup LLM call returned invalid/empty response",
+                    category=LogCategory.LLM,
+                    metadata={"session_id": session_id},
+                )
+                await broadcast_log_if_needed(log_entry)
+                return
+            
+            # Process the response like a normal user message would be processed
+            # Create a synthetic message object for processing
+            from src.core.models.message import Message
+            synthetic_msg = Message(
+                id="followup-synthetic",
+                session_id=session_id,
+                sender_id="user",
+                type=MessageType.TEXT,
+                content="",  # No actual content, just triggering processing
+                metadata={},
+                is_recalled=False,
+                is_read=False,
+                timestamp=datetime.now(timezone.utc).timestamp(),
+            )
+            
+            # Process this as if it's a new user message
+            await self.process_user_message(synthetic_msg)
+            
+        except Exception as e:
+            log_entry = unified_logger.error(
+                f"Error in followup LLM call: {e}",
+                category=LogCategory.LLM,
+                metadata={"exc_info": True, "session_id": session_id},
             )
             await broadcast_log_if_needed(log_entry)
 
