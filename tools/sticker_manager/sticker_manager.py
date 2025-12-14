@@ -242,11 +242,74 @@ class StickerWidget(QFrame):
     """单个表情包的显示组件"""
 
     delete_clicked = pyqtSignal(str)  # 发送文件路径
+    description_updated = pyqtSignal()  # 描述更新信号
 
-    def __init__(self, image_path: Path, parent=None):
+    def __init__(self, image_path: Path, sticker_base: Path, parent=None):
         super().__init__(parent)
         self.image_path = image_path
+        self.sticker_base = sticker_base
         self.setup_ui()
+        self.update_border_color()
+
+    def get_relative_path(self) -> str:
+        """获取相对于项目根目录的路径"""
+        try:
+            # 从 sticker_base 向上到项目根目录
+            project_root = self.sticker_base.parent
+            relative = self.image_path.relative_to(project_root)
+            return str(relative).replace("\\", "/")
+        except ValueError:
+            return str(self.image_path).replace("\\", "/")
+
+    def load_image_alter_data(self) -> dict:
+        """加载 image_alter.json"""
+        json_path = self.sticker_base.parent / "image_alter.json"
+        if not json_path.exists():
+            return {}
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return {}
+
+    def save_image_alter_data(self, data: dict):
+        """保存 image_alter.json"""
+        json_path = self.sticker_base.parent / "image_alter.json"
+        try:
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"Failed to save image_alter.json: {e}")
+
+    def get_current_description(self) -> str:
+        """获取当前图片的描述"""
+        data = self.load_image_alter_data()
+        relative_path = self.get_relative_path()
+        return data.get(relative_path, "")
+
+    def update_border_color(self):
+        """根据是否有描述更新边框颜色"""
+        has_description = bool(self.get_current_description())
+        if has_description:
+            border_color = "#f5f5f5"
+            hover_color = "#2196F3"
+        else:
+            border_color = "#ff5252"  # 红色边框
+            hover_color = "#ff1744"   # 深红色悬停
+        
+        self.setStyleSheet(
+            f"""
+            QFrame {{
+                background: white;
+                border-radius: 8px;
+                border: 2px solid {border_color};
+            }}
+            QFrame:hover {{
+                border: 2px solid {hover_color};
+                box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+            }}
+        """
+        )
 
     def setup_ui(self):
         layout = QVBoxLayout()
@@ -292,9 +355,39 @@ class StickerWidget(QFrame):
         """
         )
 
+        # 按钮容器
+        btn_layout = QHBoxLayout()
+        btn_layout.setSpacing(4)
+
+        # 描述按钮
+        desc_btn = QPushButton("📝")
+        desc_btn.setMaximumWidth(40)
+        desc_btn.setToolTip("编辑图片描述")
+        desc_btn.clicked.connect(self.edit_description)
+        desc_btn.setStyleSheet(
+            """
+            QPushButton {
+                background-color: #e3f2fd;
+                color: #1976d2;
+                border: 1px solid #90caf9;
+                border-radius: 4px;
+                padding: 6px;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background-color: #bbdefb;
+                border-color: #64b5f6;
+            }
+            QPushButton:pressed {
+                background-color: #90caf9;
+            }
+        """
+        )
+
         # 删除按钮
-        delete_btn = QPushButton("🗑️ 删除")
-        delete_btn.setMaximumWidth(150)
+        delete_btn = QPushButton("🗑️")
+        delete_btn.setMaximumWidth(40)
+        delete_btn.setToolTip("删除图片")
         delete_btn.clicked.connect(
             lambda: self.delete_clicked.emit(str(self.image_path))
         )
@@ -305,9 +398,8 @@ class StickerWidget(QFrame):
                 color: #c62828;
                 border: 1px solid #ef9a9a;
                 border-radius: 4px;
-                padding: 6px 12px;
-                font-size: 11px;
-                font-weight: 500;
+                padding: 6px;
+                font-size: 14px;
             }
             QPushButton:hover {
                 background-color: #ffcdd2;
@@ -319,24 +411,41 @@ class StickerWidget(QFrame):
         """
         )
 
+        btn_layout.addWidget(desc_btn)
+        btn_layout.addWidget(delete_btn)
+
         layout.addWidget(self.image_label)
         layout.addWidget(name_label)
-        layout.addWidget(delete_btn)
+        layout.addLayout(btn_layout)
 
         self.setLayout(layout)
-        self.setStyleSheet(
-            """
-            QFrame {
-                background: white;
-                border-radius: 8px;
-                border: 2px solid #f5f5f5;
-            }
-            QFrame:hover {
-                border: 2px solid #2196F3;
-                box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
-            }
-        """
+
+    def edit_description(self):
+        """编辑图片描述"""
+        current_desc = self.get_current_description()
+        
+        text, ok = QInputDialog.getText(
+            self,
+            "编辑图片描述",
+            f"图片路径: {self.get_relative_path()}\n\n请输入描述:",
+            QLineEdit.EchoMode.Normal,
+            current_desc
         )
+        
+        if ok:
+            # 保存描述
+            data = self.load_image_alter_data()
+            relative_path = self.get_relative_path()
+            
+            if text.strip():
+                data[relative_path] = text.strip()
+            else:
+                # 如果描述为空，删除该条目
+                data.pop(relative_path, None)
+            
+            self.save_image_alter_data(data)
+            self.update_border_color()
+            self.description_updated.emit()
 
 
 class GalleryArea(QWidget):
@@ -1146,8 +1255,9 @@ class StickerManagerWindow(QMainWindow):
         max_cols = 4
 
         for image_path in image_files:
-            widget = StickerWidget(image_path)
+            widget = StickerWidget(image_path, self.sticker_base)
             widget.delete_clicked.connect(self.delete_sticker)
+            widget.description_updated.connect(lambda: self.show_toast("描述已更新", True))
             self.gallery_area.sticker_layout.addWidget(widget, row, col)
 
             col += 1

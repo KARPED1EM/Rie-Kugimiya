@@ -14,6 +14,7 @@ from src.infrastructure.utils.logger import (
     broadcast_log_if_needed,
     LogCategory,
 )
+from src.utils.image_alter import image_alter
 
 logger = logging.getLogger(__name__)
 
@@ -480,7 +481,13 @@ class SessionClient:
         if msg.type == MessageType.TEXT:
             return msg.content or ""
         if msg.type == MessageType.IMAGE:
-            return "[Image]"
+            # Try to get image description
+            image_path = msg.content or ""
+            description = image_alter.get_description(image_path)
+            if description:
+                return f"[image]({description})"
+            else:
+                return "[image](图片加载失败)"
         if msg.type == MessageType.VIDEO:
             return "[Video]"
         if msg.type == MessageType.AUDIO:
