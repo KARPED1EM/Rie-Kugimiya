@@ -16,7 +16,7 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QComboBox, QGridLayout, QScrollArea,
     QMessageBox, QInputDialog, QFileDialog, QDialog, QDialogButtonBox,
-    QLineEdit, QToolBar, QSplitter, QFrame, QMenu, QStatusBar
+    QLineEdit, QToolBar, QSplitter, QFrame, QMenu, QStatusBar, QSizePolicy
 )
 from PyQt6.QtCore import Qt, QUrl, pyqtSignal, QMimeData, QPoint, QSize, QTimer, QPropertyAnimation, QEasingCurve, QRect
 from PyQt6.QtGui import QPixmap, QImage, QDragEnterEvent, QDropEvent, QAction, QPalette, QColor
@@ -387,7 +387,7 @@ class StickerManagerWindow(QMainWindow):
         
         # 添加弹性空间
         spacer = QWidget()
-        spacer.setSizePolicy(QWidget.Policy.Expanding, QWidget.Policy.Preferred)
+        spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         toolbar.addWidget(spacer)
         
         # 删除合集按钮放在右侧
