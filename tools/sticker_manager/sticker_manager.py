@@ -811,12 +811,27 @@ class StickerManagerWindow(QMainWindow):
                                 if file.is_file():
                                     dest = new_path / file.name
                                     if not dest.exists():
-                                        shutil.move(str(file), str(dest))
-                            # 删除旧目录
-                            old_path.rmdir()
+                                        try:
+                                            shutil.move(str(file), str(dest))
+                                        except Exception as e:
+                                            # 记录错误但继续处理其他文件
+                                            pass
+                            # 删除旧目录（使用rmtree以处理可能残留的文件）
+                            try:
+                                shutil.rmtree(old_path)
+                            except Exception:
+                                pass
                         else:
                             # 直接重命名
-                            old_path.rename(new_path)
+                            try:
+                                old_path.rename(new_path)
+                            except Exception:
+                                # 如果重命名失败，尝试复制然后删除
+                                try:
+                                    shutil.copytree(old_path, new_path)
+                                    shutil.rmtree(old_path)
+                                except Exception:
+                                    pass
                         
                         # 更新existing_names
                         existing_names.remove(existing_name)
