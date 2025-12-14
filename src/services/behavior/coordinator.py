@@ -2,7 +2,12 @@ from typing import List
 import uuid
 import random
 
-from src.services.behavior.models import EmotionState, PlaybackAction
+from src.services.behavior.models import (
+    EmotionState,
+    PlaybackAction,
+    EMOTION_TYPO_MULTIPLIERS,
+    EMOTION_PAUSE_MULTIPLIERS,
+)
 from src.services.behavior.segmenter import SmartSegmenter
 from src.services.behavior.emotion import EmotionFetcher
 from src.services.behavior.typo import TypoInjector
@@ -123,16 +128,7 @@ class BehaviorCoordinator:
 
         has_typo, typo_text = False, None
         if self.character.enable_typo:
-            # emotion_typo_multiplier is hardcoded in Character defaults
-            emotion_multiplier = {
-                EmotionState.NEUTRAL: 1.0,
-                EmotionState.HAPPY: 1.2,
-                EmotionState.EXCITED: 2.0,
-                EmotionState.SAD: 0.5,
-                EmotionState.ANGRY: 2.3,
-                EmotionState.ANXIOUS: 1.3,
-                EmotionState.CONFUSED: 0.3,
-            }.get(emotion, 1.0)
+            emotion_multiplier = EMOTION_TYPO_MULTIPLIERS.get(emotion, 1.0)
             typo_rate = self.character.base_typo_rate * emotion_multiplier
             (has_typo, typo_variant, _, _) = self.typo_injector.inject_typo(
                 segment_text, typo_rate=typo_rate
@@ -164,19 +160,9 @@ class BehaviorCoordinator:
                 )
 
         if segment_index < total_segments - 1:
-            # emotion_pause_multiplier is hardcoded
-            emotion_multipliers = {
-                EmotionState.NEUTRAL: 1.0,
-                EmotionState.HAPPY: 0.9,
-                EmotionState.EXCITED: 0.8,
-                EmotionState.SAD: 1.4,
-                EmotionState.ANGRY: 0.7,
-                EmotionState.ANXIOUS: 1.1,
-                EmotionState.CONFUSED: 1.3,
-            }
             interval = PausePredictor.segment_interval(
                 emotion=emotion,
-                emotion_multipliers=emotion_multipliers,
+                emotion_multipliers=EMOTION_PAUSE_MULTIPLIERS,
                 min_duration=self.character.min_pause_duration,
                 max_duration=self.character.max_pause_duration,
             )

@@ -13,6 +13,29 @@ class EmotionState(str, Enum):
     CONFUSED = "confused"
 
 
+# Emotion multipliers for typo rate (how much emotion affects typing errors)
+EMOTION_TYPO_MULTIPLIERS = {
+    EmotionState.NEUTRAL: 1.0,
+    EmotionState.HAPPY: 1.2,
+    EmotionState.EXCITED: 2.0,
+    EmotionState.SAD: 0.5,
+    EmotionState.ANGRY: 2.3,
+    EmotionState.ANXIOUS: 1.3,
+    EmotionState.CONFUSED: 0.3,
+}
+
+# Emotion multipliers for pause duration (how much emotion affects pauses between segments)
+EMOTION_PAUSE_MULTIPLIERS = {
+    EmotionState.NEUTRAL: 1.0,
+    EmotionState.HAPPY: 0.9,
+    EmotionState.EXCITED: 0.8,
+    EmotionState.SAD: 1.4,
+    EmotionState.ANGRY: 0.7,
+    EmotionState.ANXIOUS: 1.1,
+    EmotionState.CONFUSED: 1.3,
+}
+
+
 class MessageSegment(BaseModel):
     text: str
     metadata: Dict[str, Any] = Field(default_factory=dict)
