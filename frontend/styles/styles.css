@@ -2028,8 +2028,8 @@ textarea {
 
 .message-bubble.message-image img,
 .message-image {
-    max-width: 200px;
-    max-height: 200px;
+    max-width: 160px;
+    max-height: 160px;
     border-radius: 0;
     object-fit: cover;
     cursor: pointer;
