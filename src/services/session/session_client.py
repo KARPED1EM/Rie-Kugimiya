@@ -20,6 +20,9 @@ from src.services.tools.tool_service import ToolService
 
 logger = logging.getLogger(__name__)
 
+# Maximum number of tool call iterations to prevent infinite loops
+MAX_TOOL_CALL_ITERATIONS = 5
+
 
 class SessionClient:
     def __init__(
@@ -80,10 +83,9 @@ class SessionClient:
 
         try:
             # Loop until LLM returns without tool calls
-            max_iterations = 5  # Prevent infinite loops
             iteration = 0
             
-            while iteration < max_iterations:
+            while iteration < MAX_TOOL_CALL_ITERATIONS:
                 iteration += 1
                 
                 history = await self.message_service.get_messages(user_message.session_id)
@@ -134,6 +136,15 @@ class SessionClient:
                             continue
                         
                         tool_name = tool_call.get("name", "")
+                        if not tool_name:
+                            log_entry = unified_logger.warning(
+                                "Tool call missing 'name' field, skipping",
+                                category=LogCategory.LLM,
+                                metadata={"tool_call": tool_call},
+                            )
+                            await broadcast_log_if_needed(log_entry)
+                            continue
+                        
                         tool_args = tool_call.get("arguments", {})
                         
                         if not isinstance(tool_args, dict):
@@ -206,13 +217,20 @@ class SessionClient:
                 # No tool calls - process the response normally
                 break
             
-            if iteration >= max_iterations:
+            if iteration >= MAX_TOOL_CALL_ITERATIONS:
                 log_entry = unified_logger.warning(
-                    f"Max tool call iterations reached ({max_iterations})",
+                    f"Max tool call iterations reached ({MAX_TOOL_CALL_ITERATIONS})",
                     category=LogCategory.LLM,
                     metadata={"session_id": user_message.session_id},
                 )
                 await broadcast_log_if_needed(log_entry)
+                
+                # Notify user via toast
+                await self.ws_manager.send_toast(
+                    user_message.session_id,
+                    f"工具调用次数过多（超过{MAX_TOOL_CALL_ITERATIONS}次），请求已终止。",
+                    level="error",
+                )
                 return
 
             # Determine the emotion_map to use
