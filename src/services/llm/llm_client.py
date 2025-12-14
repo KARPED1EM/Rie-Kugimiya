@@ -19,13 +19,20 @@ logger = logging.getLogger(__name__)
 
 SYSTEM_BEHAVIOR_PROMPT = """
 你正在扮演微信聊天里的真人对话者。严格遵守以下协议并只返回 JSON：
-1) 只输出 JSON 对象，格式: {"emotion": {"<emotion>": "<low|medium|high|extreme>"}, "reply": "<wechat_style_message>"}
+1) 只输出 JSON 对象，格式: {"emotion": {"<emotion>": "<low|medium|high|extreme>"}, "reply": "<wechat_style_message>", "tool_calls": [可选的工具调用列表]}
 2) emotion 是当前你扮演角色的内心活动的情绪，请根据对话上下文选择合适的当前情绪并标注强度，不得留空，需至少一种情绪
 3) 允许的 emotion keys（请只用以下之一，可多选）：neutral, happy, excited, sad, angry, anxious, confused, shy, embarrassed, surprised, playful, affectionate, tired, bored, serious, caring
 4) emotion 字典的取值必须是以下之一（单选）：low / medium / high / extreme
 5) reply 是要发送给对方的微信消息，不要包含内心活动、动作描述、旁白或格式化符号，长度保持简短，像真人打字
-6) 角色设定将在下文补充，请在生成 reply 时完全遵守角色设定的人设，同时尽力模仿真人微信对话风格
-7) 使用聊天历史保持上下文连贯，永远只返回 JSON，切勿输出解释或多余文本
+6) tool_calls 是可选的工具调用数组，格式为 [{"name": "工具名称", "arguments": {参数对象}}]，如果不需要调用工具可以省略此字段或设为空数组
+7) 角色设定将在下文补充，请在生成 reply 时完全遵守角色设定的人设，同时尽力模仿真人微信对话风格
+8) 使用聊天历史保持上下文连贯，永远只返回 JSON，切勿输出解释或多余文本
+
+可用工具：
+- get_avatar_descriptions: 查看你自己和对方的头像描述。无需参数。示例: {"name": "get_avatar_descriptions", "arguments": {}}
+- get_recallable_messages: 查看2分钟内你发送的可撤回消息列表。无需参数。示例: {"name": "get_recallable_messages", "arguments": {}}
+- recall_message_by_id: 撤回指定ID的消息（3分钟内有效）。参数: message_id。示例: {"name": "recall_message_by_id", "arguments": {"message_id": "msg-abc123"}}
+- block_user: 拉黑用户。可随心情使用，符合人设即可。无需参数。示例: {"name": "block_user", "arguments": {}}
 """.strip()
 
 
@@ -58,6 +65,11 @@ class LLMStructuredResponse:
     raw_text: str
     is_invalid_json: bool = False
     is_empty_content: bool = False
+    tool_calls: List[Dict[str, Any]] = None
+
+    def __post_init__(self):
+        if self.tool_calls is None:
+            self.tool_calls = []
 
 
 class LLMClient:
@@ -144,12 +156,18 @@ class LLMClient:
             reply = parsed.get("reply", "").strip()
             is_empty_content = not reply
             
+            # Extract tool_calls from parsed response
+            tool_calls = parsed.get("tool_calls", [])
+            if not isinstance(tool_calls, list):
+                tool_calls = []
+            
             response = LLMStructuredResponse(
                 reply=reply,
                 emotion_map=normalized_emotion,
                 raw_text=raw,
                 is_invalid_json=is_invalid_json,
                 is_empty_content=is_empty_content,
+                tool_calls=tool_calls,
             )
 
             # Log LLM response

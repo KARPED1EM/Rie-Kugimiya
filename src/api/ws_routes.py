@@ -197,6 +197,9 @@ async def handle_send_message(session_id: str, user_id: str, data: Dict[str, Any
     if not content:
         return
 
+    # Check if session is blocked
+    is_blocked = await message_service.is_session_blocked(session_id)
+
     messages = await message_service.send_message_with_time(
         session_id=session_id,
         sender_id=user_id,
@@ -220,11 +223,44 @@ async def handle_send_message(session_id: str, user_id: str, data: Dict[str, Any
                 "timestamp": message.timestamp,
             },
         }
-        await ws_manager.send_to_conversation(session_id, event)
+        # If blocked, only send to user, not to character_client
+        if is_blocked:
+            # Send only to user connections
+            await ws_manager.send_to_user(session_id, user_id, event)
+        else:
+            await ws_manager.send_to_conversation(session_id, event)
 
-    session_client = session_clients.get(session_id)
-    if session_client:
-        await session_client.process_user_message(messages[-1])
+    # If blocked, add a system hint message
+    if is_blocked:
+        hint_msg = await message_service.send_message(
+            session_id=session_id,
+            sender_id="system",
+            message_type=MessageType.SYSTEM_HINT,
+            content="消息已发出，但被对方拒收了。",
+            metadata={},
+        )
+        
+        hint_event = {
+            "type": "message",
+            "data": {
+                "id": hint_msg.id,
+                "session_id": hint_msg.session_id,
+                "sender_id": hint_msg.sender_id,
+                "type": hint_msg.type,
+                "content": hint_msg.content,
+                "metadata": hint_msg.metadata,
+                "is_recalled": hint_msg.is_recalled,
+                "is_read": hint_msg.is_read,
+                "timestamp": hint_msg.timestamp,
+            },
+        }
+        # Send hint only to user
+        await ws_manager.send_to_user(session_id, user_id, hint_event)
+    else:
+        # Only process with session client if not blocked
+        session_client = session_clients.get(session_id)
+        if session_client:
+            await session_client.process_user_message(messages[-1])
 
 
 async def handle_set_typing(session_id: str, user_id: str, data: Dict[str, Any]):

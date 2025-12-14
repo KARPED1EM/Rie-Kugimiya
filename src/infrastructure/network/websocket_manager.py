@@ -64,6 +64,35 @@ class WebSocketManager:
         for ws in disconnected:
             self.disconnect(ws, conversation_id)
 
+    async def send_to_user(
+        self,
+        conversation_id: str,
+        user_id: str,
+        message: dict,
+    ):
+        """Send message only to websockets belonging to a specific user in a conversation."""
+        if conversation_id not in self.active_connections:
+            return
+
+        disconnected = set()
+        for websocket in self.active_connections[conversation_id]:
+            # Check if this websocket belongs to the specified user
+            ws_user_id = self.user_websockets.get(websocket)
+            if ws_user_id != user_id:
+                continue
+
+            try:
+                if websocket.application_state != WebSocketState.CONNECTED:
+                    disconnected.add(websocket)
+                    continue
+                await websocket.send_json(message)
+            except Exception as e:
+                logger.error(f"Error sending message to user websocket: {e}", exc_info=True)
+                disconnected.add(websocket)
+
+        for ws in disconnected:
+            self.disconnect(ws, conversation_id)
+
     async def send_to_websocket(self, websocket: WebSocket, message: dict):
         try:
             if websocket.application_state != WebSocketState.CONNECTED:

@@ -15,6 +15,7 @@ from src.infrastructure.utils.logger import (
     LogCategory,
 )
 from src.utils.image_alter import image_alter
+from src.services.tools.tool_service import ToolService
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,7 @@ class SessionClient:
         self.user_id = "assistant"
 
         self.coordinator = BehaviorCoordinator(character)
+        self.tool_service = ToolService(message_service)
         self._running = False
         self._tasks = []
         self.session_id = None
@@ -171,6 +173,67 @@ class SessionClient:
                     await broadcast_log_if_needed(log_entry)
                 except Exception:
                     pass
+
+            # Process tool calls if any
+            if llm_response.tool_calls:
+                log_entry = unified_logger.info(
+                    f"Processing {len(llm_response.tool_calls)} tool calls",
+                    category=LogCategory.LLM,
+                    metadata={"tool_calls": llm_response.tool_calls},
+                )
+                await broadcast_log_if_needed(log_entry)
+
+                for tool_call in llm_response.tool_calls:
+                    if not isinstance(tool_call, dict):
+                        continue
+                    
+                    tool_name = tool_call.get("name", "")
+                    tool_args = tool_call.get("arguments", {})
+                    
+                    if not isinstance(tool_args, dict):
+                        tool_args = {}
+                    
+                    try:
+                        # Execute the tool
+                        result = await self.tool_service.execute_tool(
+                            tool_name=tool_name,
+                            tool_args=tool_args,
+                            session_id=user_message.session_id,
+                            character_avatar=self.character.avatar,
+                            user_avatar="/static/images/avatar/user.webp",  # Default user avatar
+                        )
+                        
+                        log_entry = unified_logger.info(
+                            f"Tool {tool_name} executed",
+                            category=LogCategory.LLM,
+                            metadata={"tool_name": tool_name, "result": result},
+                        )
+                        await broadcast_log_if_needed(log_entry)
+                        
+                        # If block_user was called, broadcast the blocked message
+                        if tool_name == "block_user" and result.get("success"):
+                            # Get the blocked message that was created
+                            messages = await self.message_service.get_messages(user_message.session_id)
+                            for msg in reversed(messages):
+                                if msg.type == MessageType.SYSTEM_BLOCKED:
+                                    await self._broadcast_message(msg)
+                                    break
+                        
+                        # If recall_message_by_id was called, broadcast the recall message
+                        if tool_name == "recall_message_by_id" and result.get("success"):
+                            recall_msg_id = result.get("recall_system_message_id")
+                            if recall_msg_id:
+                                recall_msg = await self.message_service.get_message(recall_msg_id)
+                                if recall_msg:
+                                    await self._broadcast_message(recall_msg)
+                    
+                    except Exception as e:
+                        log_entry = unified_logger.error(
+                            f"Error executing tool {tool_name}: {e}",
+                            category=LogCategory.LLM,
+                            metadata={"exc_info": True},
+                        )
+                        await broadcast_log_if_needed(log_entry)
 
             # Use emotion_map_to_use for behavior processing (either new or reused)
             timeline = self.coordinator.process_message(

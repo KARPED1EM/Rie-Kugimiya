@@ -319,6 +319,17 @@ class MessageService:
                 return msg.metadata.get("is_typing", False)
         return False
 
+    async def is_session_blocked(self, session_id: str) -> bool:
+        """
+        Check if a session is in blocked state.
+        A session is blocked if there's any SYSTEM_BLOCKED message in history.
+        """
+        messages = await self.message_repo.get_by_session(session_id)
+        for msg in messages:
+            if msg.type == MessageType.SYSTEM_BLOCKED:
+                return True
+        return False
+
     async def _insert_time_message_if_needed(
         self, session_id: str, reference_timestamp: float
     ) -> Optional[Message]:
