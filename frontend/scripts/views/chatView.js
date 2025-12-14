@@ -152,6 +152,17 @@ export function renderChatSession(sessionId, opts = {}) {
   const effective = messages.filter((m) => !m.is_recalled);
 
   let latestEmotionMap = null;
+  let isBlocked = false;
+  let blockTimestamp = null;
+
+  // First pass: find if there's any blocked message
+  for (const msg of effective) {
+    if (msg.type === "system-blocked") {
+      isBlocked = true;
+      blockTimestamp = msg.timestamp;
+      break;
+    }
+  }
 
   for (const msg of effective) {
     if (msg.type === "system-emotion") {
@@ -175,13 +186,28 @@ export function renderChatSession(sessionId, opts = {}) {
       container.appendChild(buildRecallNotice(msg));
       continue;
     }
+    if (msg.type === "system-blocked") {
+      // Don't render blocked messages, just track the state
+      continue;
+    }
+
+    // Check if this message is after block
+    const isAfterBlock = isBlocked && blockTimestamp !== null && msg.timestamp > blockTimestamp;
 
     if (msg.type === "text") {
-      container.appendChild(buildTextMessage(msg));
+      const element = buildTextMessage(msg);
+      if (isAfterBlock) {
+        addBlockedIndicator(element);
+      }
+      container.appendChild(element);
       continue;
     }
     if (msg.type === "image") {
-      container.appendChild(buildImageMessage(msg));
+      const element = buildImageMessage(msg);
+      if (isAfterBlock) {
+        addBlockedIndicator(element);
+      }
+      container.appendChild(element);
       continue;
     }
     container.appendChild(buildUnsupportedMessage(msg));
@@ -246,6 +272,21 @@ function applyEmotionForSession(sessionId, latestFromRender) {
     return;
   }
   applyEmotionTheme(map);
+}
+
+/**
+ * Add blocked indicator (red exclamation mark) to a message element.
+ * @param {HTMLElement} messageElement
+ */
+function addBlockedIndicator(messageElement) {
+  const indicator = document.createElement("span");
+  indicator.className = "blocked-indicator";
+  indicator.textContent = "!";
+  indicator.title = "This message was sent after being blocked";
+  
+  // Insert the indicator at the beginning of the message
+  messageElement.insertBefore(indicator, messageElement.firstChild);
+  messageElement.classList.add("message-blocked");
 }
 
 /**
