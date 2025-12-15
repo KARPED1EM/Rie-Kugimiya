@@ -1,14 +1,19 @@
-"""Behavior configuration models - separated from Character for SRP compliance"""
+"""
+Behavior configuration models - separated from Character for SRP compliance
+
+These models ARE the single source of truth for all behavior defaults.
+No separate defaults.py file needed - defaults are defined directly in model fields.
+Infrastructure layer (database) does NOT define defaults - only domain models do.
+"""
 from pydantic import BaseModel
-from src.core.config.defaults import BehaviorDefaults
 
 
 class TimelineConfig(BaseModel):
-    """Timeline behavior configuration"""
+    """Timeline behavior configuration - SINGLE SOURCE OF TRUTH for timeline defaults"""
     # Hesitation behavior
-    hesitation_probability: float = BehaviorDefaults.TIMELINE_HESITATION_PROBABILITY
-    hesitation_cycles_min: int = BehaviorDefaults.TIMELINE_HESITATION_CYCLES_MIN
-    hesitation_cycles_max: int = BehaviorDefaults.TIMELINE_HESITATION_CYCLES_MAX
+    hesitation_probability: float = 0.15
+    hesitation_cycles_min: int = 1
+    hesitation_cycles_max: int = 3
     hesitation_duration_min: int = 1500
     hesitation_duration_max: int = 5000
     hesitation_gap_min: int = 500
@@ -46,33 +51,33 @@ class TimelineConfig(BaseModel):
 
 
 class SegmenterConfig(BaseModel):
-    """Text segmentation configuration"""
-    enable: bool = BehaviorDefaults.SEGMENTER_ENABLE
-    max_length: int = BehaviorDefaults.SEGMENTER_MAX_LENGTH
+    """Text segmentation configuration - SINGLE SOURCE OF TRUTH for segmenter defaults"""
+    enable: bool = True
+    max_length: int = 50
 
 
 class TypoConfig(BaseModel):
-    """Typo injection configuration"""
-    enable: bool = BehaviorDefaults.TYPO_ENABLE
-    base_rate: float = BehaviorDefaults.TYPO_BASE_RATE
-    recall_rate: float = BehaviorDefaults.TYPO_RECALL_RATE
+    """Typo injection configuration - SINGLE SOURCE OF TRUTH for typo defaults"""
+    enable: bool = True
+    base_rate: float = 0.05
+    recall_rate: float = 0.75
 
 
 class RecallConfig(BaseModel):
-    """Message recall configuration"""
-    enable: bool = BehaviorDefaults.RECALL_ENABLE
+    """Message recall configuration - SINGLE SOURCE OF TRUTH for recall defaults"""
+    enable: bool = True
     delay: float = 2.0
     retype_delay: float = 2.5
 
 
 class PauseConfig(BaseModel):
-    """Pause behavior configuration"""
+    """Pause behavior configuration - SINGLE SOURCE OF TRUTH for pause defaults"""
     min_duration: float = 0.8
     max_duration: float = 6.0
 
 
 class StickerConfig(BaseModel):
-    """Sticker sending configuration"""
+    """Sticker sending configuration - SINGLE SOURCE OF TRUTH for sticker defaults"""
     send_probability: float = 0.4
     confidence_threshold_positive: float = 0.6
     confidence_threshold_neutral: float = 0.7

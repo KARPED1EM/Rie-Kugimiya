@@ -2,7 +2,6 @@ import random
 from pathlib import Path
 from typing import Tuple, Dict, List, Optional, Any
 from src.core.utils.logger import unified_logger, LogCategory
-from src.core.config.defaults import BehaviorDefaults
 
 
 class IntentPredictor:
@@ -136,11 +135,15 @@ class IntentPredictor:
 
 
 class StickerSelector:
+    """
+    Sticker selection service - SINGLE SOURCE OF TRUTH for sticker confidence thresholds
+    These thresholds determine when to send stickers based on emotion detection confidence
+    """
     CONFIDENCE_THRESHOLDS = {
-        "positive": BehaviorDefaults.STICKER_CONFIDENCE_POSITIVE,
-        "neutral": BehaviorDefaults.STICKER_CONFIDENCE_NEUTRAL,
-        "negative": BehaviorDefaults.STICKER_CONFIDENCE_NEGATIVE,
-        "default": BehaviorDefaults.STICKER_CONFIDENCE_DEFAULT,
+        "positive": 0.7,  # Threshold for positive emotions
+        "neutral": 0.8,   # Threshold for neutral emotions  
+        "negative": 0.9,  # Threshold for negative emotions
+        "default": 0.8,   # Default threshold
     }
 
     POSITIVE_EMOTIONS = ["happy", "excited", "playful", "affectionate", "surprised"]

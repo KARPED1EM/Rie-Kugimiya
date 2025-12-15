@@ -13,9 +13,9 @@ from src.core.utils.logger import (
     broadcast_log_if_needed,
     LogCategory,
 )
-from src.core.config.defaults import MessageDefaults
 
-TIME_MESSAGE_INTERVAL = MessageDefaults.TIME_MESSAGE_INTERVAL
+# Time message interval in seconds - SINGLE SOURCE OF TRUTH
+TIME_MESSAGE_INTERVAL = 300
 
 
 class MessageService:

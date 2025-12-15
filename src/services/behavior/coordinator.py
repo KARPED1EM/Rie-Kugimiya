@@ -16,7 +16,6 @@ from src.services.behavior.timeline import TimelineBuilder
 from src.services.behavior.sticker import StickerSelector
 from src.core.utils.logger import unified_logger, LogCategory
 from src.core.models.character import Character
-from src.core.config.defaults import BehaviorDefaults
 
 
 class BehaviorCoordinator:
@@ -45,7 +44,8 @@ class BehaviorCoordinator:
         total_segments = len(segments)
 
         # Safety check: prevent excessive segments (likely due to malformed input)
-        MAX_SEGMENTS = BehaviorDefaults.SEGMENTER_MAX_SEGMENTS
+        # SINGLE SOURCE OF TRUTH for max segments safety limit
+        MAX_SEGMENTS = 20
         if total_segments > MAX_SEGMENTS:
             unified_logger.error(
                 f"Excessive segments detected ({total_segments}), truncating to {MAX_SEGMENTS}. "

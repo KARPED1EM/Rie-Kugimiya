@@ -8,7 +8,6 @@ import jieba
 from pypinyin import lazy_pinyin
 
 from src.core.utils.logger import unified_logger, LogCategory
-from src.core.config.defaults import BehaviorDefaults
 
 
 @dataclass
@@ -116,9 +115,13 @@ class SamePinyinFinder:
 
 
 class TypoInjector:
-    CHAR_TYPO_ACCEPT_RATE = BehaviorDefaults.TYPO_CHAR_ACCEPT_RATE
-    WORD_ACCEPT_THRESHOLD = BehaviorDefaults.TYPO_WORD_ACCEPT_THRESHOLD
-    CHAR_ACCEPT_THRESHOLD = BehaviorDefaults.TYPO_CHAR_ACCEPT_THRESHOLD
+    """
+    Typo injection service - SINGLE SOURCE OF TRUTH for typo thresholds
+    These constants define the behavior of typo injection across the application
+    """
+    CHAR_TYPO_ACCEPT_RATE = 0.25  # Accept rate for character-level typos
+    WORD_ACCEPT_THRESHOLD = 0.35  # Acceptance threshold for word-level typos
+    CHAR_ACCEPT_THRESHOLD = 0.55  # Acceptance threshold for character-level typos
     END_PARTICLES = set("啊吧呢呀啦哦哎嘛呗哈诶")
 
     PARTICLE_CONFUSIONS: Dict[str, List[str]] = {

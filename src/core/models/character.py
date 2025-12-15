@@ -1,26 +1,23 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
-from src.core.config.defaults import CharacterDefaults
-from src.core.models.behavior_config import (
-    BehaviorConfig,
-    TimelineConfig,
-    SegmenterConfig,
-    TypoConfig,
-    RecallConfig,
-    PauseConfig,
-    StickerConfig,
-)
+from src.core.models.behavior_config import BehaviorConfig
 
 
 class Character(BaseModel):
-    """Character model - core character information only (SRP compliant)"""
+    """
+    Character model - core character information only (SRP compliant)
+    
+    This model IS the single source of truth for character defaults.
+    All default values are defined in the nested BehaviorConfig model.
+    No separate config classes needed - models define structure AND defaults.
+    """
     id: str
     name: str
     avatar: str
     persona: str
-    is_builtin: bool = CharacterDefaults.IS_BUILTIN
-    sticker_packs: List[str] = Field(default_factory=lambda: CharacterDefaults.STICKER_PACKS.copy())
+    is_builtin: bool = False
+    sticker_packs: List[str] = Field(default_factory=list)
     
     # Behavior configuration - aggregated from separate config classes
     behavior: BehaviorConfig = Field(default_factory=BehaviorConfig)
