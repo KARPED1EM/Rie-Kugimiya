@@ -643,11 +643,16 @@ function updateNewMessageIndicator(sessionId, container) {
   const text = document.getElementById("newMessageText");
   if (!btn || !text) return;
 
-  if (unread > 0 && !isAtBottom(container)) {
+  const atBottom = isAtBottom(container);
+  console.log('[updateNewMessageIndicator]', { sessionId, unread, atBottom, scrollTop: container.scrollTop, scrollHeight: container.scrollHeight, clientHeight: container.clientHeight });
+
+  if (unread > 0 && !atBottom) {
     btn.classList.remove("hidden");
     text.textContent = `${unread} 条新消息`;
+    console.log('[updateNewMessageIndicator] Showing indicator');
   } else {
     btn.classList.add("hidden");
+    console.log('[updateNewMessageIndicator] Hiding indicator', { reason: unread === 0 ? 'no unread' : 'at bottom' });
   }
 }
 
@@ -661,6 +666,7 @@ function getUnreadCount(sessionId) {
     if (msg.type === "system-emotion" || msg.type === "system-typing") continue;
     if (msg.timestamp > lastRead) count += 1;
   }
+  console.log('[getUnreadCount]', { sessionId, lastRead, totalMsgs: msgs.length, unreadCount: count });
   return count;
 }
 
