@@ -2,6 +2,7 @@ import random
 from pathlib import Path
 from typing import Tuple, Dict, List, Optional, Any
 from src.core.utils.logger import unified_logger, LogCategory
+from src.core.config.defaults import BehaviorDefaults
 
 
 class IntentPredictor:
@@ -136,10 +137,10 @@ class IntentPredictor:
 
 class StickerSelector:
     CONFIDENCE_THRESHOLDS = {
-        "positive": 0.7,
-        "neutral": 0.8,
-        "negative": 0.9,
-        "default": 0.8,
+        "positive": BehaviorDefaults.STICKER_CONFIDENCE_POSITIVE,
+        "neutral": BehaviorDefaults.STICKER_CONFIDENCE_NEUTRAL,
+        "negative": BehaviorDefaults.STICKER_CONFIDENCE_NEGATIVE,
+        "default": BehaviorDefaults.STICKER_CONFIDENCE_DEFAULT,
     }
 
     POSITIVE_EMOTIONS = ["happy", "excited", "playful", "affectionate", "surprised"]

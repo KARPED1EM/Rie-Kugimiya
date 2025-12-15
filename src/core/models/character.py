@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
+from src.core.config.defaults import CharacterDefaults
 
 
 class Character(BaseModel):
@@ -8,12 +9,12 @@ class Character(BaseModel):
     name: str
     avatar: str
     persona: str
-    is_builtin: bool = False
+    is_builtin: bool = CharacterDefaults.IS_BUILTIN
 
     # Timeline module - hesitation behavior
-    timeline_hesitation_probability: float = 0.15
-    timeline_hesitation_cycles_min: int = 1
-    timeline_hesitation_cycles_max: int = 2
+    timeline_hesitation_probability: float = CharacterDefaults.TIMELINE_HESITATION_PROBABILITY
+    timeline_hesitation_cycles_min: int = CharacterDefaults.TIMELINE_HESITATION_CYCLES_MIN
+    timeline_hesitation_cycles_max: int = CharacterDefaults.TIMELINE_HESITATION_CYCLES_MAX
     timeline_hesitation_duration_min: int = 1500
     timeline_hesitation_duration_max: int = 5000
     timeline_hesitation_gap_min: int = 500
@@ -50,16 +51,16 @@ class Character(BaseModel):
     timeline_initial_delay_range_4_max: int = 9
 
     # Segmenter module
-    segmenter_enable: bool = True
-    segmenter_max_length: int = 50
+    segmenter_enable: bool = CharacterDefaults.SEGMENTER_ENABLE
+    segmenter_max_length: int = CharacterDefaults.SEGMENTER_MAX_LENGTH
 
     # Typo module
-    typo_enable: bool = True
-    typo_base_rate: float = 0.05
-    typo_recall_rate: float = 0.75
+    typo_enable: bool = CharacterDefaults.TYPO_ENABLE
+    typo_base_rate: float = CharacterDefaults.TYPO_BASE_RATE
+    typo_recall_rate: float = CharacterDefaults.TYPO_RECALL_RATE
 
     # Recall module
-    recall_enable: bool = True
+    recall_enable: bool = CharacterDefaults.RECALL_ENABLE
     recall_delay: float = 2.0
     recall_retype_delay: float = 2.5
 
@@ -68,7 +69,7 @@ class Character(BaseModel):
     pause_max_duration: float = 6.0
 
     # Sticker module
-    sticker_packs: List[str] = Field(default_factory=list)
+    sticker_packs: List[str] = Field(default_factory=lambda: CharacterDefaults.STICKER_PACKS.copy())
     sticker_send_probability: float = 0.4
     sticker_confidence_threshold_positive: float = 0.6
     sticker_confidence_threshold_neutral: float = 0.7
