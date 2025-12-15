@@ -27,6 +27,13 @@ export function showSessionListView() {
   menuBtn?.setAttribute("title", "Add");
   popover?.classList.remove("open");
   popover?.setAttribute("aria-hidden", "true");
+  
+  // Hide new message indicator when in session list view
+  const newMsgBtn = document.getElementById("newMessageBtn");
+  if (newMsgBtn) {
+    newMsgBtn.classList.remove("show");
+    newMsgBtn.classList.add("hidden");
+  }
 }
 
 export function renderSessionListView() {

@@ -118,6 +118,7 @@ export function showChatSession(sessionId, scrollToBottomOnEnter) {
   }
   activeMessageContainer = messageContainersBySession.get(sessionId) || null;
   setupInputHandlers();
+  setupNewMessageButton();
   if (activeMessageContainer) {
     setupScrollReadTracking(activeMessageContainer);
     if (activeMessageContainer.childElementCount === 0) {
@@ -238,16 +239,18 @@ export function renderChatSession(sessionId, opts = {}) {
     if (opts.scrollOnEnter) {
       scrollToBottom(container);
       markAllRead(sessionId);
+      updateNewMessageIndicator(sessionId, container);
     } else if (wasAtBottom) {
       scrollToBottom(container);
       markAllRead(sessionId);
+      updateNewMessageIndicator(sessionId, container);
     } else {
-      const newHeight = container.scrollHeight;
-      const delta = newHeight - prevScrollHeight;
-      container.scrollTop = prevScrollTop + Math.max(0, delta);
+      // User is scrolled up - do NOT adjust scroll position, keep it exactly where it is
+      // After render completes, check what's visible and mark as read
+      // Use requestAnimationFrame to ensure DOM layout is updated before checking scroll position
+      // handleScroll already calls updateNewMessageIndicator
+      requestAnimationFrame(() => handleScroll(container));
     }
-
-    updateNewMessageIndicator(sessionId, container);
   }
 
   // Attach zoom to image messages only
@@ -556,13 +559,24 @@ function setupScrollReadTracking(container) {
       handleScroll(container);
     }, 180);
   });
+}
 
+// Set up new message button click handler once
+let newMsgBtnHandlerAttached = false;
+function setupNewMessageButton() {
+  if (newMsgBtnHandlerAttached) return;
   const newMsgBtn = document.getElementById("newMessageBtn");
-  newMsgBtn?.addEventListener("click", () => {
+  if (!newMsgBtn) return;
+  
+  newMsgBtn.addEventListener("click", () => {
+    if (!state.activeSessionId) return;
+    const container = messageContainersBySession.get(state.activeSessionId);
+    if (!container) return;
     scrollToBottom(container);
     markAllRead(state.activeSessionId);
     updateNewMessageIndicator(state.activeSessionId, container);
   });
+  newMsgBtnHandlerAttached = true;
 }
 
 function handleScroll(container) {
@@ -577,7 +591,8 @@ function handleScroll(container) {
   for (const node of messageNodes) {
     const el = /** @type {HTMLElement} */ (node);
     const senderId = el.dataset.senderId;
-    if (senderId && senderId !== "assistant") {
+    // Only process assistant messages for read tracking
+    if (senderId !== "assistant") {
       continue;
     }
     const bottom = el.offsetTop + el.offsetHeight;
@@ -630,8 +645,10 @@ function updateNewMessageIndicator(sessionId, container) {
 
   if (unread > 0 && !isAtBottom(container)) {
     btn.classList.remove("hidden");
+    btn.classList.add("show");
     text.textContent = `${unread} 条新消息`;
   } else {
+    btn.classList.remove("show");
     btn.classList.add("hidden");
   }
 }
@@ -656,7 +673,10 @@ function isAtBottom(container) {
 }
 
 function scrollToBottom(container) {
-  container.scrollTop = container.scrollHeight;
+  container.scrollTo({
+    top: container.scrollHeight,
+    behavior: 'smooth'
+  });
 }
 
 function updateTypingIndicator(sessionId, metadata) {
