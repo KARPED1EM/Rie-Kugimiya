@@ -274,7 +274,6 @@ export function createApp() {
 
         if (state.activeSessionId === old_session_id) {
           setActiveSessionId(new_session_id);
-          updateActiveClient();
           ensureChatSessionContainer(new_session_id);
           if (!isChatViewHidden()) showChatSession(new_session_id, true);
         }
@@ -296,6 +295,11 @@ export function createApp() {
         newClient.connect();
         reconnectController.register(new_session_id, () => newClient.connect());
         wsClientsBySession.set(new_session_id, newClient);
+        
+        // Update active client after new client is added to the map
+        if (state.activeSessionId === new_session_id) {
+          updateActiveClient();
+        }
 
         // Render immediately (empty). History will arrive via session WS.
         ensureChatSessionContainer(new_session_id);
