@@ -249,8 +249,9 @@ export function renderChatSession(sessionId, opts = {}) {
       const delta = newHeight - prevScrollHeight;
       container.scrollTop = prevScrollTop + Math.max(0, delta);
       // After adjusting scroll position, check what's visible and mark as read
+      // Use requestAnimationFrame to ensure DOM layout is updated before checking scroll position
       // handleScroll already calls updateNewMessageIndicator
-      handleScroll(container);
+      requestAnimationFrame(() => handleScroll(container));
     }
   }
 
