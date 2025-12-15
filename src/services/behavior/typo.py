@@ -7,7 +7,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 import jieba
 from pypinyin import lazy_pinyin
 
-from src.infrastructure.utils.logger import unified_logger, LogCategory
+from src.core.utils.logger import unified_logger, LogCategory
 
 
 @dataclass

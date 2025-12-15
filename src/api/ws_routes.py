@@ -15,7 +15,7 @@ from src.services.session.session_client import SessionClient
 from src.infrastructure.network.websocket_manager import WebSocketManager
 from src.core.models.message import MessageType
 from src.api.schemas import LLMConfig
-from src.infrastructure.utils.logger import (
+from src.core.utils.logger import (
     unified_logger,
     broadcast_log_if_needed,
     LogCategory,

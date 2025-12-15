@@ -1,7 +1,7 @@
 import random
 from pathlib import Path
 from typing import Tuple, Dict, List, Optional, Any
-from src.infrastructure.utils.logger import unified_logger, LogCategory
+from src.core.utils.logger import unified_logger, LogCategory
 
 
 class IntentPredictor:

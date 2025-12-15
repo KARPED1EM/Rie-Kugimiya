@@ -7,8 +7,8 @@ from typing import Any, Dict, List, Tuple
 
 import httpx
 
-from src.api.schemas import ChatMessage, LLMConfig
-from src.infrastructure.utils.logger import (
+from src.core.schemas import ChatMessage, LLMConfig
+from src.core.utils.logger import (
     unified_logger,
     broadcast_log_if_needed,
     LogCategory,

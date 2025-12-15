@@ -8,7 +8,7 @@ from src.core.models.message import (
     ALLOWED_SYSTEM_MESSAGE_TYPES,
 )
 from src.infrastructure.database.repositories.message_repo import MessageRepository
-from src.infrastructure.utils.logger import (
+from src.core.utils.logger import (
     unified_logger,
     broadcast_log_if_needed,
     LogCategory,

@@ -12,7 +12,7 @@ from src.services.messaging.message_service import MessageService
 from src.services.character.character_service import CharacterService
 from src.services.config.config_service import ConfigService
 from src.infrastructure.network.websocket_manager import WebSocketManager
-from src.infrastructure.utils.logger import (
+from src.core.utils.logger import (
     unified_logger,
     broadcast_log_if_needed,
     LogCategory,

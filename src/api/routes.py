@@ -20,7 +20,7 @@ from src.core.config import database_config
 from src.core.models.constants import DEFAULT_USER_ID
 from src.core.models.character import Character
 from src.utils.url_utils import sanitize_base_url
-from src.infrastructure.utils.logger import (
+from src.core.utils.logger import (
     unified_logger,
     broadcast_log_if_needed,
     LogCategory,

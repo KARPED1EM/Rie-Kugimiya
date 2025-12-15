@@ -3,14 +3,14 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Any
 from src.services.llm.llm_client import LLMClient
-from src.api.schemas import LLMConfig, ChatMessage
+from src.core.schemas import LLMConfig, ChatMessage
 from src.services.behavior.coordinator import BehaviorCoordinator
 from src.core.models.behavior import PlaybackAction
 from src.services.messaging.message_service import MessageService
 from src.core.models.message import Message, MessageType
 from src.core.models.character import Character
 from src.core.models.constants import DEFAULT_USER_AVATAR
-from src.infrastructure.utils.logger import (
+from src.core.utils.logger import (
     unified_logger,
     broadcast_log_if_needed,
     LogCategory,
