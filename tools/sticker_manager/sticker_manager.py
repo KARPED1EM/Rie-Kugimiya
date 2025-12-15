@@ -322,8 +322,8 @@ class StickerWidget(QFrame):
             return str(self.image_path).replace("\\", "/")
 
     def load_image_alter_data(self) -> dict:
-        """加载 image_alter.json"""
-        json_path = self.sticker_base.parent / "image_alter.json"
+        """加载 image_descriptions.json"""
+        json_path = self.sticker_base.parent / "config" / "image_descriptions.json"
         if not json_path.exists():
             return {}
         try:
@@ -333,8 +333,8 @@ class StickerWidget(QFrame):
             return {}
 
     def save_image_alter_data(self, data: dict) -> bool:
-        """保存 image_alter.json，返回是否成功"""
-        json_path = self.sticker_base.parent / "image_alter.json"
+        """保存 image_descriptions.json，返回是否成功"""
+        json_path = self.sticker_base.parent / "config" / "image_descriptions.json"
         try:
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
@@ -616,7 +616,7 @@ class StickerManagerWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         # 使用相对路径，从 tools/sticker_manager 到项目根目录
-        self.sticker_base = Path(__file__).parent.parent.parent / "data" / "stickers"
+        self.sticker_base = Path(__file__).parent.parent.parent / "assets" / "stickers"
         self.current_collection = None
         self.current_category = None
         self.category_buttons = []  # 保存所有类别按钮的引用

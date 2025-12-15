@@ -303,7 +303,7 @@ class StickerSelector:
             )
             return False, "", log_entry
 
-        sticker_base = Path(__file__).parent.parent.parent.parent / "data" / "stickers"
+        sticker_base = Path(__file__).parent.parent.parent.parent / "assets" / "stickers"
 
         available_packs = []
         for pack in sticker_packs:

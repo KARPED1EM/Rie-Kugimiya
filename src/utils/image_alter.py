@@ -9,7 +9,7 @@ class ImageAlter:
     """Provides text descriptions for local image files."""
 
     _instance = None
-    _json_path: Path = Path(__file__).parent.parent.parent / "data" / "image_alter.json"
+    _json_path: Path = Path(__file__).parent.parent.parent / "assets" / "config" / "image_descriptions.json"
 
     def __new__(cls):
         if cls._instance is None:

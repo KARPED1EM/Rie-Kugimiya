@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-STICKER_BASE_DIR = Path(__file__).parent.parent.parent / "data" / "stickers"
+STICKER_BASE_DIR = Path(__file__).parent.parent.parent / "assets" / "stickers"
 
 # Service instances
 db_connection: Optional[DatabaseConnection] = None

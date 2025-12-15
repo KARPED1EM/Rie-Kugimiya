@@ -382,9 +382,9 @@ class TypoInjector:
             return p if p.exists() else None
 
         project_root = Path(__file__).resolve().parent.parent.parent
-        data_dir = project_root / "data"
+        assets_dir = project_root / "assets"
         for name in ("jieba/dict.txt.big", "jieba/dict.txt"):
-            candidate = data_dir / name
+            candidate = assets_dir / name
             if candidate.exists():
                 return candidate
         return None

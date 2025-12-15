@@ -56,7 +56,7 @@ app.include_router(ws_global_router, prefix="/api")
 app.include_router(api_router, prefix="/api")
 
 frontend_dir = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../../frontend")
+    os.path.join(os.path.dirname(__file__), "../frontend")
 )
 if os.path.exists(frontend_dir):
     app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
