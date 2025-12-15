@@ -651,13 +651,9 @@ class SessionClient:
         if msg.type == MessageType.TEXT:
             return msg.content or ""
         if msg.type == MessageType.IMAGE:
-            # Try to get image description
-            image_path = msg.content or ""
-            description = image_alter.get_description(image_path)
-            if description:
-                return f"[image]({description})"
-            else:
-                return "[image](图片加载失败)"
+            # Use message ID instead of description to save tokens
+            # LLM can call get_image_description tool if needed
+            return f"[image]({msg.id})"
         if msg.type == MessageType.VIDEO:
             return "[Video]"
         if msg.type == MessageType.AUDIO:

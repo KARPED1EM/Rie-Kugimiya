@@ -28,6 +28,73 @@ class TestToolService:
         assert "user_avatar_description" in result
 
     @pytest.mark.asyncio
+    async def test_get_image_description_success(self):
+        """Test getting image description successfully."""
+        image_id = "msg-image-1"
+        session_id = "test-session"
+        current_time = datetime.now(timezone.utc).timestamp()
+        
+        image_message = Message(
+            id=image_id,
+            session_id=session_id,
+            sender_id="user",
+            type=MessageType.IMAGE,
+            content="data/images/test.png",
+            metadata={},
+            is_recalled=False,
+            is_read=False,
+            timestamp=current_time
+        )
+        
+        self.mock_message_service.get_message = AsyncMock(return_value=image_message)
+        
+        result = await self.tool_service.get_image_description(image_id)
+        
+        assert "image_id" in result
+        assert result["image_id"] == image_id
+        assert "description" in result
+
+    @pytest.mark.asyncio
+    async def test_get_image_description_not_found(self):
+        """Test getting image description for non-existent message."""
+        image_id = "msg-nonexistent"
+        
+        self.mock_message_service.get_message = AsyncMock(return_value=None)
+        
+        result = await self.tool_service.get_image_description(image_id)
+        
+        assert "error" in result
+        assert "不存在" in result["error"]
+        assert result["image_id"] == image_id
+
+    @pytest.mark.asyncio
+    async def test_get_image_description_wrong_type(self):
+        """Test getting image description for non-image message."""
+        message_id = "msg-text-1"
+        session_id = "test-session"
+        current_time = datetime.now(timezone.utc).timestamp()
+        
+        text_message = Message(
+            id=message_id,
+            session_id=session_id,
+            sender_id="user",
+            type=MessageType.TEXT,
+            content="This is a text message",
+            metadata={},
+            is_recalled=False,
+            is_read=False,
+            timestamp=current_time
+        )
+        
+        self.mock_message_service.get_message = AsyncMock(return_value=text_message)
+        
+        result = await self.tool_service.get_image_description(message_id)
+        
+        assert "error" in result
+        assert "不是图片类型" in result["error"]
+        assert result["image_id"] == message_id
+
+    @pytest.mark.asyncio
     async def test_get_recallable_messages(self):
         """Test getting recallable messages within 2 minutes."""
         session_id = "test-session"
@@ -185,3 +252,50 @@ class TestToolService:
         
         assert "error" in result
         assert "Unknown tool" in result["error"]
+
+    @pytest.mark.asyncio
+    async def test_execute_tool_get_image_description(self):
+        """Test executing get_image_description tool."""
+        image_id = "msg-image-1"
+        session_id = "test-session"
+        current_time = datetime.now(timezone.utc).timestamp()
+        
+        image_message = Message(
+            id=image_id,
+            session_id=session_id,
+            sender_id="user",
+            type=MessageType.IMAGE,
+            content="data/images/test.png",
+            metadata={},
+            is_recalled=False,
+            is_read=False,
+            timestamp=current_time
+        )
+        
+        self.mock_message_service.get_message = AsyncMock(return_value=image_message)
+        
+        result = await self.tool_service.execute_tool(
+            tool_name="get_image_description",
+            tool_args={"image_id": image_id},
+            session_id=session_id,
+            character_avatar="",
+            user_avatar=""
+        )
+        
+        assert "image_id" in result
+        assert result["image_id"] == image_id
+        assert "description" in result
+
+    @pytest.mark.asyncio
+    async def test_execute_tool_get_image_description_missing_arg(self):
+        """Test executing get_image_description tool without required argument."""
+        result = await self.tool_service.execute_tool(
+            tool_name="get_image_description",
+            tool_args={},
+            session_id="test-session",
+            character_avatar="",
+            user_avatar=""
+        )
+        
+        assert "error" in result
+        assert "image_id is required" in result["error"]

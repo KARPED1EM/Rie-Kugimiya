@@ -24,6 +24,23 @@ TOOL_DEFINITIONS = [
     {
         "type": "function",
         "function": {
+            "name": "get_image_description",
+            "description": "查看指定图片的描述信息。当消息历史中出现[image](图片ID)时，可以调用此工具查看图片的详细描述。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "image_id": {
+                        "type": "string",
+                        "description": "图片ID（即消息ID）",
+                    }
+                },
+                "required": ["image_id"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "get_recallable_messages",
             "description": "查看可撤回的消息列表。返回2分钟内所有由AI助手（assistant）发送的、尚未被撤回的消息及其ID。",
             "parameters": {
@@ -94,6 +111,11 @@ class ToolService:
         """
         if tool_name == "get_avatar_descriptions":
             return await self.get_avatar_descriptions(character_avatar, user_avatar)
+        elif tool_name == "get_image_description":
+            image_id = tool_args.get("image_id")
+            if not image_id:
+                return {"error": "image_id is required"}
+            return await self.get_image_description(image_id)
         elif tool_name == "get_recallable_messages":
             return await self.get_recallable_messages(session_id)
         elif tool_name == "recall_message_by_id":
@@ -132,6 +154,45 @@ class ToolService:
             "character_avatar_description": character_desc or "图片加载失败",
             "user_avatar_description": user_desc or "用户使用了自定义头像",
         }
+
+    async def get_image_description(self, image_id: str) -> Dict[str, Any]:
+        """
+        Get description for a specific image by its message ID.
+        
+        Args:
+            image_id: Message ID of the image
+            
+        Returns:
+            Dictionary with image description and ID
+        """
+        message = await self.message_service.get_message(image_id)
+        
+        if not message:
+            return {
+                "error": "图片消息不存在",
+                "image_id": image_id,
+            }
+        
+        if message.type != MessageType.IMAGE:
+            return {
+                "error": "指定的消息不是图片类型",
+                "image_id": image_id,
+            }
+        
+        # Get image description from image path
+        image_path = message.content or ""
+        description = image_alter.get_description(image_path)
+        
+        if description:
+            return {
+                "image_id": image_id,
+                "description": description,
+            }
+        else:
+            return {
+                "image_id": image_id,
+                "description": "图片加载失败",
+            }
 
     async def get_recallable_messages(self, session_id: str) -> Dict[str, Any]:
         """
