@@ -118,6 +118,7 @@ export function showChatSession(sessionId, scrollToBottomOnEnter) {
   }
   activeMessageContainer = messageContainersBySession.get(sessionId) || null;
   setupInputHandlers();
+  setupNewMessageButton();
   if (activeMessageContainer) {
     setupScrollReadTracking(activeMessageContainer);
     if (activeMessageContainer.childElementCount === 0) {
@@ -556,13 +557,24 @@ function setupScrollReadTracking(container) {
       handleScroll(container);
     }, 180);
   });
+}
 
+// Set up new message button click handler once
+let newMsgBtnHandlerAttached = false;
+function setupNewMessageButton() {
+  if (newMsgBtnHandlerAttached) return;
   const newMsgBtn = document.getElementById("newMessageBtn");
-  newMsgBtn?.addEventListener("click", () => {
+  if (!newMsgBtn) return;
+  
+  newMsgBtn.addEventListener("click", () => {
+    if (!state.activeSessionId) return;
+    const container = messageContainersBySession.get(state.activeSessionId);
+    if (!container) return;
     scrollToBottom(container);
     markAllRead(state.activeSessionId);
     updateNewMessageIndicator(state.activeSessionId, container);
   });
+  newMsgBtnHandlerAttached = true;
 }
 
 function handleScroll(container) {
@@ -577,7 +589,8 @@ function handleScroll(container) {
   for (const node of messageNodes) {
     const el = /** @type {HTMLElement} */ (node);
     const senderId = el.dataset.senderId;
-    if (senderId && senderId !== "assistant") {
+    // Only process assistant messages for read tracking
+    if (senderId !== "assistant") {
       continue;
     }
     const bottom = el.offsetTop + el.offsetHeight;
