@@ -385,12 +385,16 @@ class TypoInjector:
             p = Path(explicit_path)
             return p if p.exists() else None
 
-        project_root = Path(__file__).resolve().parent.parent.parent
-        assets_dir = project_root / "assets"
-        for name in ("jieba/dict.txt.big", "jieba/dict.txt"):
-            candidate = assets_dir / name
-            if candidate.exists():
-                return candidate
+        # Walk up the tree so we work no matter where this module sits (imported package vs src tree)
+        current = Path(__file__).resolve()
+        for parent in current.parents:
+            assets_dir = parent / "assets"
+            if not assets_dir.exists():
+                continue
+            for name in ("jieba/dict.txt.big", "jieba/dict.txt"):
+                candidate = assets_dir / name
+                if candidate.exists():
+                    return candidate
         return None
 
     @staticmethod

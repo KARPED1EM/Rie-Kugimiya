@@ -10,7 +10,7 @@ import pytest
 from datetime import datetime, timezone
 from src.core.models.message import Message, MessageType
 from src.services.session.session_service import SessionService
-from src.api.schemas import LLMConfig, ChatMessage
+from src.core.schemas import LLMConfig, ChatMessage
 from src.core.models.character import Character
 
 
@@ -37,63 +37,28 @@ class TestMessageRecall:
         
         # Minimal LLM config for testing
         llm_config = LLMConfig(
-            llm_protocol="openai",
-            llm_api_key="test",
-            llm_base_url="http://test",
-            llm_model="test",
+            protocol="completions",
+            api_key="test",
+            base_url="http://test",
+            model="test",
             user_nickname="TestUser"
         )
         
         # Minimal character config for testing
+        behavior_config = {
+            "segmenter": {"enable": False, "max_length": 50},
+            "typo": {"enable": False, "base_rate": 0.0, "recall_rate": 0.0},
+            "recall": {"enable": True, "delay": 1.0, "retype_delay": 0.5},
+            "pause": {"min_duration": 0.2, "max_duration": 0.5},
+        }
+
         character = Character(
             id="char1",
             name="TestChar",
             avatar="",
             persona="test persona",
-            is_builtin=False,
-            hesitation_probability=0.0,
-            hesitation_cycles_min=1,
-            hesitation_cycles_max=2,
-            hesitation_duration_min=100,
-            hesitation_duration_max=200,
-            hesitation_gap_min=50,
-            hesitation_gap_max=100,
-            typing_lead_time_threshold_1=10,
-            typing_lead_time_1=500,
-            typing_lead_time_threshold_2=20,
-            typing_lead_time_2=1000,
-            typing_lead_time_threshold_3=30,
-            typing_lead_time_3=1500,
-            typing_lead_time_threshold_4=40,
-            typing_lead_time_4=2000,
-            typing_lead_time_threshold_5=50,
-            typing_lead_time_5=2500,
-            typing_lead_time_default=3000,
-            entry_delay_min=100,
-            entry_delay_max=500,
-            initial_delay_weight_1=0.5,
-            initial_delay_range_1_min=200,
-            initial_delay_range_1_max=400,
-            initial_delay_weight_2=0.3,
-            initial_delay_range_2_min=500,
-            initial_delay_range_2_max=800,
-            initial_delay_weight_3=0.2,
-            initial_delay_range_3_min=1000,
-            initial_delay_range_3_max=1500,
-            initial_delay_range_4_min=2000,
-            initial_delay_range_4_max=3000,
-            enable_segmentation=False,
-            enable_typo=False,
-            enable_recall=True,
-            enable_emotion_detection=False,
-            max_segment_length=50,
-            min_pause_duration=200,
-            max_pause_duration=500,
-            base_typo_rate=0.0,
-            typo_recall_rate=0.0,
-            recall_delay=1000,
-            retype_delay=500,
-            emoticon_packs=[]
+            sticker_packs=[],
+            behavior=behavior_config,
         )
         
         client = SessionService(
