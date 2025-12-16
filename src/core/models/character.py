@@ -87,9 +87,10 @@ class Character(BaseModel):
                 # Merge new fields with existing dict
                 behavior_dict[module_name].update(module_fields)
             else:
-                # Module is an instantiated object - create a new dict with merged values
-                # This shouldn't happen in normal flow but handle it gracefully
-                behavior_dict[module_name] = {**module_fields}
+                # Module is an instantiated object - preserve existing values
+                # This edge case handles mixed nested/flattened input
+                existing_data = behavior_dict[module_name].model_dump() if hasattr(behavior_dict[module_name], 'model_dump') else {}
+                behavior_dict[module_name] = {**existing_data, **module_fields}
         
         # Add behavior dict to remaining data
         if behavior_dict or modules:

@@ -204,6 +204,7 @@ async def get_character_behavior_schema():
         })
     
     # Extract fields from nested BehaviorConfig structure
+    # Note: BehaviorConfig() is lightweight - only creates config objects with defaults
     behavior_config = BehaviorConfig()
     for module_name, module_field in BehaviorConfig.model_fields.items():
         # Get the config class for this module (e.g., TimelineConfig, SegmenterConfig)
