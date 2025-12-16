@@ -32,12 +32,19 @@ router = APIRouter()
 
 STICKER_BASE_DIR = Path(__file__).parent.parent.parent / "assets" / "stickers"
 
+# Character fields that should not be updated via behavior_params
+PROTECTED_CHARACTER_FIELDS = {
+    "behavior", "id", "name", "avatar", "persona", 
+    "is_builtin", "created_at", "updated_at"
+}
+
 # Service instances
 db_connection: Optional[DatabaseConnection] = None
 character_service: Optional[CharacterService] = None
 config_service: Optional[ConfigService] = None
 message_service: Optional[MessageService] = None
 session_repo: Optional[SessionRepository] = None
+
 
 
 async def initialize_services():
@@ -276,9 +283,6 @@ async def update_character(character_id: str, data: CharacterUpdate):
         character.avatar = _validate_avatar_value(data.avatar, allow_local=True)
     if data.persona is not None:
         character.persona = data.persona or ""
-    # Fields that should not be updated via behavior_params
-    PROTECTED_CHARACTER_FIELDS = {"behavior", "id", "name", "avatar", "persona", "is_builtin", "created_at", "updated_at"}
-    
     if data.sticker_packs is not None:
         character.sticker_packs = _normalize_string_list(data.sticker_packs)
     if data.behavior_params:

@@ -81,8 +81,8 @@ class Character(BaseModel):
         # Merge extracted modules into behavior dict
         for module_name, module_fields in modules.items():
             if module_name not in behavior_dict:
-                behavior_dict[module_name] = {}
-                behavior_dict[module_name].update(module_fields)
+                # Create new module dict with extracted fields
+                behavior_dict[module_name] = module_fields
             elif isinstance(behavior_dict[module_name], dict):
                 # Merge new fields with existing dict
                 behavior_dict[module_name].update(module_fields)
