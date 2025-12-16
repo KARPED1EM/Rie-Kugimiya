@@ -60,7 +60,10 @@ class Character(BaseModel):
         remaining_data = {}
         
         for key, value in data.items():
-            if '_' in key:
+            # Handle sticker_packs as a special case (top-level Character field)
+            if key == 'sticker_packs':
+                remaining_data[key] = value
+            elif '_' in key:
                 # Split into module and field name
                 parts = key.split('_', 1)
                 module_name = parts[0]
