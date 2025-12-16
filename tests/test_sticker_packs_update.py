@@ -1,8 +1,4 @@
 """Test that sticker_packs can be updated via behavior_params"""
-import sys
-import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-
 from src.core.models.character import Character
 from src.api.http_routes import _normalize_string_list
 

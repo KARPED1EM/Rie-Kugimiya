@@ -290,6 +290,8 @@ async def update_character(character_id: str, data: CharacterUpdate):
         for key, value in data.behavior_params.items():
             try:
                 # Handle sticker_packs as a special case (top-level Character field)
+                # Note: If sticker_packs appears in both data.sticker_packs and behavior_params,
+                # the behavior_params value takes precedence (last write wins)
                 if key == "sticker_packs":
                     character.sticker_packs = _normalize_string_list(value)
                 # Handle nested behavior config fields (e.g., "timeline_hesitation_probability")
