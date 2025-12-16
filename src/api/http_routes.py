@@ -280,20 +280,28 @@ async def update_character(character_id: str, data: CharacterUpdate):
         character.sticker_packs = _normalize_string_list(data.sticker_packs)
     if data.behavior_params:
         for key, value in data.behavior_params.items():
-            # Handle nested behavior config fields (e.g., "timeline_hesitation_probability")
-            if "_" in key:
-                parts = key.split("_", 1)
-                module_name = parts[0]
-                field_name = parts[1]
-                
-                # Check if this is a valid module in BehaviorConfig
-                if hasattr(character.behavior, module_name):
-                    module_config = getattr(character.behavior, module_name)
-                    if hasattr(module_config, field_name):
-                        setattr(module_config, field_name, value)
-            # Handle top-level fields like sticker_packs (already handled above, but kept for completeness)
-            elif hasattr(character, key) and key not in {"behavior", "id", "name", "avatar", "persona", "is_builtin", "created_at", "updated_at"}:
-                setattr(character, key, value)
+            try:
+                # Handle nested behavior config fields (e.g., "timeline_hesitation_probability")
+                if "_" in key:
+                    parts = key.split("_", 1)
+                    module_name = parts[0]
+                    field_name = parts[1]
+                    
+                    # Check if this is a valid module in BehaviorConfig
+                    if hasattr(character.behavior, module_name):
+                        module_config = getattr(character.behavior, module_name)
+                        if hasattr(module_config, field_name):
+                            # Pydantic will validate the value type when setting
+                            setattr(module_config, field_name, value)
+                        else:
+                            logger.warning(f"Unknown behavior field: {module_name}.{field_name}")
+                # Handle top-level fields like sticker_packs (already handled above, but kept for completeness)
+                elif hasattr(character, key) and key not in {"behavior", "id", "name", "avatar", "persona", "is_builtin", "created_at", "updated_at"}:
+                    setattr(character, key, value)
+            except (ValueError, TypeError) as e:
+                # Log validation errors but continue processing other fields
+                logger.warning(f"Invalid value for {key}: {e}")
+                continue
 
     success = await character_service.update_character(character)
     if not success:

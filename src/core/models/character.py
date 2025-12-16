@@ -42,12 +42,18 @@ class Character(BaseModel):
         if not isinstance(data, dict):
             return data
         
-        # If behavior is already provided, don't transform
-        if 'behavior' in data and isinstance(data['behavior'], (BehaviorConfig, dict)):
-            # But if there are also flattened fields, merge them
-            behavior_dict = data['behavior'] if isinstance(data['behavior'], dict) else {}
-        else:
-            behavior_dict = {}
+        # Extract existing behavior dict if present
+        behavior_dict = {}
+        if 'behavior' in data:
+            existing_behavior = data['behavior']
+            if isinstance(existing_behavior, BehaviorConfig):
+                # Convert BehaviorConfig instance to dict
+                behavior_dict = existing_behavior.model_dump()
+            elif isinstance(existing_behavior, dict):
+                behavior_dict = existing_behavior.copy()
+        
+        # Cache valid module names for performance
+        valid_modules = set(BehaviorConfig.model_fields.keys())
         
         # Extract flattened fields and group by module
         modules: Dict[str, Dict[str, Any]] = {}
@@ -61,7 +67,7 @@ class Character(BaseModel):
                 field_name = parts[1]
                 
                 # Check if this is a valid behavior module
-                if module_name in BehaviorConfig.model_fields:
+                if module_name in valid_modules:
                     if module_name not in modules:
                         modules[module_name] = {}
                     modules[module_name][field_name] = value
@@ -76,10 +82,10 @@ class Character(BaseModel):
         for module_name, module_fields in modules.items():
             if module_name not in behavior_dict:
                 behavior_dict[module_name] = {}
-            elif not isinstance(behavior_dict[module_name], dict):
-                # If it's already an object, skip
-                continue
-            behavior_dict[module_name].update(module_fields)
+            elif isinstance(behavior_dict[module_name], dict):
+                # Merge new fields with existing dict
+                behavior_dict[module_name].update(module_fields)
+            # If module is already an instantiated object, keep it as-is
         
         # Add behavior dict to remaining data
         if behavior_dict or modules:
