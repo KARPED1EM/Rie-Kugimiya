@@ -8,6 +8,9 @@ import { mountAvatarEditor, getAvatarEditorValue } from "./avatarEditor.js";
 /** @type {Array<{key:string,type:string,default:any,group:string}> | null} */
 let behaviorSchemaCache = null;
 
+/** @type {Array<string> | null} */
+let stickerPacksCache = null;
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -40,11 +43,22 @@ async function getBehaviorSchema() {
   }
 }
 
+async function getStickerPacks() {
+  if (stickerPacksCache) return stickerPacksCache;
+  try {
+    stickerPacksCache = await api.fetchStickerPacks();
+    return stickerPacksCache;
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Pre-fetch behavior schema during app initialization to avoid delay on first modal open
  */
 export async function prefetchBehaviorSchema() {
   await getBehaviorSchema();
+  await getStickerPacks();
 }
 
 function createOverlay() {
@@ -327,6 +341,7 @@ export async function showCharacterSettingsModal(character) {
   );
 
   const behaviorFields = await getBehaviorSchema();
+  const stickerPacks = await getStickerPacks();
   body.innerHTML = `
     <div class="modal-section">
       ${
@@ -352,7 +367,7 @@ export async function showCharacterSettingsModal(character) {
       </div>
       ${
         Array.isArray(behaviorFields) && behaviorFields.length
-          ? renderCharacterBehaviorFields(character, behaviorFields, readonly)
+          ? renderCharacterBehaviorFields(character, behaviorFields, readonly, stickerPacks)
           : '<div class="modal-notice modal-notice-readonly">行为系统配置加载失败（可尝试刷新页面）。</div>'
       }
       <div class="modal-actions">
@@ -469,8 +484,9 @@ export async function showCharacterSettingsModal(character) {
  * @param {import("../core/types.js").Character} character
  * @param {Array<{key:string,type:string,default:any,group:string}>} fields
  * @param {boolean} readonly
+ * @param {Array<string>} stickerPacks
  */
-function renderCharacterBehaviorFields(character, fields, readonly) {
+function renderCharacterBehaviorFields(character, fields, readonly, stickerPacks) {
   /** @type {Record<string, Array<{key:string,type:string,default:any,group:string}>>} */
   const grouped = {};
   fields.forEach((f) => {
@@ -504,7 +520,7 @@ function renderCharacterBehaviorFields(character, fields, readonly) {
       });
 
       const inner = sortedFields
-        .map((f) => renderBehaviorField(character, f, readonly))
+        .map((f) => renderBehaviorField(character, f, readonly, stickerPacks))
         .join("");
 
       return `
@@ -526,17 +542,22 @@ function renderCharacterBehaviorFields(character, fields, readonly) {
  * @param {import("../core/types.js").Character} character
  * @param {{key:string,type:string,default:any,group:string}} field
  * @param {boolean} readonly
+ * @param {Array<string>} stickerPacks
  */
-function renderBehaviorField(character, field, readonly) {
+function renderBehaviorField(character, field, readonly, stickerPacks) {
   const key = field.key;
   const type = String(field.type || "str");
   const currentValue = character?.[key];
   const value = currentValue ?? field.default ?? "";
   const label = escapeHtml(key);
-  const help =
-    field.default !== undefined && field.default !== null
-      ? `<div class="help-text">default: ${escapeHtml(field.default)}</div>`
-      : "";
+  
+  // Special help text for sticker_packs field
+  let help = "";
+  if (key === "sticker_packs" && Array.isArray(stickerPacks) && stickerPacks.length > 0) {
+    help = `<div class="help-text">可用的表情包: ${stickerPacks.map(escapeHtml).join(", ")}</div>`;
+  } else if (field.default !== undefined && field.default !== null) {
+    help = `<div class="help-text">default: ${escapeHtml(field.default)}</div>`;
+  }
 
   if (type === "bool") {
     return `

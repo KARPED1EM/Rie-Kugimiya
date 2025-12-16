@@ -206,6 +206,24 @@ async def get_character_behavior_schema():
     return {"fields": fields}
 
 
+@router.get("/sticker-packs")
+async def get_sticker_packs():
+    """
+    Return a list of available sticker packs from the data/stickers directory.
+    Frontend uses this to show users what sticker packs they can configure.
+    """
+    packs = []
+    if STICKER_BASE_DIR.exists() and STICKER_BASE_DIR.is_dir():
+        for item in STICKER_BASE_DIR.iterdir():
+            if item.is_dir() and not item.name.startswith("."):
+                packs.append(item.name)
+    
+    # Sort alphabetically for consistent ordering
+    packs.sort()
+    
+    return {"packs": packs}
+
+
 @router.get("/characters")
 async def get_characters():
     await initialize_services()

@@ -111,3 +111,8 @@ export async function fetchCharacterBehaviorSchema() {
   const data = await fetchJson("/api/characters/behavior-schema");
   return data.fields || [];
 }
+
+export async function fetchStickerPacks() {
+  const data = await fetchJson("/api/sticker-packs");
+  return data.packs || [];
+}
