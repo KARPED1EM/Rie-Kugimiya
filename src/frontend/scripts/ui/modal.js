@@ -8,6 +8,9 @@ import { mountAvatarEditor, getAvatarEditorValue } from "./avatarEditor.js";
 /** @type {Array<{key:string,type:string,default:any,group:string}> | null} */
 let behaviorSchemaCache = null;
 
+/** @type {Array<string> | null} */
+let stickerPacksCache = null;
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -40,11 +43,22 @@ async function getBehaviorSchema() {
   }
 }
 
+async function getStickerPacks() {
+  if (stickerPacksCache) return stickerPacksCache;
+  try {
+    stickerPacksCache = await api.fetchStickerPacks();
+    return stickerPacksCache;
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Pre-fetch behavior schema during app initialization to avoid delay on first modal open
  */
 export async function prefetchBehaviorSchema() {
   await getBehaviorSchema();
+  await getStickerPacks();
 }
 
 function createOverlay() {
@@ -566,13 +580,17 @@ function renderBehaviorField(character, field, readonly) {
   }
 
   if (type.startsWith("list[")) {
+    const helpText = key === "sticker_packs" 
+      ? "输入时会显示可用的表情包，回车/逗号添加，点击标签删除" 
+      : "回车/逗号添加，点击标签删除";
+    
     return `
       <div class="form-group">
         <label>${label}</label>
         <div class="tag-input" data-bfield="${escapeHtml(key)}" ${
           readonly ? 'data-readonly="true"' : ""
         }></div>
-        <div class="help-text">回车/逗号添加，点击标签删除</div>
+        <div class="help-text">${helpText}</div>
       </div>
     `;
   }
@@ -594,7 +612,9 @@ function renderBehaviorField(character, field, readonly) {
  * @param {Array<{key:string,type:string,default:any,group:string}>} fields
  * @param {boolean} readonly
  */
-function initTagInputs(modal, character, fields, readonly) {
+async function initTagInputs(modal, character, fields, readonly) {
+  const availablePacks = await getStickerPacks();
+  
   fields
     .filter((f) => String(f.type || "").startsWith("list["))
     .forEach((f) => {
@@ -603,7 +623,10 @@ function initTagInputs(modal, character, fields, readonly) {
       );
       if (!container) return;
       const initial = Array.isArray(character?.[f.key]) ? character[f.key] : [];
-      setupTagInput(container, initial, readonly);
+      
+      // Pass available options for sticker_packs field
+      const options = f.key === "sticker_packs" ? availablePacks : [];
+      setupTagInput(container, initial, readonly, options);
     });
 }
 
@@ -611,8 +634,9 @@ function initTagInputs(modal, character, fields, readonly) {
  * @param {HTMLElement} container
  * @param {string[]} initialTags
  * @param {boolean} readonly
+ * @param {string[]} [availableOptions]
  */
-function setupTagInput(container, initialTags, readonly) {
+function setupTagInput(container, initialTags, readonly, availableOptions = []) {
   /** @type {string[]} */
   let tags = Array.isArray(initialTags) ? initialTags.slice() : [];
   tags = normalizeTags(tags);
@@ -625,6 +649,13 @@ function setupTagInput(container, initialTags, readonly) {
   input.className = "tag-input-field";
   input.placeholder = readonly ? "" : "输入后回车…";
   input.disabled = Boolean(readonly);
+
+  // Create dropdown for available options
+  let dropdown = null;
+  if (availableOptions && availableOptions.length > 0 && !readonly) {
+    dropdown = document.createElement("div");
+    dropdown.className = "tag-input-dropdown hidden";
+  }
 
   function sync() {
     container.dataset.value = JSON.stringify(tags);
@@ -688,7 +719,12 @@ function setupTagInput(container, initialTags, readonly) {
       sync();
     }
   });
-  input.addEventListener("blur", () => addFromRaw(input.value));
+  input.addEventListener("blur", () => {
+    addFromRaw(input.value);
+    if (dropdown) {
+      setTimeout(() => dropdown.classList.add("hidden"), 200);
+    }
+  });
   input.addEventListener("paste", (ev) => {
     if (readonly) return;
     const text = ev.clipboardData?.getData("text/plain");
@@ -697,6 +733,50 @@ function setupTagInput(container, initialTags, readonly) {
     ev.preventDefault();
     addFromRaw(text);
   });
+
+  // Dropdown functionality for available options
+  if (dropdown) {
+    function updateDropdown() {
+      const query = input.value.toLowerCase();
+      dropdown.innerHTML = "";
+      
+      const filteredOptions = availableOptions.filter(opt => 
+        !tags.includes(opt) && opt.toLowerCase().includes(query)
+      );
+      
+      if (filteredOptions.length === 0) {
+        dropdown.classList.add("hidden");
+        return;
+      }
+      
+      filteredOptions.forEach(opt => {
+        const item = document.createElement("div");
+        item.textContent = opt;
+        item.className = "tag-dropdown-item";
+        
+        item.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          if (!tags.includes(opt)) {
+            tags.push(opt);
+            tags = normalizeTags(tags);
+            input.value = "";
+            sync();
+            updateDropdown();
+          }
+        });
+        
+        dropdown.appendChild(item);
+      });
+      
+      dropdown.classList.remove("hidden");
+    }
+    
+    input.addEventListener("input", updateDropdown);
+    input.addEventListener("focus", updateDropdown);
+    
+    container.style.position = "relative";
+    container.appendChild(dropdown);
+  }
 
   container.addEventListener("click", () => {
     if (!readonly) input.focus();
