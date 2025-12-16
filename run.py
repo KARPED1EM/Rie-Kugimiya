@@ -25,7 +25,7 @@ if __name__ == "__main__":
     import uvicorn
     from src.infrastructure.network.port_manager import PortManager
     from src.api.main import app
-    from src.infrastructure.utils.logger import get_uvicorn_log_config
+    from src.core.utils.logger import get_uvicorn_log_config
 
     PortManager.initialize(start_port=8000, host="0.0.0.0")
     port_manager = PortManager.get_instance()
