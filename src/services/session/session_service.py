@@ -9,7 +9,7 @@ from src.core.models.behavior import PlaybackAction
 from src.services.messaging.message_service import MessageService
 from src.core.models.message import Message, MessageType
 from src.core.models.character import Character
-from src.core.models.constants import DEFAULT_USER_AVATAR
+from src.core.models.constants import DEFAULT_USER_AVATAR, DEFAULT_USER_ID
 from src.core.utils.logger import (
     unified_logger,
     broadcast_log_if_needed,
@@ -17,6 +17,7 @@ from src.core.utils.logger import (
 )
 from src.utils.image_descriptions import image_descriptions
 from src.services.tools.tool_service import ToolService
+from src.services.configurations.config_service import ConfigService
 
 logger = logging.getLogger(__name__)
 
@@ -31,12 +32,16 @@ class SessionService:
         ws_manager: Any,
         llm_config: LLMConfig,
         character: Character,
+        config_service: ConfigService,
+        user_id: str = DEFAULT_USER_ID,
     ):
         self.message_service = message_service
         self.ws_manager = ws_manager
         self.llm_client = LLMService(llm_config)
         self.character = character
         self.user_id = "assistant"
+        self.config_service = config_service
+        self._client_user_id = user_id
 
         self.coordinator = BehaviorCoordinator(character)
         self.tool_service = ToolService(message_service)
@@ -165,12 +170,13 @@ class SessionService:
 
                         try:
                             # Execute the tool
+                            user_avatar_value = await self._resolve_user_avatar()
                             result = await self.tool_service.execute_tool(
                                 tool_name=tool_name,
                                 tool_args=tool_args,
                                 session_id=user_message.session_id,
                                 character_avatar=self.character.avatar,
-                                user_avatar=DEFAULT_USER_AVATAR,
+                                user_avatar=user_avatar_value,
                             )
 
                             log_entry = unified_logger.info(
@@ -520,6 +526,23 @@ class SessionService:
             category=LogCategory.BEHAVIOR,
         )
         await broadcast_log_if_needed(log_entry)
+
+    async def _resolve_user_avatar(self) -> str:
+        """Resolve the latest user avatar for the current session."""
+        if not self.config_service:
+            return DEFAULT_USER_AVATAR
+
+        try:
+            avatar = await self.config_service.get_user_avatar(self._client_user_id)
+            avatar_str = (avatar or "").strip()
+            return avatar_str or DEFAULT_USER_AVATAR
+        except Exception as exc:
+            logger.warning(
+                "Failed to resolve user avatar for %s: %s",
+                self._client_user_id,
+                exc,
+            )
+            return DEFAULT_USER_AVATAR
 
     async def _broadcast_message(self, message: Message):
         event = {

@@ -169,7 +169,7 @@ async def handle_client_message(
             await handle_clear_session(session_id)
 
         elif msg_type == "init_character":
-            await handle_init_character(session_id, data)
+            await handle_init_character(session_id, data, user_id)
 
         elif msg_type == "mark_read":
             await handle_mark_read(session_id, data)
@@ -373,7 +373,7 @@ async def handle_clear_session(session_id: str):
         await ws_manager.send_to_conversation(session_id, event)
 
 
-async def handle_init_character(session_id: str, data: Dict[str, Any]):
+async def handle_init_character(session_id: str, data: Dict[str, Any], user_id: str):
     if session_id in session_clients:
         old_client = session_clients.get(session_id)
         if old_client:
@@ -468,6 +468,8 @@ async def handle_init_character(session_id: str, data: Dict[str, Any]):
         ws_manager=ws_manager,
         llm_config=llm_config,
         character=character,
+        config_service=config_service,
+        user_id=user_id,
     )
 
     await session_client.start(session_id)

@@ -81,14 +81,14 @@ class ToolService:
     ) -> Dict[str, Any]:
         """
         Execute a tool call and return the result.
-        
+
         Args:
             tool_name: Name of the tool to execute
             tool_args: Arguments for the tool
             session_id: Current session ID
             character_avatar: Path to character avatar
             user_avatar: Path to user avatar
-            
+
         Returns:
             Dictionary with tool execution result
         """
@@ -111,36 +111,38 @@ class ToolService:
     ) -> Dict[str, Any]:
         """
         Get descriptions for character and user avatars.
-        
+
         Args:
             character_avatar: Path to character avatar
             user_avatar: Path to user avatar
-            
+
         Returns:
             Dictionary with character and user avatar descriptions
         """
         character_desc = image_descriptions.get_description(character_avatar)
-        
+
         # Only return user avatar description if it's the default avatar
         # Don't return description for custom user avatars
         from src.core.models.constants import DEFAULT_USER_AVATAR
+
         user_desc = None
         if user_avatar == DEFAULT_USER_AVATAR:
             user_desc = image_descriptions.get_description(user_avatar)
 
         return {
-            "character_avatar_description": character_desc or "图片加载失败",
-            "user_avatar_description": user_desc or "用户使用了自定义头像",
+            "character_avatar_description": character_desc
+            or "图片加载失败，请不要重复获取",
+            "user_avatar_description": user_desc or "图片加载失败，请不要重复获取",
         }
 
     async def get_recallable_messages(self, session_id: str) -> Dict[str, Any]:
         """
         Get all messages sent by assistant in the last 2 minutes that can be recalled.
         Actually returns messages from the last 1.5 minutes to account for delays.
-        
+
         Args:
             session_id: Current session ID
-            
+
         Returns:
             Dictionary with list of recallable messages
         """
@@ -174,16 +176,16 @@ class ToolService:
     ) -> Dict[str, Any]:
         """
         Recall a specific message by ID if it's within 2 minutes.
-        
+
         Args:
             session_id: Current session ID
             message_id: ID of the message to recall
-            
+
         Returns:
             Dictionary with recall result
         """
         message = await self.message_service.get_message(message_id)
-        
+
         if not message:
             return {"error": "Message not found", "success": False}
 
@@ -222,10 +224,10 @@ class ToolService:
     async def block_user(self, session_id: str) -> Dict[str, Any]:
         """
         Block the user by adding a SYSTEM_BLOCKED message.
-        
+
         Args:
             session_id: Current session ID
-            
+
         Returns:
             Dictionary with block result
         """
