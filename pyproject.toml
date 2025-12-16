@@ -1,7 +1,7 @@
 [project]
 name = "yuzuriha-rin"
 version = "0.1.0"
-description = "Virtual character dialogue system with rule-based behavior engine for natural messaging patterns"
+description = "Present the LLM chat in a WeChat-like style"
 readme = "README.md"
 requires-python = ">=3.10,<3.11"
 dependencies = [
