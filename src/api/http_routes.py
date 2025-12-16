@@ -316,18 +316,20 @@ async def update_character(character_id: str, data: CharacterUpdate):
 
     # Update character configuration in active SessionService instances
     from src.api import ws_routes
+
     updated_sessions = []
     for session_id, session_client in list(ws_routes.session_clients.items()):
-        if hasattr(session_client, 'character') and session_client.character.id == character_id:
+        if (
+            hasattr(session_client, "character")
+            and session_client.character.id == character_id
+        ):
             try:
                 # Update the character configuration in the SessionService
                 session_client.update_character(character)
                 # Send notification to frontend that config is updated
                 if ws_routes.ws_manager:
                     await ws_routes.ws_manager.send_toast(
-                        session_id,
-                        "角色配置已更新",
-                        level="info"
+                        session_id, "角色配置已更新", level="info"
                     )
                 updated_sessions.append(session_id)
             except Exception as e:
@@ -336,7 +338,7 @@ async def update_character(character_id: str, data: CharacterUpdate):
                     category=LogCategory.BEHAVIOR,
                 )
                 await broadcast_log_if_needed(log_entry)
-    
+
     if updated_sessions:
         log_entry = unified_logger.info(
             f"Character config updated for {len(updated_sessions)} active sessions",

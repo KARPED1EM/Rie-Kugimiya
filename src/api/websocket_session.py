@@ -239,7 +239,7 @@ async def handle_send_message(session_id: str, user_id: str, data: Dict[str, Any
             content="消息已发出，但被对方拒收了。",
             metadata={},
         )
-        
+
         hint_event = {
             "type": "message",
             "data": {
@@ -409,9 +409,7 @@ async def handle_init_character(session_id: str, data: Dict[str, Any]):
     )
 
     resolved_model = (
-        llm_config_dict.get("model")
-        or config.get("llm_model")
-        or llm_defaults.model
+        llm_config_dict.get("model") or config.get("llm_model") or llm_defaults.model
     )
 
     resolved_api_key = llm_config_dict.get("api_key") or config.get("llm_api_key") or ""
@@ -432,7 +430,7 @@ async def handle_init_character(session_id: str, data: Dict[str, Any]):
     normalized_base_url = sanitize_base_url(
         llm_config_dict.get("base_url") or config.get("llm_base_url")
     )
-    
+
     # Handle temperature - can be None (optional)
     resolved_temperature = llm_config_dict.get("temperature")
     if resolved_temperature is None:
@@ -442,7 +440,7 @@ async def handle_init_character(session_id: str, data: Dict[str, Any]):
                 resolved_temperature = float(temp_str)
             except ValueError:
                 resolved_temperature = None
-    
+
     # Handle max_tokens - required, default 1000
     resolved_max_tokens = llm_config_dict.get("max_tokens")
     if resolved_max_tokens is None:
@@ -451,7 +449,7 @@ async def handle_init_character(session_id: str, data: Dict[str, Any]):
             resolved_max_tokens = int(max_tokens_str)
         except ValueError:
             resolved_max_tokens = llm_defaults.max_tokens
-    
+
     llm_config = LLMConfig(
         protocol=resolved_protocol,
         api_key=resolved_api_key,
