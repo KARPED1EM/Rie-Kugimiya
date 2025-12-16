@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
-from typing import Optional, List
+from pydantic import BaseModel, Field, model_validator
+from typing import Optional, List, Any, Dict
 from datetime import datetime
 from src.core.models.behavior import BehaviorConfig
 
@@ -11,6 +11,9 @@ class Character(BaseModel):
     This model IS the single source of truth for character defaults.
     All default values are defined in the nested BehaviorConfig model.
     No separate config classes needed - models define structure AND defaults.
+    
+    Accepts both nested (behavior.timeline.field) and flattened (timeline_field) formats
+    for backward compatibility with database and API layers.
     """
     id: str
     name: str
@@ -25,6 +28,64 @@ class Character(BaseModel):
     # Metadata
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    
+    @model_validator(mode='before')
+    @classmethod
+    def map_flattened_fields(cls, data: Any) -> Any:
+        """
+        Transform flattened behavior fields (e.g., timeline_hesitation_probability)
+        into nested structure (behavior.timeline.hesitation_probability).
+        
+        This enables backward compatibility with the database layer and API
+        that use flattened field names.
+        """
+        if not isinstance(data, dict):
+            return data
+        
+        # If behavior is already provided, don't transform
+        if 'behavior' in data and isinstance(data['behavior'], (BehaviorConfig, dict)):
+            # But if there are also flattened fields, merge them
+            behavior_dict = data['behavior'] if isinstance(data['behavior'], dict) else {}
+        else:
+            behavior_dict = {}
+        
+        # Extract flattened fields and group by module
+        modules: Dict[str, Dict[str, Any]] = {}
+        remaining_data = {}
+        
+        for key, value in data.items():
+            if '_' in key:
+                # Split into module and field name
+                parts = key.split('_', 1)
+                module_name = parts[0]
+                field_name = parts[1]
+                
+                # Check if this is a valid behavior module
+                if module_name in BehaviorConfig.model_fields:
+                    if module_name not in modules:
+                        modules[module_name] = {}
+                    modules[module_name][field_name] = value
+                else:
+                    # Not a behavior field, keep in remaining data
+                    remaining_data[key] = value
+            else:
+                # No underscore, not a flattened field
+                remaining_data[key] = value
+        
+        # Merge extracted modules into behavior dict
+        for module_name, module_fields in modules.items():
+            if module_name not in behavior_dict:
+                behavior_dict[module_name] = {}
+            elif not isinstance(behavior_dict[module_name], dict):
+                # If it's already an object, skip
+                continue
+            behavior_dict[module_name].update(module_fields)
+        
+        # Add behavior dict to remaining data
+        if behavior_dict or modules:
+            remaining_data['behavior'] = behavior_dict
+        
+        return remaining_data
     
     # Backward compatibility properties - deprecated, use behavior.* instead
     @property

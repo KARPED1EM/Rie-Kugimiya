@@ -180,39 +180,44 @@ async def get_character_behavior_schema():
     """
     Return a machine-readable schema for all character behavior-system fields.
     Frontend uses this to render editable controls without duplicating field lists.
-    Fields are automatically grouped by module prefix (timeline_, segmenter_, typo_, etc.)
+    Fields are automatically grouped by module name from the nested BehaviorConfig structure.
     """
-    exclude = {
-        "id",
-        "name",
-        "avatar",
-        "persona",
-        "is_builtin",
-        "created_at",
-        "updated_at",
-    }
+    from src.core.models.behavior import BehaviorConfig
 
     fields: List[Dict[str, Any]] = []
-    for key, field in Character.model_fields.items():
-        if key in exclude:
-            continue
-
-        type_name = _annotation_to_type_name(field.annotation)
-        default_value = _pydantic_field_default(field)
-
-        # Extract module prefix from field name (e.g., "timeline_hesitation_probability" -> "timeline")
-        # This enables automatic grouping without hardcoding field names
-        group = key.split("_")[0] if "_" in key else "other"
-
-        fields.append(
-            {
-                "key": key,
+    
+    # Handle sticker_packs field separately (not part of nested behavior config)
+    sticker_packs_field = Character.model_fields.get("sticker_packs")
+    if sticker_packs_field:
+        fields.append({
+            "key": "sticker_packs",
+            "type": _annotation_to_type_name(sticker_packs_field.annotation),
+            "default": _pydantic_field_default(sticker_packs_field),
+            "group": "sticker",
+        })
+    
+    # Extract fields from nested BehaviorConfig structure
+    behavior_config = BehaviorConfig()
+    for module_name, module_field in BehaviorConfig.model_fields.items():
+        # Get the config class for this module (e.g., TimelineConfig, SegmenterConfig)
+        module_config = getattr(behavior_config, module_name)
+        module_config_class = type(module_config)
+        
+        # Iterate through fields in this module's config
+        for field_name, field_info in module_config_class.model_fields.items():
+            # Construct the flat field key (e.g., "timeline_hesitation_probability")
+            flat_key = f"{module_name}_{field_name}"
+            
+            type_name = _annotation_to_type_name(field_info.annotation)
+            default_value = _pydantic_field_default(field_info)
+            
+            fields.append({
+                "key": flat_key,
                 "type": type_name,
                 "default": default_value,
-                "group": group,
-            }
-        )
-
+                "group": module_name,
+            })
+    
     return {"fields": fields}
 
 
@@ -275,7 +280,19 @@ async def update_character(character_id: str, data: CharacterUpdate):
         character.sticker_packs = _normalize_string_list(data.sticker_packs)
     if data.behavior_params:
         for key, value in data.behavior_params.items():
-            if hasattr(character, key):
+            # Handle nested behavior config fields (e.g., "timeline_hesitation_probability")
+            if "_" in key:
+                parts = key.split("_", 1)
+                module_name = parts[0]
+                field_name = parts[1]
+                
+                # Check if this is a valid module in BehaviorConfig
+                if hasattr(character.behavior, module_name):
+                    module_config = getattr(character.behavior, module_name)
+                    if hasattr(module_config, field_name):
+                        setattr(module_config, field_name, value)
+            # Handle top-level fields like sticker_packs (already handled above, but kept for completeness)
+            elif hasattr(character, key) and key not in {"behavior", "id", "name", "avatar", "persona", "is_builtin", "created_at", "updated_at"}:
                 setattr(character, key, value)
 
     success = await character_service.update_character(character)
