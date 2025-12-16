@@ -1,0 +1,153 @@
+prompt_template:
+小样本意图识别。不确定时请输出 “{not_applicable}”。
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"不确定。\", \"无法确定\"]", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+小样本意图识别。如果不能确定最后一个句子的意图标签，可输出：{not_applicable}
+
+注意：示例中有些句子的意图标签可能会比较笼统。
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"不确定。\", \"无法确定\", \"我无法确定。\", \"对不起，我不能确定。\", \"我不能确定正确的意图是什么。\"]", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+小样本意图识别。
+
+注意：
+（1）如果句子的标签没有在示例中出现过，可输出：{not_applicable}
+（2）示例中有些句子的意图标签可能是错的。
+
+示例：
+{examples}
+
+请给出以下句子的意图：
+sentence: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nsentence: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"不确定。\", \"无法确定\", \"我无法确定。\", \"对不起，我不能确定。\", \"我不能确定正确的意图是什么。\"]", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+根据示例判断给定句子的意图标签。
+
+如果句子的标签没有在示例中出现过，可输出：{not_applicable}。
+
+示例中的一些句子的意图标签是错的。
+
+示例：
+---
+{examples}
+---
+
+请给出以下句子的意图：
+sentence: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nsentence: {text}\nintent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"不确定。\", \"无法确定\", \"我无法确定。\", \"对不起，我不能确定。\", \"我不能确定正确的意图是什么。\"]", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+根据示例判断给定句子的意图标签。
+
+如果句子的标签没有在示例中出现过，可输出：{not_applicable}。
+
+示例：
+---
+{examples}
+---
+
+{text}
+
+请给我这个句子的意图标签：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nsentence: {text}\nintent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"不确定。\", \"无法确定\", \"我无法确定。\", \"对不起，我不能确定。\", \"我不能确定正确的意图是什么。\"]", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+
+{examples}。
+
+{text}
+
+这个句子的意图标签是哪个？
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "，", "not_applicable_variable": "其他", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+
+{text}
+
+{examples}。
+
+以上标签哪一个最适合这个句子？
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "，", "not_applicable_variable": "其他", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+
+{text}
+
+可选的意图标签有：“{examples}”。
+
+这个句子的标签是哪个：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "”，“", "not_applicable_variable": "其他", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---

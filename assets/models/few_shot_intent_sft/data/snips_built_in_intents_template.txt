@@ -1,0 +1,295 @@
+prompt_template:
+virtual assistant intent recognition.
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "I don't know.", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+intent recognition.
+output "{not_applicable}" when not sure.
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "I don't know.", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+this is a **intent recognition** task on virtual assistant.
+
+if you can not determine the intent. please output "{not_applicable}".
+
+Examples:
+```
+{examples}
+```
+
+now, please determine the intent of the text below.
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+**intent recognition**.
+
+if you can not determine the intent. please output "{not_applicable}".
+
+Examples:
+```
+{examples}
+```
+
+please give out the intent of the text below.
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few shot **intent recognition**.
+
+if you can not determine the intent. you can give it "{not_applicable}".
+
+examples:
+---
+{examples}
+---
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few shot **intent recognition**.
+
+examples:
+---
+{examples}
+---
+
+note:
+* if you can not determine the intent. you can give it "{not_applicable}".
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few shot **intent recognition**.
+
+examples:
+---
+{examples}
+---
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few shot **intent determination**.
+
+examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero shot **intent determination**.
+
+options:
+- {examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n- ", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero shot **intent determination**.
+
+choices options:
+* {examples}
+
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n* ", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero shot **intent determination**.
+
+choices options:
+* {examples}
+
+```
+{text}
+```
+
+output:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n* ", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero shot **intent determination**.
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+{text}
+
+what's the intent ?
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+```
+{text}
+```
+
+what's the intent ?
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+```
+{text}
+```
+what's the intent of this text ?
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+```
+{text}
+```
+intent label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+```
+{text}
+```
+**intent** label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "", "not_applicable_variable": "[\"I don't know.\", \"sorry I don't know\", \"sorry I can not determine\", \"I cannot make sure it\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---

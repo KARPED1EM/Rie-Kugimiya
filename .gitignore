@@ -3,7 +3,6 @@
 .pytest_cache/
 **/__pycache__/
 
-assets/models/few_shot_intent_sft/
 assets/models/intent_predictor/
 
 *.db

@@ -1,0 +1,53 @@
+prompt_template:
+Text Categorization.
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nlabel: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"others\", \"unknown\", \"oos\", \"out of scope\", \"other\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+文本分类。
+根据以下示例推测最后一个句子的标签。不能确定时输出“{not_applicable}”。
+
+示例：
+------------
+{examples}
+------------
+text: {text}
+label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nlabel: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"其它\", \"其它标签\", \"无法确定\", \"正确的标签可能不在示例当中\", \"标签无法确定\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+文本分类。
+
+{examples}
+
+根据以上示例推测这个句子的标签。不能确定时输出“{not_applicable}”。
+句子: {text}
+标签:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\n句子: {text}\n标签: {intent}", "example_sep": "", "not_applicable_variable": "[\"领域外标签\", \"其它标签\", \"无法确定\", \"不能确定\", \"标签无法确定\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---

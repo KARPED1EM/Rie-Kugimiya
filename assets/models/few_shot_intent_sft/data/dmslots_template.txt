@@ -1,0 +1,508 @@
+prompt_template:
+意图识别。不确定时输出 “{not_applicable}”。
+
+注意：有些示例的标签可能是错误的。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"unknown\", \"other\", \"unknown intent\", \"other intent\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+小样本意图识别。判断不出时输出 “{not_applicable}”。
+
+注意：有些示例的标签可能是错误的。
+
+Examples:
+------
+{examples}
+------
+
+请判断以下 text 的意图标签。
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------", "not_applicable_variable": "[\"unknown\", \"other\", \"unknown intent\", \"other intent\"]", "not_applicable_rate": 0.1, "max_n_way": 4, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+少样本意图识别。从示例中推断出给定句子的意图标签，推断不出时，可输出 “{not_applicable}”。
+
+注意：有些示例的标签可能是错误的。
+
+Examples:
+{examples}
+
+请判断以下句子的意图标签。
+sentence: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nsentence: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"unknown\", \"other\", \"unknown intent\", \"other intent\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+少样本意图识别。推断不出时，可输出标签：{not_applicable}
+
+注意：有些示例的标签可能是错误的。
+
+Examples:
+###
+{examples}
+###
+
+请判断以下句子的意图：
+sentence: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nsentence: {text}\nintent: {intent}\n", "example_sep": "###", "not_applicable_variable": "[\"unknown\", \"other\", \"unknown intent\", \"other intent\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+少样本意图识别。无法确定时可输出标签：{not_applicable}
+
+示例：
+{examples}
+
+注意：
+（1）有些示例的标签可能是错误的。
+
+请判断以下句子的意图：
+Sentence: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nSentence: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"unknown\", \"other\", \"unknown intent\", \"other intent\"]", "not_applicable_rate": 0.1, "max_n_way": 6, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+虚拟助手的意图识别。
+其中有些示例的标签可能是错误的。
+当意图不能确定时输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"unknown\", \"other\", \"unknown intent\", \"other intent\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+针对虚拟助手的意图识别任务。
+你需要根据给出的示例来判断最后一个句子的意图标签，注意有些示例的标签可能是错误的。
+当意图不能确定时输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"unknown\", \"other\", \"unknown intent\", \"other intent\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+虚拟助手的意图识别。注意有些示例的标签可能是错误的。
+如果不确定正确的意图，则输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+手机助手场景的意图识别。
+请根据给定的示例来判断最后一个句子的意图标签，注意某些示例的标签可能是错误的。
+不确定时请输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+手机虚拟助手意图识别，注意鉴别某些示例的错误标签。
+不确定时请输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别。不确定时请输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+注意有些示例的标签可能是错误的。
+
+请输出以下句子的意图标签：
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别。根据给定的示例及其意图标签判断给定句子的意图。
+
+Examples:
+{examples}
+
+注意：示例中的句子来自于弱标注数据集，即有些标签可能是错误的。
+
+请输出以下句子的意图标签，不确定时请输出 “{not_applicable}”。
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+请完成这个意图分类任务。
+
+Examples:
+{examples}
+
+注意：
+（1）有些标签可能是错误的。
+（2）不确定时请输出 “{not_applicable}”。
+
+Text: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+这是一个手机虚拟助手的小样本意图识别任务。
+
+样本示例如下：
+---
+{examples}
+---
+
+注意：
+（1）有些标签可能是错误的。
+（2）不确定时请输出 “{not_applicable}”。
+
+Text: {text}
+Label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nText: {text}\nLabel: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别。
+
+样本示例如下：
+---
+{examples}
+---
+
+注意：
+（1）有些示例的标签存在错误。
+（2）意图不能确定时请输出 “{not_applicable}”。
+
+Utterance: {text}
+Label:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nUtterance: {text}\nLabel: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+虚拟助手的意图识别。
+
+示例：
+```
+{examples}
+```
+
+注意：
+1. 有些示例的标签存在错误。
+2. 意图不能确定时输出 “{not_applicable}”。
+
+Utterance: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nUtterance: {text}\nIntent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+虚拟助手的意图识别。意图不能确定时输出：{not_applicable}
+
+示例：
+```
+{examples}
+```
+
+注意：
+1. 有些示例的标签是错的。
+
+Utterance: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nUtterance: {text}\nIntent: {intent}\n", "example_sep": "```", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+手机虚拟助手，意图识别。
+
+{examples}
+
+Utterance: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nUtterance: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+手机助手，意图识别。不确定时输出“{not_applicable}”。
+
+{examples}
+
+输出以下 Message 的标签。
+Message: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+手机助手，少样本意图识别。不确定时输出：{not_applicable}
+
+{examples}
+
+输出以下 Message 的标签。
+Message: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+手机助手，意图识别。不确定时输出“{not_applicable}”。注意有很多示例的标签可能是错误的。
+
+{examples}
+
+输出以下 Message 的标签。
+Message: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent: {intent}", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+小样本意图识别。
+
+根据给定的示例来判断意图标签，注意有些示例的标签可能是错的。
+
+不能确定时输出“{not_applicable}”。
+
+{examples}
+
+输出以下 Message 的标签。
+Message: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nMessage: {text}\nIntent: {intent}", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+少样本意图识别。不能从示例中推断意图时输出“{not_applicable}”。
+
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\", \"推断不出\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别。
+
+注意：
+（1）如果无法从示例中推断出意图标签，输出：{not_applicable}
+
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\", \"推断不出\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别。不确定时输出：{not_applicable}
+
+示例：
+{examples}
+
+任务：
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"未知意图\", \"不确定\", \"无法确定\", \"其他\", \"不能确定。\", \"意图不能确定。\", \"我不知道。\", \"我不确定。\", \"正确的意图没有在示例中。\", \"不能确定正确的意图。\", \"我不能确定正确的意图。\", \"推断不出\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+
+prompt_template:
+小样本意图识别。如果正确标签不在示例中，输出：{not_applicable}
+
+示例：
+{examples}
+
+任务：
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}", "example_sep": "", "not_applicable_variable": "[\"未知领域\", \"无关领域\", \"不相关的领域\", \"不相关的意图\", \"其他意图\"]", "not_applicable_rate": 0.1, "max_n_way": 5, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---

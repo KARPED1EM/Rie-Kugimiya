@@ -1,0 +1,242 @@
+prompt_template:
+few-shot classification.
+
+if the tag not in the examples, output: "{not_applicable}".
+
+examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"others\", \"out of scope\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent classification. output "{not_applicable}" when not sure.
+
+examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"others\", \"out of scope\", \"other intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent recognition. output "{not_applicable}" when cannot make sure.
+
+examples:
+---
+{examples}
+---
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"I don't know.\", \"unknown\", \"others\", \"out of scope\", \"other intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot intent recognition.
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "", "not_applicable_variable": "unknown", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot intent recognition.
+
+intent choices: {examples}.
+
+text: {text}
+
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "; ", "not_applicable_variable": "unknown", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别。
+
+可选意图标签：{examples}。
+
+句子：
+{text}
+
+输出：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "；", "not_applicable_variable": "unknown", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+{text}
+
+给我这个句子的意图标签。
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "；", "not_applicable_variable": "unknown", "not_applicable_rate": 0.0, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot classification.
+
+if the tag not in the examples, output: "{not_applicable}".
+
+intent choices:
+{intent_description}
+
+examples:
+{examples}
+
+text: {text}
+intent name:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent name: {intent}\n", "example_sep": "", "intent_description_template": "\nintent id: {intent_symbol}\nintent name: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot classification.
+
+if the tag not in the examples, output: "{not_applicable}".
+
+intent choices:
+```
+{intent_description}
+```
+
+examples:
+```
+{examples}
+```
+text: {text}
+intent symbol:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent symbol: {intent_symbol}\n", "example_sep": "```", "intent_description_template": "\nintent symbol: {intent_symbol}\nintent name: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+few-shot intent classification. output "{not_applicable}" when not sure.
+
+intent description:
+```
+{intent_description}
+```
+
+examples:
+```
+{examples}
+```
+text: {text}
+intent id:
+
+response_template:
+{intent_symbol}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent id: {intent_symbol}\n", "example_sep": "```", "intent_description_template": "\nintent id: {intent_symbol}\nintent name: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "```", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot intent recognition.
+
+intent description:
+----
+{intent_description}
+----
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "\nintent id: {intent_symbol}\nintent: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "----", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 10, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+zero-shot intent recognition.
+
+intent description:
+----
+{intent_description}
+----
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "\nintent id: {intent_symbol}\nintent: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "----", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别。
+
+可选意图标签：
+{intent_description}
+
+句子：
+{text}
+
+输出：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "", "example_sep": "", "intent_description_template": "\nintent id: {intent_symbol}\nintent: {intent}\ndescription: {intent_description}\n", "intent_description_sep": "", "not_applicable_variable": "[\"others\", \"other\", \"other intent\", \"unknown\", \"unknown intent\", \"can not determine\", \"out of scope intent\", \"out-of-scope intent\"]", "not_applicable_rate": 0.1, "max_n_way": 7, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---

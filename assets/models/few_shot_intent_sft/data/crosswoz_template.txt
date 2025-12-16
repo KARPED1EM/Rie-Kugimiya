@@ -1,0 +1,134 @@
+prompt_template:
+意图识别。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 3, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+意图识别。不确定时输出 “{not_applicable}”。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"其他\", \"其它\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 3, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+小样本意图识别。正确意图不在Examples中时，输出：{not_applicable}。
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"我不确定\", \"我不能确定\", \"不确定\", \"未知\", \"意图不确定\", \"未知意图\"]", "not_applicable_rate": 0.1, "max_n_way": 3, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+小样本意图识别。
+
+不能确定时，输出：{not_applicable}。
+
+示例：
+{examples}
+
+文本：{text}
+输出：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\n文本：{text}\n意图标签：{intent}\n", "example_sep": "", "not_applicable_variable": "[\"无法确定\", \"我不确定\", \"我不能确定\", \"不确定\", \"我不确定正确的意图是什么\", \"意图不确定\"]", "not_applicable_rate": 0.1, "max_n_way": 3, "min_n_way": 2, "max_n_shot": 5, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+零样本意图识别。
+
+文本：{text}
+
+可选标签：
+* {examples}
+
+文本：{text}
+输出：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n* ", "not_applicable_variable": "其它", "not_applicable_rate": 0.0, "max_n_way": 3, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+句子：
+{text}
+
+可选标签：
+- {examples}
+
+这个句子的标签选哪个：
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n- ", "not_applicable_variable": "其它", "not_applicable_rate": 0.0, "max_n_way": 3, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+{text}
+
+选项：
+- {examples}
+
+哪个选项最合适？
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "\n- ", "not_applicable_variable": "其它", "not_applicable_rate": 0.0, "max_n_way": 3, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+{text}
+
+这些标签：{examples}。哪个选项最适合？
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "；", "not_applicable_variable": "其它", "not_applicable_rate": 0.0, "max_n_way": 3, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---

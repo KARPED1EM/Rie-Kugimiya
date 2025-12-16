@@ -1,0 +1,53 @@
+prompt_template:
+Intent Recognition, Output "{not_applicable}" When Not Sure.
+
+Examples:
+{examples}
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "", "not_applicable_variable": "[\"unknown\", \"other\", \"unknown intent\", \"other intent\"]", "not_applicable_rate": 0.1, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+Few-Shot Intent Recognition.
+Output "{not_applicable}", if can not determine.
+
+Examples:
+###
+{examples}
+###
+
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "###", "not_applicable_variable": "[\"unknown\", \"other\", \"unknown intent\", \"other intent\"]", "not_applicable_rate": 0.1, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+Few-Shot Intent Recognition.
+
+{examples}
+
+Annotate the following sentences, if you don't known, output "{not_applicable}".
+Sentence: {text}
+Intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nSentence: {text}\nIntent: {intent}", "example_sep": "", "not_applicable_variable": "[\"unknown\", \"other\", \"unknown intent\", \"other intent\"]", "not_applicable_rate": 0.1, "max_n_way": 8, "min_n_way": 2, "max_n_shot": 4, "min_n_shot": 1}
+
+--- [define prompt template end] ---

@@ -1,0 +1,134 @@
+prompt_template:
+意图识别。不确定时请输出 “{not_applicable}”。
+
+Examples:
+------------
+{examples}
+------------
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "------------", "not_applicable_variable": "[\"不确定。\", \"无法确定\"]", "not_applicable_rate": 0.0, "max_n_way": 2, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+小样本意图识别。不确定时可输出 “{not_applicable}”。
+
+示例：
+======
+{examples}
+======
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "======", "not_applicable_variable": "[\"不确定。\", \"无法确定\"]", "not_applicable_rate": 0.0, "max_n_way": 2, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+对话意图识别。我现在需要你根据示例中句子的意图标签来判断给定句子的意图标签，如果它的意图不在示例中，可输出：“{not_applicable}”。
+
+示例：
+{examples}
+
+请给我以下句子的意图标签。
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "======", "not_applicable_variable": "[\"不确定。\", \"无法确定\"]", "not_applicable_rate": 0.0, "max_n_way": 2, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+麻烦你根据示例，推断最后一个句子的意图。
+
+如果无法做到，请输出：{not_applicable}。
+
+示例：
+======
+{examples}
+======
+text: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\ntext: {text}\nintent: {intent}\n", "example_sep": "======", "not_applicable_variable": "[\"对不起，我不知道。\", \"对不起，我推断不出来。\", \"我无法推断出它的意图。\", \"我认为合适的意图并没有在示例中出现过。\"]", "not_applicable_rate": 0.0, "max_n_way": 2, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+麻烦你根据示例，推断最后一个句子的意图。如果无法判断，可输出标签：{not_applicable}。
+
+示例：
+---
+{examples}
+---
+sentence: {text}
+intent:
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "\nsentence: {text}\nintent: {intent}\n", "example_sep": "---", "not_applicable_variable": "[\"其它意图\", \"未知意图\", \"其他意图\", \"领域外意图\", \"无关领域\"]", "not_applicable_rate": 0.0, "max_n_way": 2, "min_n_way": 2, "max_n_shot": 3, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+{text}
+
+这个句子的意图是什么。
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "", "not_applicable_variable": "其它", "not_applicable_rate": 0.0, "max_n_way": 2, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+{text}
+
+候选标签：{examples}。
+
+零样本意图识别。
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "，", "not_applicable_variable": "其它", "not_applicable_rate": 0.0, "max_n_way": 2, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
+
+prompt_template:
+{text}
+
+请从以下选项中给我这个句子的意图标签。
+
+候选标签：{examples}。
+
+response_template:
+{intent}
+
+kwargs:
+{"description": "null", "example_template": "{intent}", "example_sep": "", "not_applicable_variable": "其它", "not_applicable_rate": 0.0, "max_n_way": 2, "min_n_way": 2, "max_n_shot": 1, "min_n_shot": 1}
+
+--- [define prompt template end] ---
