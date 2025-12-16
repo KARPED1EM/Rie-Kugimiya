@@ -34,18 +34,18 @@ def test_character_sticker_packs_field():
         "name": "Test2",
         "avatar": "",
         "persona": "",
-        "sticker_packs": ["weirdo", "abai"]
+        "sticker_packs": ["weirdo", "general"]
     }
     
     char2 = Character(**char_data)
-    assert char2.sticker_packs == ["weirdo", "abai"], \
-        f"Expected ['weirdo', 'abai'], got {char2.sticker_packs}"
+    assert char2.sticker_packs == ["weirdo", "general"], \
+        f"Expected ['weirdo', 'general'], got {char2.sticker_packs}"
     
     # Test 3: Verify model_dump includes sticker_packs
     dumped = char2.model_dump()
     assert "sticker_packs" in dumped, "sticker_packs should be in model_dump()"
-    assert dumped["sticker_packs"] == ["weirdo", "abai"], \
-        f"Expected ['weirdo', 'abai'] in dump, got {dumped.get('sticker_packs')}"
+    assert dumped["sticker_packs"] == ["weirdo", "general"], \
+        f"Expected ['weirdo', 'general'] in dump, got {dumped.get('sticker_packs')}"
     
     # Test 4: Create character with mixed flattened and direct fields
     mixed_data = {

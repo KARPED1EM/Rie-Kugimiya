@@ -29,6 +29,10 @@ class Character(BaseModel):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     
+    # Fields that should not be treated as flattened behavior fields
+    # even if they contain underscores matching module names
+    _EXCLUDED_FROM_FLATTENING = {'sticker_packs'}
+    
     @model_validator(mode='before')
     @classmethod
     def map_flattened_fields(cls, data: Any) -> Any:
@@ -55,17 +59,13 @@ class Character(BaseModel):
         # Cache valid module names for performance
         valid_modules = set(BehaviorConfig.model_fields.keys())
         
-        # Fields that should not be treated as flattened behavior fields
-        # even if they contain underscores matching module names
-        excluded_fields = {'sticker_packs'}
-        
         # Extract flattened fields and group by module
         modules: Dict[str, Dict[str, Any]] = {}
         remaining_data = {}
         
         for key, value in data.items():
             # Skip excluded fields - they are top-level Character fields
-            if key in excluded_fields:
+            if key in cls._EXCLUDED_FROM_FLATTENING:
                 remaining_data[key] = value
                 continue
                 
