@@ -3,6 +3,10 @@ from typing import Optional, List, Any, Dict
 from datetime import datetime
 from src.core.models.behavior import BehaviorConfig
 
+# Fields that should not be treated as flattened behavior fields
+# even if they contain underscores matching module names
+_EXCLUDED_FROM_FLATTENING = {'sticker_packs'}
+
 
 class Character(BaseModel):
     """
@@ -28,10 +32,6 @@ class Character(BaseModel):
     # Metadata
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    
-    # Fields that should not be treated as flattened behavior fields
-    # even if they contain underscores matching module names
-    _EXCLUDED_FROM_FLATTENING = {'sticker_packs'}
     
     @model_validator(mode='before')
     @classmethod
@@ -65,7 +65,7 @@ class Character(BaseModel):
         
         for key, value in data.items():
             # Skip excluded fields - they are top-level Character fields
-            if key in cls._EXCLUDED_FROM_FLATTENING:
+            if key in _EXCLUDED_FROM_FLATTENING:
                 remaining_data[key] = value
                 continue
                 
